@@ -219,7 +219,8 @@ export class PastMastersComponent {
       biography: `Worshipful Hibbs was the Worshipful Master of our Lodge in 1899. In his personal life, he established one of St. Petersburg's most important industries - the shipping of fresh fish to northern markets. Worshipful Hibbs was the president of the Hibbs Fish Company, president of the Citizens Ice & Cold Storage Company and a director of the First National Bank.`,
       specialNotes: 'He was elected mayor of St. Petersburg in 1894 and again in 1895, making him one of the city\'s earliest civic leaders.',
       deathDate: '1942',
-      burialLocation: 'Royal Palm South Cemetery'
+      burialLocation: 'Royal Palm South Cemetery',
+      imageUrl: 'assets/past-masters/henry-w-hibbs.png'
     },
     {
       name: 'W. A. Sloan',
@@ -227,14 +228,16 @@ export class PastMastersComponent {
       period: 'First Town Marshal',
       biography: `Worshipful Sloan led our Lodge into the 20th Century. He was among the Worshipful Masters who were instrumental in the founding of St. Petersburg. Worshipful Sloan was the first Town Marshal, serving as one of the city's earliest law enforcement officers.`,
       deathDate: 'June 25, 1906',
-      burialLocation: 'Greenwood Cemetery'
+      burialLocation: 'Greenwood Cemetery',
+      imageUrl: 'assets/past-masters/william-a-sloan.jpg'
     },
     {
       name: 'David Murray',
       years: ['1902'],
       period: 'Mayor & Ice Company Pioneer',
       biography: `Worshipful Murray came to St. Petersburg in 1890 to put in the plant for the Crystal Ice Company, the first ice company in St. Petersburg. In April of 1893, he was elected Mayor of St. Petersburg to fill out the term of Mayor Judge Wm. H. Benton, who died suddenly while on his way to Tampa. While Mayor, he laid the cornerstone of the first public school building in St. Petersburg.`,
-      specialNotes: 'After serving as Worshipful Master, he moved to California.'
+      specialNotes: 'After serving as Worshipful Master, he moved to California.',
+      imageUrl: 'assets/past-masters/david-murray.jpg'
     },
     {
       name: 'Henry Miner',
@@ -243,7 +246,8 @@ export class PastMastersComponent {
       biography: `Worshipful Miner was Worshipful Master in 1904. As a young lad, 16 years old, he went to sea doing the work of an Able Seaman, sailing in all of the seven seas. In 1888, then a Sea Captain, Worshipful Miner sailed from Pensacola to the snapper banks. After a couple of days fishing they were hit by one of the worst hurricanes ever seen on the Gulf. More than 200 ships were sunk, including Captain Miner's. He and his crew of 19 men spent the next 18 days in open boats before they were rescued.`,
       specialNotes: 'After recuperating, he became Master on one of the Plant system boats and became a blockade runner to Cuba during the Spanish-American war. He contracted yellow fever while in Cuba and would have died if not for Theodore Roosevelt and other officers, all fellow Masons, pulling him through on a diet of brandy and morphine. His health no longer good enough to continue as a sea Captain, he acquired a pilot\'s license and engaged in pilot service on Tampa bay for the next 20 years.',
       deathDate: 'December 20, 1923',
-      burialLocation: 'Royal Palm South Cemetery'
+      burialLocation: 'Royal Palm South Cemetery',
+      imageUrl: 'assets/past-masters/henry-miner.jpg'
     },
     {
       name: 'William B. Pope',
@@ -252,7 +256,8 @@ export class PastMastersComponent {
       biography: `Worshipful Pope served our Lodge as Worshipful Master four years in a row. His dedication to the lodge was exceptional, providing stable leadership during a critical period in our lodge's early development.`,
       specialNotes: 'He later served another four years as District Deputy Grand Master of District 27 from 1912 through 1915, demonstrating his continued commitment to Masonry beyond our lodge.',
       deathDate: 'December 13, 1930 (age 72)',
-      burialLocation: 'Royal Palm South Cemetery'
+      burialLocation: 'Royal Palm South Cemetery',
+      imageUrl: 'assets/past-masters/william-b-pope.png'
     },
     {
       name: 'Elmer C. Howard',
@@ -260,7 +265,8 @@ export class PastMastersComponent {
       period: 'Two Consecutive Years',
       biography: `Worshipful Howard served two years in a row, 1910 & 1911, helping to guide the lodge through the second decade of its existence.`,
       deathDate: '1931',
-      burialLocation: 'Oaklawn Cemetery in Winter Haven, Florida'
+      burialLocation: 'Oaklawn Cemetery in Winter Haven, Florida',
+      imageUrl: 'assets/past-masters/elmer-c-howard.png'
     },
     {
       name: 'Willison H. English',
@@ -268,7 +274,8 @@ export class PastMastersComponent {
       period: 'Business Leader & Knight Templar',
       biography: `Worshipful English was Worshipful Master in 1912. He was a partner in the firm of Dent & English and was known as one of the best known business men in the city. He was also a fellow Knight Templar, demonstrating his commitment to multiple Masonic bodies.`,
       specialNotes: 'According to the Tampa Tribune report of his passing: "William (sic) H. English, one of the best known business men in this city, dropped dead at 3:45 O\'clock this afternoon while attending the funeral of J. R. Craven, a friend and fellow Knight Templar..." Heart failure was the cause of his demise.',
-      deathDate: 'January 3, 1918'
+      deathDate: 'January 3, 1918',
+      imageUrl: 'assets/past-masters/willison-h-english.png'
     }
   ];
 }
