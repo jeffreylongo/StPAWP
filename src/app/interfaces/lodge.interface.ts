@@ -24,10 +24,12 @@ export interface Officer {
 }
 
 export interface PastMaster {
-  id: number;
   name: string;
-  yearServed: string;
+  years: string[];
+  period: string;
+  biography: string;
+  specialNotes?: string;
+  burialLocation?: string;
+  deathDate?: string;
   imageUrl?: string;
-  bio?: string;
-  isDeceased?: boolean;
 }

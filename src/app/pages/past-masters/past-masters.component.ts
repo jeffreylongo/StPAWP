@@ -1,17 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
-interface PastMaster {
-  name: string;
-  years: string[];
-  period: string;
-  biography: string;
-  specialNotes?: string;
-  burialLocation?: string;
-  deathDate?: string;
-  imageUrl?: string;
-}
+import { PastMaster } from '../../interfaces';
 
 @Component({
   selector: 'app-past-masters',
