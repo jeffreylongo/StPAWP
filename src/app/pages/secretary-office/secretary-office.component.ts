@@ -107,6 +107,65 @@ import { catchError, map } from 'rxjs/operators';
         </div>
       </div>
 
+      <!-- Birthdays and Anniversaries -->
+      <div class="bg-white border border-gray-200 rounded-lg shadow-md mb-12">
+        <div class="bg-gradient-to-r from-primary-blue to-primary-blue-dark text-white p-6">
+          <div class="flex items-center">
+            <i class="fas fa-birthday-cake text-primary-gold text-2xl mr-3"></i>
+            <h3 class="font-cinzel text-xl font-bold">Birthdays and Masonic Anniversaries</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- January Birthdays -->
+            <div>
+              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
+                <i class="fas fa-gift text-primary-gold mr-2"></i>
+                January Birthdays
+              </h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
+                  <span class="font-medium">Brother John Smith</span>
+                  <span class="text-sm text-gray-600">January 5th</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
+                  <span class="font-medium">Brother Michael Johnson</span>
+                  <span class="text-sm text-gray-600">January 12th</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
+                  <span class="font-medium">Brother David Wilson</span>
+                  <span class="text-sm text-gray-600">January 28th</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Masonic Anniversaries -->
+            <div>
+              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
+                <i class="fas fa-medal text-primary-gold mr-2"></i>
+                Masonic Anniversaries
+              </h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-primary-gold-light rounded">
+                  <div>
+                    <span class="font-medium block">Brother Robert Davis</span>
+                    <span class="text-xs text-gray-600">25 Years - Silver Anniversary</span>
+                  </div>
+                  <span class="text-sm text-primary-blue font-bold">Jan 15</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-primary-gold-light rounded">
+                  <div>
+                    <span class="font-medium block">Brother James Miller</span>
+                    <span class="text-xs text-gray-600">10 Years</span>
+                  </div>
+                  <span class="text-sm text-primary-blue font-bold">Jan 22</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Coming Months -->
       <div class="bg-white border border-gray-200 rounded-lg shadow-md mb-12">
         <div class="bg-primary-blue-dark text-white p-6">
@@ -210,65 +269,6 @@ import { catchError, map } from 'rxjs/operators';
             <i class="fas fa-calendar text-gray-300 text-5xl mb-4"></i>
             <p class="text-gray-500 text-lg mb-2">No upcoming events scheduled</p>
             <p class="text-gray-400 text-sm">Check back soon or contact the Secretary for more information</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Birthdays and Anniversaries -->
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md">
-        <div class="bg-gradient-to-r from-primary-blue to-primary-blue-dark text-white p-6">
-          <div class="flex items-center">
-            <i class="fas fa-birthday-cake text-primary-gold text-2xl mr-3"></i>
-            <h3 class="font-cinzel text-xl font-bold">Birthdays and Masonic Anniversaries</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="grid md:grid-cols-2 gap-8">
-            <!-- January Birthdays -->
-            <div>
-              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
-                <i class="fas fa-gift text-primary-gold mr-2"></i>
-                January Birthdays
-              </h4>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
-                  <span class="font-medium">Brother John Smith</span>
-                  <span class="text-sm text-gray-600">January 5th</span>
-                </div>
-                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
-                  <span class="font-medium">Brother Michael Johnson</span>
-                  <span class="text-sm text-gray-600">January 12th</span>
-                </div>
-                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
-                  <span class="font-medium">Brother David Wilson</span>
-                  <span class="text-sm text-gray-600">January 28th</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Masonic Anniversaries -->
-            <div>
-              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
-                <i class="fas fa-medal text-primary-gold mr-2"></i>
-                Masonic Anniversaries
-              </h4>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center p-3 bg-primary-gold-light rounded">
-                  <div>
-                    <span class="font-medium block">Brother Robert Davis</span>
-                    <span class="text-xs text-gray-600">25 Years - Silver Anniversary</span>
-                  </div>
-                  <span class="text-sm text-primary-blue font-bold">Jan 15</span>
-                </div>
-                <div class="flex justify-between items-center p-3 bg-primary-gold-light rounded">
-                  <div>
-                    <span class="font-medium block">Brother James Miller</span>
-                    <span class="text-xs text-gray-600">10 Years</span>
-                  </div>
-                  <span class="text-sm text-primary-blue font-bold">Jan 22</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
