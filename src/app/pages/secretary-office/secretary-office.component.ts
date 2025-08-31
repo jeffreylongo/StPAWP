@@ -67,7 +67,7 @@ import { catchError, map } from 'rxjs/operators';
               <div class="border-l-4 border-primary-blue pl-4 mt-4">
                 <h4 class="font-semibold text-primary-blue mb-2">Meeting Highlights</h4>
                 <ul class="text-gray-600 space-y-1 text-sm" *ngIf="data.lastMeeting.metadata?.highlights">
-                  <li *ngFor="let highlight of data.lastMeeting.metadata.highlights">• {{ highlight }}</li>
+                  <li *ngFor="let highlight of data.lastMeeting.metadata?.highlights || []">• {{ highlight }}</li>
                 </ul>
               </div>
             </div>
@@ -89,7 +89,7 @@ import { catchError, map } from 'rxjs/operators';
               <div class="border-l-4 border-primary-blue pl-4 mt-4" *ngIf="data.nextMeeting.metadata?.next_meeting_highlights">
                 <h4 class="font-semibold text-primary-blue mb-2">What to Expect</h4>
                 <ul class="text-gray-600 space-y-1 text-sm">
-                  <li *ngFor="let highlight of data.nextMeeting.metadata.next_meeting_highlights">• {{ highlight }}</li>
+                  <li *ngFor="let highlight of data.nextMeeting.metadata?.next_meeting_highlights || []">• {{ highlight }}</li>
                 </ul>
               </div>
             </div>
@@ -365,7 +365,7 @@ import { catchError, map } from 'rxjs/operators';
   `]
 })
 export class SecretaryOfficeComponent implements OnInit {
-  secretaryData$: Observable<SecretaryOfficeData>;
+  secretaryData$!: Observable<SecretaryOfficeData>;
   upcomingEvents: CalendarEvent[] = [];
   isLoadingEvents = true;
 
