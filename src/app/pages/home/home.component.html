@@ -264,6 +264,188 @@
   </div>
 </section>
 
+<!-- News & Announcements Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">News & Announcements</h2>
+      <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+        Stay informed about the latest lodge developments, important updates, and community activities.
+      </p>
+    </div>
+    
+    <div class="grid lg:grid-cols-2 gap-8 mb-8">
+      <!-- Lodge News & Updates -->
+      <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-newspaper text-primary-gold text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-xl font-bold">Lodge News</h3>
+        </div>
+        <div *ngIf="secretaryData$ | async as data" class="space-y-4">
+          <!-- Recent Achievements -->
+          <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+            <h4 class="font-semibold text-primary-gold mb-2">Recent Achievements</h4>
+            <div class="text-sm space-y-2">
+              <div class="flex items-center">
+                <i class="fas fa-trophy text-primary-gold mr-2"></i>
+                <span>MM1 Course Completion by Brother Jeff Longo</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-medal text-primary-gold mr-2"></i>
+                <span>40 Year Award: Worshipful John Gunter</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-star text-primary-gold mr-2"></i>
+                <span>55 Year Award: Worshipful John Gicking</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Important Updates -->
+          <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+            <h4 class="font-semibold text-primary-gold mb-2">Important Updates</h4>
+            <div class="text-sm space-y-2">
+              <div class="flex items-center">
+                <i class="fas fa-check-circle text-primary-gold mr-2"></i>
+                <span>By-Law Section 1.01 Address Correction Approved</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-building text-primary-gold mr-2"></i>
+                <span>New Lodge Building Planning in Progress</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Community Activities -->
+      <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-hands-helping text-primary-blue text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-xl font-bold">Community Activities</h3>
+        </div>
+        <div class="space-y-4">
+          <!-- New Teams & Programs -->
+          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
+            <h4 class="font-semibold text-primary-blue mb-2">New Opportunities</h4>
+            <div class="text-sm space-y-2">
+              <div class="flex items-center">
+                <i class="fas fa-users text-primary-blue mr-2"></i>
+                <span>Funeral Team Formation</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-graduation-cap text-primary-blue mr-2"></i>
+                <span>Masonic Mentorship Program</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-book text-primary-blue mr-2"></i>
+                <span>Catechism Coaching</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Resources Available -->
+          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
+            <h4 class="font-semibold text-primary-blue mb-2">Available Resources</h4>
+            <div class="text-sm space-y-2">
+              <div class="flex items-center">
+                <i class="fas fa-library text-primary-blue mr-2"></i>
+                <span>Virtual Masonic Library Access</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-file-alt text-primary-blue mr-2"></i>
+                <span>Trestle Board Newsletter</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-calendar-alt text-primary-blue mr-2"></i>
+                <span>Updated Meeting Calendar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional News Grid -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Meeting Information -->
+      <div class="bg-neutral-light border border-gray-200 rounded-lg p-6 shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-handshake text-primary-blue text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-lg font-bold text-primary-blue">Meeting Updates</h3>
+        </div>
+        <div class="text-sm text-gray-700 space-y-2">
+          <div class="flex items-center">
+            <i class="fas fa-calendar text-primary-gold mr-2"></i>
+            <span>Next Stated Communication: June 17th, 7:30 PM</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-utensils text-primary-gold mr-2"></i>
+            <span>Dinner at 6:30 PM</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>
+            <span>Location: 3325 1st St NE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Educational Opportunities -->
+      <div class="bg-neutral-light border border-gray-200 rounded-lg p-6 shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-graduation-cap text-primary-blue text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-lg font-bold text-primary-blue">Education</h3>
+        </div>
+        <div class="text-sm text-gray-700 space-y-2">
+          <div class="flex items-center">
+            <i class="fas fa-book text-primary-gold mr-2"></i>
+            <span>MM1 Course Materials Available</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-chalkboard-teacher text-primary-gold mr-2"></i>
+            <span>Catechism Proficiency Training</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-lightbulb text-primary-gold mr-2"></i>
+            <span>Masonic Landmarks Discussion</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="bg-neutral-light border border-gray-200 rounded-lg p-6 shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-envelope text-primary-blue text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-lg font-bold text-primary-blue">Get In Touch</h3>
+        </div>
+        <div class="text-sm text-gray-700 space-y-2">
+          <div class="flex items-center">
+            <i class="fas fa-phone text-primary-gold mr-2"></i>
+            <span>(727) 418-3356</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-at text-primary-gold mr-2"></i>
+            <span>secretary&#64;stpete139.org</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>
+            <span>3325 1st St NE, St. Petersburg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-8">
+      <a routerLink="/secretary-office" 
+         class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
+        <i class="fas fa-newspaper mr-2"></i>
+        <span>Get All Latest Updates</span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- Current Events & Activities Section -->
 <section class="py-16 bg-neutral-light">
   <div class="container mx-auto px-4">
