@@ -10,6 +10,7 @@ interface PastMaster {
   specialNotes?: string;
   burialLocation?: string;
   deathDate?: string;
+  imageUrl?: string;
 }
 
 @Component({
@@ -76,24 +77,39 @@ interface PastMaster {
             </div>
             
             <div class="p-8">
-              <div class="prose prose-lg max-w-none">
-                <p class="text-gray-700 leading-relaxed mb-6" [innerHTML]="master.biography"></p>
-                
-                <div *ngIf="master.specialNotes" class="bg-primary-gold-light p-4 rounded-lg mb-6">
-                  <h5 class="font-semibold text-primary-blue mb-2">
-                    <i class="fas fa-star text-primary-gold mr-2"></i>Notable Achievements
-                  </h5>
-                  <p class="text-gray-700 text-sm" [innerHTML]="master.specialNotes"></p>
+              <div class="grid md:grid-cols-3 gap-8">
+                <!-- Portrait Image -->
+                <div *ngIf="master.imageUrl" class="md:col-span-1">
+                  <div class="bg-neutral-light rounded-lg p-4 text-center">
+                    <img [src]="master.imageUrl" 
+                         [alt]="'Portrait of Worshipful ' + master.name"
+                         class="w-full h-80 object-cover object-top rounded-lg shadow-md mb-4">
+                    <p class="text-sm text-gray-600 italic">Portrait of Worshipful {{ master.name }}</p>
+                  </div>
                 </div>
                 
-                <div *ngIf="master.deathDate || master.burialLocation" class="flex flex-wrap gap-6 text-sm text-gray-600">
-                  <div *ngIf="master.deathDate" class="flex items-center">
-                    <i class="fas fa-calendar text-primary-gold mr-2"></i>
-                    <span>Passed: {{ master.deathDate }}</span>
-                  </div>
-                  <div *ngIf="master.burialLocation" class="flex items-center">
-                    <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>
-                    <span>Interred: {{ master.burialLocation }}</span>
+                <!-- Biography Content -->
+                <div [class]="master.imageUrl ? 'md:col-span-2' : 'md:col-span-3'">
+                  <div class="prose prose-lg max-w-none">
+                    <p class="text-gray-700 leading-relaxed mb-6" [innerHTML]="master.biography"></p>
+                    
+                    <div *ngIf="master.specialNotes" class="bg-primary-gold-light p-4 rounded-lg mb-6">
+                      <h5 class="font-semibold text-primary-blue mb-2">
+                        <i class="fas fa-star text-primary-gold mr-2"></i>Notable Achievements
+                      </h5>
+                      <p class="text-gray-700 text-sm" [innerHTML]="master.specialNotes"></p>
+                    </div>
+                    
+                    <div *ngIf="master.deathDate || master.burialLocation" class="flex flex-wrap gap-6 text-sm text-gray-600">
+                      <div *ngIf="master.deathDate" class="flex items-center">
+                        <i class="fas fa-calendar text-primary-gold mr-2"></i>
+                        <span>Passed: {{ master.deathDate }}</span>
+                      </div>
+                      <div *ngIf="master.burialLocation" class="flex items-center">
+                        <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>
+                        <span>Interred: {{ master.burialLocation }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -178,7 +194,8 @@ export class PastMastersComponent {
       biography: `Worshipful Coleman was a Hydraulic Engineer by trade and was actually responsible for installing St. Petersburg's first water system that supplied fresh water to this pioneer town on the edge of Tampa Bay. Worshipful Coleman and his Wife Mary Ellen also built, owned, and ran the Paxton House Hotel which at the time was one of the largest hotels in the area boasting 32 rooms for guests and stayed open year round. The Paxton House Hotel was a block away from the Detroit Hotel on Central Ave and 1st Street.`,
       specialNotes: 'Through Worshipful Coleman\'s guidance Lodge 139 was able to forge through the early years and last the test of time. Not only served as our first Worshipful Master, but returned to serve four additional terms, demonstrating his continued dedication to the lodge.',
       deathDate: '1909',
-      burialLocation: 'Greenwood Cemetery (9th Street & 11th Ave S)'
+      burialLocation: 'Greenwood Cemetery (9th Street & 11th Ave S)',
+      imageUrl: 'assets/past-masters/walter-w-coleman.jpg'
     },
     {
       name: 'G. L. King',
