@@ -141,7 +141,7 @@ interface QuickLink {
                 <i class="fas fa-phone text-primary-gold mt-1 mr-3"></i>
                 <div>
                   <p class="font-medium">Phone</p>
-                  <p>(727) 321-1739</p>
+                  <p>(727) 418-3356</p>
                 </div>
               </div>
               
@@ -149,7 +149,7 @@ interface QuickLink {
                 <i class="fas fa-envelope text-primary-gold mt-1 mr-3"></i>
                 <div>
                   <p class="font-medium">Email</p>
-                  <p>secretary&#64;stpetelodge139.org</p>
+                  <p>secretary&#64;stpete139.org</p>
                 </div>
               </div>
               

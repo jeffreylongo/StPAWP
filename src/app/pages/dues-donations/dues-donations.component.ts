@@ -118,9 +118,9 @@ import { RouterModule } from '@angular/router';
                 <p class="text-sm text-gray-600 mb-2">
                   Contact the Secretary for online payment options
                 </p>
-                <a href="mailto:secretary&#64;stpetelodge139.org" 
+                <a href="mailto:secretary&#64;stpete139.org" 
                    class="text-primary-blue hover:text-primary-gold text-sm font-medium">
-                  secretary&#64;stpetelodge139.org
+                  secretary&#64;stpete139.org
                 </a>
               </div>
             </div>
@@ -206,7 +206,7 @@ import { RouterModule } from '@angular/router';
             Contact our Secretary for assistance with payments, questions about dues, or information about donation opportunities.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="mailto:secretary@stpetelodge139.org" 
+            <a href="mailto:secretary@stpete139.org" 
                class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold px-6 py-3 rounded transition inline-flex items-center">
               <i class="fas fa-envelope mr-2"></i>
               Email Secretary

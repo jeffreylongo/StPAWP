@@ -124,10 +124,11 @@ interface ContactForm {
             <!-- Address -->
             <div class="mb-6">
               <h3 class="font-semibold text-lg text-gray-800 mb-2">
-                <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>Lodge Address
+                <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>Lodge Location
               </h3>
               <p class="text-gray-600 leading-relaxed">
-                3325 1st St NE<br>
+                <strong>Temporarily Located at:</strong><br>
+                3325 1st St. NE<br>
                 St. Petersburg, FL 33704
               </p>
               <a href="https://maps.google.com/?q=3325+1st+St+NE,+St.+Petersburg,+FL+33704" 
@@ -142,9 +143,9 @@ interface ContactForm {
               <h3 class="font-semibold text-lg text-gray-800 mb-2">
                 <i class="fas fa-phone text-primary-gold mr-2"></i>Phone
               </h3>
-              <a href="tel:+17273211739" 
+              <a href="tel:+17274183356" 
                  class="text-gray-600 hover:text-primary-blue text-lg transition-colors">
-                (727) 321-1739
+                (727) 418-3356
               </a>
             </div>
             
@@ -153,9 +154,9 @@ interface ContactForm {
               <h3 class="font-semibold text-lg text-gray-800 mb-2">
                 <i class="fas fa-envelope text-primary-gold mr-2"></i>Email
               </h3>
-              <a href="mailto:secretary&#64;stpetelodge139.org" 
+              <a href="mailto:secretary&#64;stpete139.org" 
                  class="text-gray-600 hover:text-primary-blue transition-colors">
-                secretary&#64;stpetelodge139.org
+                secretary&#64;stpete139.org
               </a>
             </div>
           </div>

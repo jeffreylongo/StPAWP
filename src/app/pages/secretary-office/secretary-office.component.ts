@@ -496,7 +496,7 @@ import { catchError, map } from 'rxjs/operators';
             The Secretary's Office is here to help. Don't hesitate to reach out with any questions about lodge activities or membership.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="mailto:secretary@stpetelodge139.org" 
+            <a href="mailto:secretary@stpete139.org" 
                class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold px-6 py-3 rounded transition inline-flex items-center">
               <i class="fas fa-envelope mr-2"></i>
               Email the Secretary
