@@ -203,7 +203,8 @@ export class PastMastersComponent {
       period: 'Second Worshipful Master',
       biography: `Worshipful King was our second Worshipful Master. He was one of the first lumber mill owners in lower Pinellas Point/Maximo Point area. He is credited with spearheading population growth in the 1890s in Lower Pinellas Point/St. Pete Village.`,
       deathDate: 'February 1904 (after long battle with cancer)',
-      burialLocation: 'Greenwood Cemetery'
+      burialLocation: 'Greenwood Cemetery',
+      imageUrl: 'assets/past-masters/henry-w-hibbs.png'
     },
     {
       name: 'Robert Johnson',
@@ -220,7 +221,7 @@ export class PastMastersComponent {
       specialNotes: 'He was elected mayor of St. Petersburg in 1894 and again in 1895, making him one of the city\'s earliest civic leaders.',
       deathDate: '1942',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/henry-w-hibbs.png'
+      imageUrl: 'assets/past-masters/william-a-sloan.jpg'
     },
     {
       name: 'W. A. Sloan',
@@ -229,7 +230,7 @@ export class PastMastersComponent {
       biography: `Worshipful Sloan led our Lodge into the 20th Century. He was among the Worshipful Masters who were instrumental in the founding of St. Petersburg. Worshipful Sloan was the first Town Marshal, serving as one of the city's earliest law enforcement officers.`,
       deathDate: 'June 25, 1906',
       burialLocation: 'Greenwood Cemetery',
-      imageUrl: 'assets/past-masters/william-a-sloan.jpg'
+      imageUrl: 'assets/past-masters/david-murray.jpg'
     },
     {
       name: 'David Murray',
@@ -237,7 +238,7 @@ export class PastMastersComponent {
       period: 'Mayor & Ice Company Pioneer',
       biography: `Worshipful Murray came to St. Petersburg in 1890 to put in the plant for the Crystal Ice Company, the first ice company in St. Petersburg. In April of 1893, he was elected Mayor of St. Petersburg to fill out the term of Mayor Judge Wm. H. Benton, who died suddenly while on his way to Tampa. While Mayor, he laid the cornerstone of the first public school building in St. Petersburg.`,
       specialNotes: 'After serving as Worshipful Master, he moved to California.',
-      imageUrl: 'assets/past-masters/david-murray.jpg'
+      imageUrl: 'assets/past-masters/henry-miner.jpg'
     },
     {
       name: 'Henry Miner',
@@ -247,7 +248,7 @@ export class PastMastersComponent {
       specialNotes: 'After recuperating, he became Master on one of the Plant system boats and became a blockade runner to Cuba during the Spanish-American war. He contracted yellow fever while in Cuba and would have died if not for Theodore Roosevelt and other officers, all fellow Masons, pulling him through on a diet of brandy and morphine. His health no longer good enough to continue as a sea Captain, he acquired a pilot\'s license and engaged in pilot service on Tampa bay for the next 20 years.',
       deathDate: 'December 20, 1923',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/henry-miner.jpg'
+      imageUrl: 'assets/past-masters/william-b-pope.png'
     },
     {
       name: 'William B. Pope',
@@ -257,7 +258,7 @@ export class PastMastersComponent {
       specialNotes: 'He later served another four years as District Deputy Grand Master of District 27 from 1912 through 1915, demonstrating his continued commitment to Masonry beyond our lodge.',
       deathDate: 'December 13, 1930 (age 72)',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/william-b-pope.png'
+      imageUrl: 'assets/past-masters/elmer-c-howard.png'
     },
     {
       name: 'Elmer C. Howard',
@@ -266,7 +267,7 @@ export class PastMastersComponent {
       biography: `Worshipful Howard served two years in a row, 1910 & 1911, helping to guide the lodge through the second decade of its existence.`,
       deathDate: '1931',
       burialLocation: 'Oaklawn Cemetery in Winter Haven, Florida',
-      imageUrl: 'assets/past-masters/elmer-c-howard.png'
+      imageUrl: 'assets/past-masters/willison-h-english.png'
     },
     {
       name: 'Willison H. English',
