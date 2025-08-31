@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CalendarService } from '../../services/calendar.service';
 import { CalendarEvent } from '../../interfaces';
+import { SecretaryOfficeService, SecretaryOfficeData, SecretaryUpdate } from '../../services/secretary-office.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -43,7 +44,7 @@ import { catchError, map } from 'rxjs/operators';
       </div>
 
       <!-- Secretary's Updates Sections -->
-      <div class="grid lg:grid-cols-2 gap-8 mb-12">
+      <div *ngIf="secretaryData$ | async as data" class="grid lg:grid-cols-2 gap-8 mb-12">
         <!-- What You Missed -->
         <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
           <div class="bg-primary-blue text-white p-6">
@@ -61,23 +62,12 @@ import { catchError, map } from 'rxjs/operators';
                 </p>
               </div>
               
-              <div class="border-l-4 border-primary-gold pl-4">
-                <h4 class="font-semibold text-primary-blue mb-2">May Stated Communication</h4>
-                <p class="text-gray-700 text-sm mb-2">May 20, 2025</p>
-                <div class="text-gray-600 space-y-2 text-sm">
-                  <p>We had a very interesting Stated Communication. After opening in the Master Mason Degree, the Worshipful Master dropped down to the Entered Apprentice Degree to permit any Mason the ability to partake of the discussion concerning Masonic Landmarks.</p>
-                  <p>Brother Malek Chevalier, one of our EAs, attended and later stated that he learned quite a lot and was looking forward to the next time he could attend such a presentation.</p>
-                </div>
-              </div>
+              <div [innerHTML]="data.lastMeeting.content"></div>
               
-              <div class="border-l-4 border-primary-blue pl-4">
-                <h4 class="font-semibold text-primary-blue mb-2">Special Presentations & Awards</h4>
-                <ul class="text-gray-600 space-y-1 text-sm">
-                  <li>• Right Worshipful Oran Ellis gave a very moving presentation on the Volume of Sacred Law Landmark</li>
-                  <li>• Approved By-law change to Section 1.01 correcting the Lodge address</li>
-                  <li>• Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course</li>
-                  <li>• 40 Year Longevity Award presented to Worshipful John Gunter</li>
-                  <li>• 55 Year Longevity Award presented to Worshipful John Gicking</li>
+              <div class="border-l-4 border-primary-blue pl-4 mt-4">
+                <h4 class="font-semibold text-primary-blue mb-2">Meeting Highlights</h4>
+                <ul class="text-gray-600 space-y-1 text-sm" *ngIf="data.lastMeeting.metadata?.highlights">
+                  <li *ngFor="let highlight of data.lastMeeting.metadata.highlights">• {{ highlight }}</li>
                 </ul>
               </div>
             </div>
@@ -94,22 +84,13 @@ import { catchError, map } from 'rxjs/operators';
           </div>
           <div class="p-6">
             <div class="space-y-4">
-              <div class="border-l-4 border-primary-blue pl-4">
-                <h4 class="font-semibold text-primary-blue mb-2">June Stated Communication</h4>
-                <p class="text-gray-700 text-sm mb-2">Tuesday, June 17th - 7:30 PM</p>
-                <div class="text-gray-600 space-y-2 text-sm">
-                  <p>Among other business, we will be receiving the Entered Apprentice Catechism Proficiency from:</p>
-                  <ul class="ml-4 space-y-1">
-                    <li>• Brother Raymond Wilson</li>
-                    <li>• Brother Malek Chevalier</li>
+              <div [innerHTML]="data.nextMeeting.content"></div>
+              
+              <div class="border-l-4 border-primary-blue pl-4 mt-4" *ngIf="data.nextMeeting.metadata?.next_meeting_highlights">
+                <h4 class="font-semibold text-primary-blue mb-2">What to Expect</h4>
+                <ul class="text-gray-600 space-y-1 text-sm">
+                  <li *ngFor="let highlight of data.nextMeeting.metadata.next_meeting_highlights">• {{ highlight }}</li>
                 </ul>
-                </div>
-              </div>
-              <div class="bg-primary-gold-light p-3 rounded">
-                <p class="text-primary-blue-darker text-sm font-medium">
-                  <i class="fas fa-graduation-cap mr-2"></i>
-                  Witness these Brothers advance in their Masonic journey!
-                </p>
               </div>
             </div>
           </div>
@@ -117,7 +98,7 @@ import { catchError, map } from 'rxjs/operators';
       </div>
 
       <!-- Birthdays and Anniversaries -->
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md mb-12">
+      <div *ngIf="secretaryData$ | async as data" class="bg-white border border-gray-200 rounded-lg shadow-md mb-12">
         <div class="bg-gradient-to-r from-primary-blue to-primary-blue-dark text-white p-6">
           <div class="flex items-center">
             <i class="fas fa-birthday-cake text-primary-gold text-2xl mr-3"></i>
@@ -133,99 +114,16 @@ import { catchError, map } from 'rxjs/operators';
                 June Birthdays
               </h4>
               <div class="max-h-80 overflow-y-auto space-y-2">
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Worshipful George Rovert Gaston, Jr</span>
-                  <span class="text-gray-600">3rd</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Raymond Walter Lampe</span>
-                  <span class="text-gray-600">5th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Patrick Royal Green</span>
-                  <span class="text-gray-600">6th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Michael Reed Hutchins</span>
-                  <span class="text-gray-600">6th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Charles Flow Lambeth</span>
-                  <span class="text-gray-600">7th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Robert Theodore Eubank</span>
-                  <span class="text-gray-600">8th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Worshipful David Michael Rosenthal</span>
-                  <span class="text-gray-600">10th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Gregory Jack Jarrell</span>
-                  <span class="text-gray-600">13th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Worshipful Chave Stevens Aspinall</span>
-                  <span class="text-gray-600">16th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Edmund Eugene Olson</span>
-                  <span class="text-gray-600">17th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother John Warren Edds</span>
-                  <span class="text-gray-600">17th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Worshipful William Grant Smith</span>
-                  <span class="text-gray-600">20th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Robert George Faustino</span>
-                  <span class="text-gray-600">21st</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Richard Lee Hoskins</span>
-                  <span class="text-gray-600">22nd</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother James William Lich</span>
-                  <span class="text-gray-600">22nd</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Kenneth J Zeiler</span>
-                  <span class="text-gray-600">23rd</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Stephen Conrad Rannells</span>
-                  <span class="text-gray-600">24th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Charles Traubert</span>
-                  <span class="text-gray-600">25th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Ervin Lee Watkins</span>
-                  <span class="text-gray-600">26th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Richard Patrick Gallagher</span>
-                  <span class="text-gray-600">26th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Brother Justin Stuart King</span>
-                  <span class="text-gray-600">27th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">Worshipful Piero Magliulo</span>
-                  <span class="text-gray-600">30th</span>
+                <div *ngFor="let brother of data.birthdays.metadata?.birthday_brothers || []" 
+                     class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">{{ brother.name }}</span>
+                  <span class="text-gray-600">{{ brother.date }}</span>
                 </div>
               </div>
               
               <!-- Birthday Statistics -->
               <div class="mt-4 p-4 bg-primary-gold-light rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Of our 22 Brothers with June Birthdays:</h5>
+                <h5 class="font-semibold text-primary-blue mb-2">Of our {{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers with June Birthdays:</h5>
                 <div class="text-sm text-gray-700 space-y-1">
                   <div>• Four were born in the 1930's</div>
                   <div>• Eight were born in the 1940's</div>
@@ -248,83 +146,16 @@ import { catchError, map } from 'rxjs/operators';
                 June Masonic Anniversaries
               </h4>
               <div class="max-h-80 overflow-y-auto space-y-2">
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Michael Reed Hutchins</span>
-                  <span class="text-primary-blue font-bold">7th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Randy Lee Evans</span>
-                  <span class="text-primary-blue font-bold">7th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Russell Richard Wurr</span>
-                  <span class="text-primary-blue font-bold">7th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother George Thomas Pierson</span>
-                  <span class="text-primary-blue font-bold">9th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Christopher Aaron Peak</span>
-                  <span class="text-primary-blue font-bold">9th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Christopher Douglas Breton</span>
-                  <span class="text-primary-blue font-bold">9th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Robert Melvin Berry</span>
-                  <span class="text-primary-blue font-bold">11th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother David Harry Gross</span>
-                  <span class="text-primary-blue font-bold">21st</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Worshipful Nicholas Lawrence Mamalis</span>
-                  <span class="text-primary-blue font-bold">22nd</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Kenneth J Zeiler</span>
-                  <span class="text-primary-blue font-bold">23rd</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother James Ross Trubry</span>
-                  <span class="text-primary-blue font-bold">24th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Worshipful John B Livingston</span>
-                  <span class="text-primary-blue font-bold">25th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Robert Neil Talley</span>
-                  <span class="text-primary-blue font-bold">25th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother William John Jacobs</span>
-                  <span class="text-primary-blue font-bold">25th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother John Allen Cotton</span>
-                  <span class="text-primary-blue font-bold">27th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Aaron David Higgs</span>
-                  <span class="text-primary-blue font-bold">27th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Larry D Ferrell</span>
-                  <span class="text-primary-blue font-bold">28th</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">Brother Wyatt Keith Wright</span>
-                  <span class="text-primary-blue font-bold">30th</span>
+                <div *ngFor="let brother of data.anniversaries.metadata?.anniversary_brothers || []" 
+                     class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">{{ brother.name }}</span>
+                  <span class="text-primary-blue font-bold">{{ brother.years }} years</span>
                 </div>
               </div>
               
               <!-- Anniversary Statistics -->
               <div class="mt-4 p-4 bg-primary-blue-light rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Of the 18 Brothers Raised in June:</h5>
+                <h5 class="font-semibold text-primary-blue mb-2">Of the {{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers Raised in June:</h5>
                 <div class="text-sm text-gray-700 space-y-1">
                   <div>• One was Raised in the 1950's</div>
                   <div>• One was Raised in the 1960's</div>
@@ -534,13 +365,18 @@ import { catchError, map } from 'rxjs/operators';
   `]
 })
 export class SecretaryOfficeComponent implements OnInit {
+  secretaryData$: Observable<SecretaryOfficeData>;
   upcomingEvents: CalendarEvent[] = [];
   isLoadingEvents = true;
 
-  constructor(private calendarService: CalendarService) { }
+  constructor(
+    private calendarService: CalendarService,
+    private secretaryOfficeService: SecretaryOfficeService
+  ) { }
 
   ngOnInit(): void {
     this.loadUpcomingEvents();
+    this.secretaryData$ = this.secretaryOfficeService.getSecretaryOfficeData();
   }
 
   loadUpcomingEvents(): void {
@@ -624,5 +460,4 @@ export class SecretaryOfficeComponent implements OnInit {
     };
     return typeClasses[eventType] || 'bg-gray-100 text-gray-800';
   }
-
 }

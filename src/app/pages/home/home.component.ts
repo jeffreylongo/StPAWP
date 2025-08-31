@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { WordPressService } from '../../services/wordpress.service';
 import { CalendarService } from '../../services/calendar.service';
+import { SecretaryOfficeService, SecretaryOfficeData } from '../../services/secretary-office.service';
 import { LodgeEmblemComponent } from '../../components/lodge-emblem/lodge-emblem.component';
-import { WordPressPost, CalendarEvent } from '../../interfaces';
+import { CalendarEvent } from '../../interfaces';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -16,46 +16,18 @@ import { catchError, map } from 'rxjs/operators';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  announcements: WordPressPost[] = [];
   upcomingEvents: CalendarEvent[] = [];
-  isLoadingAnnouncements = true;
+  secretaryData$: Observable<SecretaryOfficeData>;
   isLoadingEvents = true;
 
-  // Skeleton loading items
-  skeletonItems = Array(3).fill(0);
-
   constructor(
-    private wordpressService: WordPressService,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private secretaryOfficeService: SecretaryOfficeService
   ) {}
 
   ngOnInit(): void {
-    this.loadAnnouncements();
     this.loadEvents();
-  }
-
-  loadAnnouncements(): void {
-    this.isLoadingAnnouncements = true;
-    
-    // Try to get announcements, fallback to regular posts
-    this.wordpressService.getPosts({ per_page: 6 })
-      .pipe(
-        catchError(error => {
-          console.error('Error loading announcements:', error);
-          return of([]);
-        })
-      )
-      .subscribe({
-        next: (posts) => {
-          this.announcements = posts;
-          this.isLoadingAnnouncements = false;
-        },
-        error: (error) => {
-          console.error('Error loading announcements:', error);
-          this.announcements = [];
-          this.isLoadingAnnouncements = false;
-        }
-      });
+    this.secretaryData$ = this.secretaryOfficeService.getSecretaryOfficeData();
   }
 
     loadEvents(): void {
@@ -125,23 +97,7 @@ export class HomeComponent implements OnInit {
     return events;
   }
 
-  getExcerpt(htmlContent: string): string {
-    // Strip HTML tags and limit to ~150 characters
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
-    const textContent = tempDiv.textContent || tempDiv.innerText || '';
-    
-    if (textContent.length > 150) {
-      return textContent.substring(0, 150) + '...';
-    }
-    return textContent;
-  }
-
-  // TrackBy functions for performance optimization
-  trackByAnnouncementId(index: number, announcement: WordPressPost): number {
-    return announcement.id;
-  }
-
+  // TrackBy function for performance optimization
   trackByEventId(index: number, event: CalendarEvent): number {
     return event.id;
   }

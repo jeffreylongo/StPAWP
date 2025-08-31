@@ -157,50 +157,109 @@
   </div>
 </section>
 
-<!-- Announcements Section -->
+<!-- Lodge Updates & Highlights Section -->
 <section class="py-16 bg-white">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
-      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Latest News & Announcements</h2>
+      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Lodge Updates & Highlights</h2>
       <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-        Stay informed about important lodge news, upcoming events, and community activities.
+        Stay informed about recent meetings, upcoming events, and important lodge information.
       </p>
     </div>
     
-    <!-- Loading State -->
-    <div *ngIf="isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div *ngFor="let item of skeletonItems" class="announcement-skeleton">
-        <div class="skeleton-date"></div>
-        <div class="skeleton-title"></div>
-        <div class="skeleton-content"></div>
-        <div class="skeleton-link"></div>
+    <!-- Dynamic Content from Secretary Office Service -->
+    <div *ngIf="secretaryData$ | async as data" class="grid lg:grid-cols-2 gap-8 mb-12">
+      <!-- What You Missed at Last Meeting -->
+      <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
+        <div class="bg-primary-blue text-white p-6">
+          <div class="flex items-center">
+            <i class="fas fa-history text-primary-gold text-2xl mr-3"></i>
+            <h3 class="font-cinzel text-xl font-bold">What You Missed</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="bg-primary-gold-light p-4 rounded-lg mb-4">
+            <p class="text-primary-blue font-semibold text-center italic">
+              <i class="fas fa-utensils mr-2"></i>
+              If you miss a meeting, you miss a Fantastic Meal!!
+            </p>
+          </div>
+          <div [innerHTML]="data.lastMeeting.content"></div>
+          <div class="mt-4 text-sm text-gray-600">
+            <strong>Meeting Date:</strong> {{ data.lastMeeting.metadata?.meeting_date || 'Recent' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- What's Coming Up -->
+      <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
+        <div class="bg-primary-gold text-primary-blue-darker p-6">
+          <div class="flex items-center">
+            <i class="fas fa-calendar-alt text-primary-gold text-2xl mr-3"></i>
+            <h3 class="font-cinzel text-xl font-bold">What's Coming Up</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <div [innerHTML]="data.nextMeeting.content"></div>
+          <div class="mt-4 text-sm text-gray-600">
+            <strong>Next Meeting:</strong> {{ data.nextMeeting.metadata?.next_meeting || 'Check calendar for details' }}
+          </div>
+        </div>
       </div>
     </div>
-    
-    <!-- Announcements Grid -->
-    <div *ngIf="!isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="bg-neutral-light p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 group" 
-           *ngFor="let announcement of announcements; trackBy: trackByAnnouncementId">
+
+    <!-- Additional Highlights Grid -->
+    <div *ngIf="secretaryData$ | async as data" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Birthdays -->
+      <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-6 rounded-lg shadow-md">
         <div class="flex items-center mb-4">
-          <i class="fas fa-bullhorn text-primary-gold text-xl mr-3"></i>
-          <span class="text-sm text-gray-500">{{ announcement.date | date:'mediumDate' }}</span>
+          <i class="fas fa-birthday-cake text-primary-gold text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-lg font-bold">June Birthdays</h3>
         </div>
-        <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-3 group-hover:text-primary-gold transition-colors" 
-            [innerHTML]="announcement.title.rendered"></h3>
-        <div class="text-gray-700 mb-4 leading-relaxed" [innerHTML]="getExcerpt(announcement.excerpt.rendered)"></div>
-        <a [routerLink]="['/announcements', announcement.slug]" 
-           class="text-primary-blue hover:text-primary-gold font-semibold inline-flex items-center transition-colors">
-          <span>Read More</span>
-          <i class="fas fa-chevron-right ml-2"></i>
-        </a>
+        <div class="text-sm">
+          <p class="mb-2">{{ data.birthdays.content }}</p>
+          <div class="text-primary-gold-light">
+            <strong>{{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers</strong> celebrating this month
+          </div>
+        </div>
       </div>
-      
-      <!-- No Announcements State -->
-      <div *ngIf="announcements.length === 0" class="empty-state">
-        <i class="fas fa-bullhorn text-gray-300 text-5xl mb-4"></i>
-        <p class="text-gray-500 text-lg">No announcements at this time.</p>
-        <p class="text-gray-400">Check back soon for updates from the lodge.</p>
+
+      <!-- Anniversaries -->
+      <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-medal text-primary-blue text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-lg font-bold">Masonic Anniversaries</h3>
+        </div>
+        <div class="text-sm">
+          <p class="mb-2">{{ data.anniversaries.content }}</p>
+          <div class="text-primary-blue">
+            <strong>{{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers</strong> with June anniversaries
+          </div>
+        </div>
       </div>
+
+      <!-- Upcoming Highlights -->
+      <div class="bg-gradient-to-br from-neutral-light to-gray-200 text-primary-blue p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-star text-primary-gold text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-lg font-bold">Looking Forward</h3>
+        </div>
+        <div class="text-sm">
+          <p class="mb-2">{{ data.upcomingEvents.content }}</p>
+          <div class="text-primary-blue-dark">
+            <strong>{{ data.upcomingEvents.metadata?.highlights?.length || 0 }} highlights</strong> to look forward to
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-8">
+      <a routerLink="/secretary-office" 
+         class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
+        <i class="fas fa-file-alt mr-2"></i>
+        <span>Visit Secretary's Office for Full Details</span>
+      </a>
     </div>
   </div>
 </section>

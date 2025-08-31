@@ -1,221 +1,263 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { WooCommerceProduct, WooCommerceCategory, WooCommerceOrder, CartItem } from '../interfaces';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { WooCommerceProduct, WooCommerceCategory } from '../interfaces';
+
+export interface WooCommerceConfig {
+  consumerKey: string;
+  consumerSecret: string;
+  baseUrl: string;
+}
+
+export interface CartItem {
+  product_id: number;
+  quantity: number;
+  variation_id?: number;
+  variation?: { [key: string]: any };
+}
+
+export interface CartResponse {
+  items: CartItem[];
+  totals: {
+    subtotal: string;
+    total: string;
+    tax: string;
+    shipping: string;
+  };
+  item_count: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class WooCommerceService {
   private readonly baseUrl = 'https://stpetelodge139.org/wp-json/wc/v3';
-  private readonly consumerKey = 'your_consumer_key'; // These should be in environment variables
-  private readonly consumerSecret = 'your_consumer_secret';
+  private readonly consumerKey = 'ck_'; // You'll need to add your actual consumer key
+  private readonly consumerSecret = 'cs_'; // You'll need to add your actual consumer secret
 
-  // Cart management
-  private cartItems = new BehaviorSubject<CartItem[]>([]);
-  public cart$ = this.cartItems.asObservable();
-
-  constructor(private http: HttpClient) {
-    // Load cart from localStorage on init
-    const savedCart = localStorage.getItem('woo-cart');
-    if (savedCart) {
-      this.cartItems.next(JSON.parse(savedCart));
+  // Fallback products if WooCommerce is unavailable
+  private fallbackProducts: WooCommerceProduct[] = [
+    {
+      id: 1,
+      name: '2025 Dues with Contribution',
+      slug: '2025-dues-let-your-pennies-make-good-sense',
+      short_description: 'Pay your 2025 Dues...This selection includes the voluntary "Let your pennies make good sense" contribution to the Masonic Home.',
+      price: '202.30',
+      regular_price: '202.30',
+      sale_price: '202.30',
+      on_sale: false,
+      purchasable: true,
+      images: [{
+        id: 1,
+        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        name: '2025 Dues with Contribution',
+        alt: '2025 Dues with Contribution'
+      }],
+      categories: [{
+        id: 1,
+        name: 'Dues',
+        slug: 'dues'
+      }],
+      stock_status: 'instock'
+    },
+    {
+      id: 2,
+      name: '2025 Dues Only - No Contribution',
+      slug: '2025-dues-only-no-contribution',
+      short_description: 'Pay your 2025 Dues only. This selection does not include the voluntary contribution to the Masonic Home.',
+      price: '195.00',
+      regular_price: '195.00',
+      sale_price: '195.00',
+      on_sale: false,
+      purchasable: true,
+      images: [{
+        id: 2,
+        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        name: '2025 Dues Only',
+        alt: '2025 Dues Only'
+      }],
+      categories: [{
+        id: 1,
+        name: 'Dues',
+        slug: 'dues'
+      }],
+      stock_status: 'instock'
+    },
+    {
+      id: 3,
+      name: 'Let your pennies make good sense Voluntary Contribution',
+      slug: 'let-your-pennies-make-good-sense-voluntary-contribution',
+      short_description: 'Voluntary contribution to the Masonic Home. This can be added to your dues payment.',
+      price: '7.30',
+      regular_price: '7.30',
+      sale_price: '7.30',
+      on_sale: false,
+      purchasable: true,
+      images: [{
+        id: 3,
+        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        name: 'Voluntary Contribution',
+        alt: 'Voluntary Contribution'
+      }],
+      categories: [{
+        id: 2,
+        name: 'Contributions',
+        slug: 'contributions'
+      }],
+      stock_status: 'instock'
+    },
+    {
+      id: 4,
+      name: 'Prepay Meal Plan',
+      slug: 'prepay-meal-plan',
+      short_description: 'Prepay for your meal plan. This helps with planning and reduces costs.',
+      price: '120.00',
+      regular_price: '120.00',
+      sale_price: '120.00',
+      on_sale: false,
+      purchasable: true,
+      images: [{
+        id: 4,
+        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        name: 'Prepay Meal Plan',
+        alt: 'Prepay Meal Plan'
+      }],
+      categories: [{
+        id: 3,
+        name: 'Meals',
+        slug: 'meals'
+      }],
+      stock_status: 'instock'
     }
-  }
+  ];
 
-  private getHeaders(): HttpHeaders {
-    const auth = btoa(`${this.consumerKey}:${this.consumerSecret}`);
-    return new HttpHeaders({
-      'Authorization': `Basic ${auth}`,
-      'Content-Type': 'application/json'
-    });
-  }
+  constructor(private http: HttpClient) {}
 
-  private getAuthParams(): HttpParams {
-    return new HttpParams()
-      .set('consumer_key', this.consumerKey)
-      .set('consumer_secret', this.consumerSecret);
-  }
-
-  // Products
+  // Get all products
   getProducts(params?: { 
     per_page?: number; 
     page?: number; 
     category?: string; 
     search?: string;
     featured?: boolean;
-    on_sale?: boolean;
-    orderby?: string;
-    order?: 'asc' | 'desc';
   }): Observable<WooCommerceProduct[]> {
-    let httpParams = this.getAuthParams();
+    let httpParams = new HttpParams();
     
     if (params) {
       if (params.per_page) httpParams = httpParams.set('per_page', params.per_page.toString());
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.category) httpParams = httpParams.set('category', params.category);
       if (params.search) httpParams = httpParams.set('search', params.search);
-      if (params.featured !== undefined) httpParams = httpParams.set('featured', params.featured.toString());
-      if (params.on_sale !== undefined) httpParams = httpParams.set('on_sale', params.on_sale.toString());
-      if (params.orderby) httpParams = httpParams.set('orderby', params.orderby);
-      if (params.order) httpParams = httpParams.set('order', params.order);
+      if (params.featured) httpParams = httpParams.set('featured', params.featured.toString());
     }
 
-    return this.http.get<WooCommerceProduct[]>(`${this.baseUrl}/products`, { params: httpParams });
+    // Add authentication
+    httpParams = httpParams.set('consumer_key', this.consumerKey);
+    httpParams = httpParams.set('consumer_secret', this.consumerSecret);
+
+    return this.http.get<WooCommerceProduct[]>(`${this.baseUrl}/products`, { params: httpParams }).pipe(
+      catchError(() => {
+        // Fallback to static products if WooCommerce is unavailable
+        return of(this.fallbackProducts);
+      })
+    );
   }
 
+  // Get product by ID
   getProduct(id: number): Observable<WooCommerceProduct> {
-    const params = this.getAuthParams();
-    return this.http.get<WooCommerceProduct>(`${this.baseUrl}/products/${id}`, { params });
+    const params = new HttpParams()
+      .set('consumer_key', this.consumerKey)
+      .set('consumer_secret', this.consumerSecret);
+
+    return this.http.get<WooCommerceProduct>(`${this.baseUrl}/products/${id}`, { params }).pipe(
+      catchError(() => {
+        // Fallback to static product
+        const product = this.fallbackProducts.find(p => p.id === id);
+        if (product) {
+          return of(product);
+        }
+        throw new Error('Product not found');
+      })
+    );
   }
 
-  getProductBySlug(slug: string): Observable<WooCommerceProduct[]> {
-    const params = this.getAuthParams().set('slug', slug);
-    return this.http.get<WooCommerceProduct[]>(`${this.baseUrl}/products`, { params });
+  // Get product by slug
+  getProductBySlug(slug: string): Observable<WooCommerceProduct | null> {
+    const params = new HttpParams()
+      .set('slug', slug)
+      .set('consumer_key', this.consumerKey)
+      .set('consumer_secret', this.consumerSecret);
+
+    return this.http.get<WooCommerceProduct[]>(`${this.baseUrl}/products`, { params }).pipe(
+      map(products => products.length > 0 ? products[0] : null),
+      catchError(() => {
+        // Fallback to static product
+        const product = this.fallbackProducts.find(p => p.slug === slug);
+        return of(product || null);
+      })
+    );
   }
 
-  // Product Categories
-  getProductCategories(params?: { per_page?: number; page?: number; parent?: number }): Observable<WooCommerceCategory[]> {
-    let httpParams = this.getAuthParams();
+  // Get categories
+  getCategories(params?: { per_page?: number; page?: number }): Observable<WooCommerceCategory[]> {
+    let httpParams = new HttpParams();
     
     if (params) {
       if (params.per_page) httpParams = httpParams.set('per_page', params.per_page.toString());
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.parent !== undefined) httpParams = httpParams.set('parent', params.parent.toString());
     }
 
-    return this.http.get<WooCommerceCategory[]>(`${this.baseUrl}/products/categories`, { params: httpParams });
+    // Add authentication
+    httpParams = httpParams.set('consumer_key', this.consumerKey);
+    httpParams = httpParams.set('consumer_secret', this.consumerSecret);
+
+    return this.http.get<WooCommerceCategory[]>(`${this.baseUrl}/products/categories`, { params: httpParams }).pipe(
+      catchError(() => {
+        // Fallback categories
+        return of([
+          { id: 1, name: 'Dues', slug: 'dues', description: 'Annual lodge dues', count: 2 },
+          { id: 2, name: 'Contributions', slug: 'contributions', description: 'Voluntary contributions', count: 1 },
+          { id: 3, name: 'Meals', slug: 'meals', description: 'Meal plans and dining', count: 1 }
+        ]);
+      })
+    );
   }
 
-  getProductCategory(id: number): Observable<WooCommerceCategory> {
-    const params = this.getAuthParams();
-    return this.http.get<WooCommerceCategory>(`${this.baseUrl}/products/categories/${id}`, { params });
+  // Add to cart (redirects to WooCommerce cart)
+  addToCart(productId: number, quantity: number = 1): void {
+    const cartUrl = `https://stpetelodge139.org/cart/?add-to-cart=${productId}&quantity=${quantity}`;
+    window.open(cartUrl, '_blank');
   }
 
-  // Cart Management
-  addToCart(item: CartItem): void {
-    const currentCart = this.cartItems.value;
-    const existingItem = currentCart.find(cartItem => cartItem.product_id === item.product_id);
-
-    if (existingItem) {
-      existingItem.quantity += item.quantity;
-      existingItem.total = existingItem.price * existingItem.quantity;
-    } else {
-      item.total = item.price * item.quantity;
-      currentCart.push(item);
-    }
-
-    this.updateCart(currentCart);
-  }
-
-  removeFromCart(productId: number): void {
-    const currentCart = this.cartItems.value.filter(item => item.product_id !== productId);
-    this.updateCart(currentCart);
-  }
-
-  updateCartItemQuantity(productId: number, quantity: number): void {
-    const currentCart = this.cartItems.value.map(item => {
-      if (item.product_id === productId) {
-        item.quantity = quantity;
-        item.total = item.price * quantity;
-      }
-      return item;
+  // Get cart contents (if you want to display cart on your site)
+  getCart(): Observable<CartResponse> {
+    // This would require additional WooCommerce REST API endpoints or custom implementation
+    // For now, redirect to WooCommerce cart
+    return of({
+      items: [],
+      totals: { subtotal: '0.00', total: '0.00', tax: '0.00', shipping: '0.00' },
+      item_count: 0
     });
-    this.updateCart(currentCart);
   }
 
-  clearCart(): void {
-    this.updateCart([]);
+  // Checkout (redirects to WooCommerce checkout)
+  goToCheckout(): void {
+    window.open('https://stpetelodge139.org/checkout/', '_blank');
   }
 
-  getCartTotal(): number {
-    return this.cartItems.value.reduce((total, item) => total + item.total, 0);
+  // Get featured products
+  getFeaturedProducts(): Observable<WooCommerceProduct[]> {
+    return this.getProducts({ featured: true, per_page: 4 });
   }
 
-  getCartItemCount(): number {
-    return this.cartItems.value.reduce((count, item) => count + item.quantity, 0);
+  // Search products
+  searchProducts(query: string): Observable<WooCommerceProduct[]> {
+    return this.getProducts({ search: query, per_page: 10 });
   }
 
-  private updateCart(cart: CartItem[]): void {
-    this.cartItems.next(cart);
-    localStorage.setItem('woo-cart', JSON.stringify(cart));
-  }
-
-  // Orders
-  createOrder(orderData: {
-    payment_method: string;
-    payment_method_title: string;
-    set_paid: boolean;
-    billing: any;
-    shipping: any;
-    line_items: Array<{
-      product_id: number;
-      quantity: number;
-    }>;
-    shipping_lines?: any[];
-  }): Observable<WooCommerceOrder> {
-    const headers = this.getHeaders();
-    return this.http.post<WooCommerceOrder>(`${this.baseUrl}/orders`, orderData, { headers });
-  }
-
-  getOrders(params?: { 
-    customer?: number; 
-    per_page?: number; 
-    page?: number;
-    status?: string;
-  }): Observable<WooCommerceOrder[]> {
-    let httpParams = this.getAuthParams();
-    
-    if (params) {
-      if (params.customer) httpParams = httpParams.set('customer', params.customer.toString());
-      if (params.per_page) httpParams = httpParams.set('per_page', params.per_page.toString());
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.status) httpParams = httpParams.set('status', params.status);
-    }
-
-    return this.http.get<WooCommerceOrder[]>(`${this.baseUrl}/orders`, { params: httpParams });
-  }
-
-  getOrder(id: number): Observable<WooCommerceOrder> {
-    const params = this.getAuthParams();
-    return this.http.get<WooCommerceOrder>(`${this.baseUrl}/orders/${id}`, { params });
-  }
-
-  // Customer methods (requires authentication)
-  getCustomers(params?: { per_page?: number; page?: number; search?: string }): Observable<any[]> {
-    let httpParams = this.getAuthParams();
-    
-    if (params) {
-      if (params.per_page) httpParams = httpParams.set('per_page', params.per_page.toString());
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.search) httpParams = httpParams.set('search', params.search);
-    }
-
-    return this.http.get<any[]>(`${this.baseUrl}/customers`, { params: httpParams });
-  }
-
-  // Payment methods
-  getPaymentGateways(): Observable<any[]> {
-    const params = this.getAuthParams();
-    return this.http.get<any[]>(`${this.baseUrl}/payment_gateways`, { params });
-  }
-
-  // Shipping methods
-  getShippingZones(): Observable<any[]> {
-    const params = this.getAuthParams();
-    return this.http.get<any[]>(`${this.baseUrl}/shipping/zones`, { params });
-  }
-
-  // Coupons
-  getCoupons(params?: { per_page?: number; page?: number; code?: string }): Observable<any[]> {
-    let httpParams = this.getAuthParams();
-    
-    if (params) {
-      if (params.per_page) httpParams = httpParams.set('per_page', params.per_page.toString());
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.code) httpParams = httpParams.set('code', params.code);
-    }
-
-    return this.http.get<any[]>(`${this.baseUrl}/coupons`, { params: httpParams });
+  // Get products by category
+  getProductsByCategory(categorySlug: string): Observable<WooCommerceProduct[]> {
+    return this.getProducts({ category: categorySlug, per_page: 20 });
   }
 }
