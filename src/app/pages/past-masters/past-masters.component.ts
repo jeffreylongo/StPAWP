@@ -194,7 +194,7 @@ export class PastMastersComponent {
       biography: `Worshipful King was our second Worshipful Master. He was one of the first lumber mill owners in lower Pinellas Point/Maximo Point area. He is credited with spearheading population growth in the 1890s in Lower Pinellas Point/St. Pete Village.`,
       deathDate: 'February 1904 (after long battle with cancer)',
       burialLocation: 'Greenwood Cemetery',
-      imageUrl: 'assets/past-masters/henry-w-hibbs.png'
+      imageUrl: 'assets/past-masters/henry-hibbs.jpg'
     },
     {
       name: 'Robert Johnson',
@@ -220,7 +220,7 @@ export class PastMastersComponent {
       biography: `Worshipful Sloan led our Lodge into the 20th Century. He was among the Worshipful Masters who were instrumental in the founding of St. Petersburg. Worshipful Sloan was the first Town Marshal, serving as one of the city's earliest law enforcement officers.`,
       deathDate: 'June 25, 1906',
       burialLocation: 'Greenwood Cemetery',
-      imageUrl: 'assets/past-masters/david-murray.jpg'
+      imageUrl: 'assets/past-masters/george-king.png'
     },
     {
       name: 'David Murray',
@@ -228,7 +228,7 @@ export class PastMastersComponent {
       period: 'Mayor & Ice Company Pioneer',
       biography: `Worshipful Murray came to St. Petersburg in 1890 to put in the plant for the Crystal Ice Company, the first ice company in St. Petersburg. In April of 1893, he was elected Mayor of St. Petersburg to fill out the term of Mayor Judge Wm. H. Benton, who died suddenly while on his way to Tampa. While Mayor, he laid the cornerstone of the first public school building in St. Petersburg.`,
       specialNotes: 'After serving as Worshipful Master, he moved to California.',
-      imageUrl: 'assets/past-masters/henry-miner.jpg'
+      imageUrl: 'assets/past-masters/henry-miner.png'
     },
     {
       name: 'Henry Miner',
@@ -248,7 +248,7 @@ export class PastMastersComponent {
       specialNotes: 'He later served another four years as District Deputy Grand Master of District 27 from 1912 through 1915, demonstrating his continued commitment to Masonry beyond our lodge.',
       deathDate: 'December 13, 1930 (age 72)',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/william-b-pope.png'
+      imageUrl: 'assets/past-masters/william-sloan.jpg'
     },
     {
       name: 'Elmer C. Howard',
@@ -257,7 +257,7 @@ export class PastMastersComponent {
       biography: `Worshipful Howard served two years in a row, 1910 & 1911, helping to guide the lodge through the second decade of its existence.`,
       deathDate: '1931',
       burialLocation: 'Oaklawn Cemetery in Winter Haven, Florida',
-      imageUrl: 'assets/past-masters/elmer-c-howard.png'
+      imageUrl: 'assets/past-masters/elmer-howard.png'
     },
     {
       name: 'Willison H. English',
@@ -266,7 +266,7 @@ export class PastMastersComponent {
       biography: `Worshipful English was Worshipful Master in 1912. He was a partner in the firm of Dent & English and was known as one of the best known business men in the city. He was also a fellow Knight Templar, demonstrating his commitment to multiple Masonic bodies.`,
       specialNotes: 'According to the Tampa Tribune report of his passing: "William (sic) H. English, one of the best known business men in this city, dropped dead at 3:45 O\'clock this afternoon while attending the funeral of J. R. Craven, a friend and fellow Knight Templar..." Heart failure was the cause of his demise.',
       deathDate: 'January 3, 1918',
-      imageUrl: 'assets/past-masters/willison-h-english.png'
+      imageUrl: 'assets/past-masters/willison-english.jpg'
     }
   ];
 }
