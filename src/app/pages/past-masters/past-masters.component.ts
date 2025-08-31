@@ -228,7 +228,7 @@ export class PastMastersComponent {
       period: 'Mayor & Ice Company Pioneer',
       biography: `Worshipful Murray came to St. Petersburg in 1890 to put in the plant for the Crystal Ice Company, the first ice company in St. Petersburg. In April of 1893, he was elected Mayor of St. Petersburg to fill out the term of Mayor Judge Wm. H. Benton, who died suddenly while on his way to Tampa. While Mayor, he laid the cornerstone of the first public school building in St. Petersburg.`,
       specialNotes: 'After serving as Worshipful Master, he moved to California.',
-      imageUrl: 'assets/past-masters/george-king.png'
+      imageUrl: 'assets/past-masters/david-murray.jpg'
     },
     {
       name: 'Henry Miner',
