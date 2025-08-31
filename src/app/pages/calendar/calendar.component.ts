@@ -56,12 +56,20 @@ import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfa
         <!-- Active Calendar Sources Info -->
         <div class="grid md:grid-cols-3 gap-4">
           <div *ngFor="let source of getActiveCalendarSources()" 
-               class="flex items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div class="w-3 h-3 rounded-full mr-3" [style.background-color]="source.color"></div>
-            <div>
-              <h3 class="font-medium text-sm">{{ source.name }}</h3>
-              <p class="text-xs text-gray-600">{{ source.description }}</p>
+               class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div class="flex items-center">
+              <div class="w-3 h-3 rounded-full mr-3" [style.background-color]="source.color"></div>
+              <div>
+                <h3 class="font-medium text-sm">{{ source.name }}</h3>
+                <p class="text-xs text-gray-600">{{ source.description }}</p>
+              </div>
             </div>
+            <button 
+              (click)="downloadCalendarICS(source)"
+              class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker text-xs font-semibold px-3 py-1 rounded transition-colors">
+              <i class="fas fa-download mr-1"></i>
+              Download
+            </button>
           </div>
         </div>
       </div>
@@ -271,7 +279,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   activeView = 'combined';
   calendarViews = [
     { id: 'lodge', name: 'St. Petersburg Lodge #139' },
-    { id: 'smma', name: 'SMMA' },
+    { id: 'smma', name: 'Suncoast Master Mason Association' },
     { id: 'aasr', name: 'Tampa Scottish Rite' },
     { id: 'combined', name: 'Combined Calendar' }
   ];
@@ -558,6 +566,27 @@ export class CalendarComponent implements OnInit, OnDestroy {
       default:
         return this.events;
     }
+  }
+
+  /**
+   * Download calendar ICS file for a specific calendar source
+   */
+  downloadCalendarICS(source: CalendarSource): void {
+    this.calendarService.downloadCalendarICS(source.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result.success) {
+            this.toastService.showSuccess(`Successfully downloaded ${source.name} calendar`);
+          } else {
+            this.toastService.showWarning(result.message || 'Failed to download calendar');
+          }
+        },
+        error: (error) => {
+          console.error('Calendar download error:', error);
+          this.toastService.showError('Failed to download calendar. Please try again later.');
+        }
+      });
   }
 
   /**

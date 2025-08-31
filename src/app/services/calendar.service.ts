@@ -40,11 +40,11 @@ export class CalendarService {
     },
     {
       id: 2,
-      name: 'Suncoast Masters & Wardens',
+      name: 'Suncoast Master Mason Association',
       url: 'https://localendar.com/public/MastersAndWardens?style=X2',
       isActive: true,
       color: '#c6a84a',
-      description: 'Suncoast Masters and Wardens Association events'
+      description: 'Suncoast Master Mason Association events'
     },
     {
       id: 3,
@@ -918,5 +918,42 @@ export class CalendarService {
         return isAfter(eventDate, now) && isBefore(eventDate, futureDate);
       }))
     );
+  }
+
+  /**
+   * Download calendar ICS file for a specific calendar source
+   */
+  downloadCalendarICS(calendarId: number): Observable<CalendarSyncResult> {
+    const source = this.calendarSources.find(s => s.id === calendarId);
+    if (!source) {
+      return of({
+        success: false,
+        message: 'Calendar source not found'
+      });
+    }
+
+    try {
+      // Create a download link for the ICS file
+      const link = document.createElement('a');
+      link.href = source.url;
+      link.download = `${source.name.replace(/[^a-zA-Z0-9]/g, '_')}_calendar.ics`;
+      link.target = '_blank';
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      return of({
+        success: true,
+        message: `Downloading ${source.name} calendar...`
+      });
+    } catch (error) {
+      console.error('Failed to download calendar:', error);
+      return of({
+        success: false,
+        message: 'Failed to download calendar file'
+      });
+    }
   }
 }
