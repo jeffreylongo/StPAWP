@@ -55,18 +55,8 @@ import { RouterModule } from '@angular/router';
                 <span class="text-sm">(727) 637-3106</span>
               </div>
               <p class="text-gray-600 mb-4 leading-relaxed">
-                The Worshipful Master is the chief executive officer of the lodge, presiding over all meetings and ceremonies. 
-                He leads with wisdom, ensures proper ritual work, and represents the lodge in all official matters.
+                Leading our lodge with wisdom and dedication to Masonic principles and traditions.
               </p>
-              <div class="bg-primary-gold-light p-4 rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Key Responsibilities:</h5>
-                <ul class="text-sm text-gray-700 space-y-1">
-                  <li>• Presides over all lodge meetings</li>
-                  <li>• Confers degrees upon candidates</li>
-                  <li>• Represents the lodge officially</li>
-                  <li>• Ensures proper ritual and protocol</li>
-                </ul>
-              </div>
             </div>
           </div>
 
@@ -90,18 +80,8 @@ import { RouterModule } from '@angular/router';
                 <span class="text-sm">(315) 412-1672</span>
               </div>
               <p class="text-gray-600 mb-4 leading-relaxed">
-                The Senior Warden is the second-ranking officer, stationed in the West. He assists the Worshipful Master 
-                and is responsible for the craft during labor and refreshment periods.
+                Supporting the Worshipful Master and assisting with lodge operations and activities.
               </p>
-              <div class="bg-primary-blue-light p-4 rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Key Responsibilities:</h5>
-                <ul class="text-sm text-gray-700 space-y-1">
-                  <li>• Assists the Worshipful Master</li>
-                  <li>• Oversees craft during labor</li>
-                  <li>• Stationed in the West</li>
-                  <li>• Next in line for Worshipful Master</li>
-                </ul>
-              </div>
             </div>
           </div>
 
@@ -125,18 +105,8 @@ import { RouterModule } from '@angular/router';
                 <span class="text-sm">(727) 504-7310</span>
               </div>
               <p class="text-gray-600 mb-4 leading-relaxed">
-                The Junior Warden is stationed in the South and is responsible for the welfare of the brethren, 
-                ensuring harmony within the lodge and overseeing refreshments.
+                Supporting the brethren and assisting with lodge harmony and fellowship activities.
               </p>
-              <div class="bg-neutral-light p-4 rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Key Responsibilities:</h5>
-                <ul class="text-sm text-gray-700 space-y-1">
-                  <li>• Ensures welfare of the brethren</li>
-                  <li>• Maintains lodge harmony</li>
-                  <li>• Stationed in the South</li>
-                  <li>• Oversees refreshments</li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
@@ -169,7 +139,7 @@ import { RouterModule } from '@angular/router';
                 <span>(727) 418-3356</span>
               </div>
               <p class="text-gray-600 text-sm mb-3">
-                Maintains lodge records, correspondence, and handles administrative duties.
+                Supporting lodge administration and record keeping.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-file-alt mr-2"></i>
@@ -196,7 +166,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Michael Mignon</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Manages lodge finances, maintains financial records, and oversees monetary transactions.
+                Assisting with lodge financial matters and transactions.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-calculator mr-2"></i>
@@ -223,7 +193,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Leo Laskin</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Provides spiritual guidance and leads lodge prayers and ceremonial invocations.
+                Supporting lodge spiritual activities and ceremonies.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-hands-praying mr-2"></i>
@@ -250,7 +220,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Chris Webb</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Maintains order during meetings and assists with ceremonial processions.
+                Assisting with lodge order and ceremonial activities.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-users-cog mr-2"></i>
@@ -277,7 +247,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Craig Hull</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Assists the Worshipful Master and guides candidates during degree ceremonies.
+                Supporting the Worshipful Master and lodge activities.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-route mr-2"></i>
@@ -302,7 +272,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Steve Stamberger</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Serves as messenger between the Wardens and assists with candidate preparation.
+                Assisting with lodge ceremonies and activities.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-walking mr-2"></i>
@@ -327,7 +297,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Jeffrey Longo</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Assists with lodge hospitality, ceremonies, and ensures comfort of the brethren.
+                Supporting lodge functions and fellowship.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-utensils mr-2"></i>
@@ -352,7 +322,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Henry Swett</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Works alongside the Senior Steward to support lodge functions and fellowship.
+                Assisting with lodge activities and brotherhood.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-hands-helping mr-2"></i>
@@ -379,7 +349,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Justin King</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Guards the lodge door and ensures security during meetings and ceremonies.
+                Supporting lodge security and activities.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-door-closed mr-2"></i>
@@ -404,7 +374,7 @@ import { RouterModule } from '@angular/router';
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother John Gunter</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Oversees degree work, ensures proper ritual execution, and guides candidates.
+                Supporting Masonic education and development.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-graduation-cap mr-2"></i>
@@ -435,7 +405,7 @@ import { RouterModule } from '@angular/router';
                 <span>(727) 393-6007</span>
               </div>
               <p class="text-gray-600 text-sm mb-3">
-                Reviews membership applications and guides new candidates through the petition process.
+                Assisting with membership applications and new candidate processes.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-user-plus mr-2"></i>
