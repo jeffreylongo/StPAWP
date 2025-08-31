@@ -1,0 +1,174 @@
+/* Footer Component Styles */
+
+/* Lodge Info Section */
+.lodge-info {
+  @apply text-left;
+}
+
+.lodge-logo {
+  @apply h-24 mb-4 w-24;
+}
+
+.lodge-name {
+  @apply font-cinzel text-xl font-bold mb-2;
+}
+
+.lodge-subtitle {
+  @apply mb-2;
+}
+
+.lodge-address {
+  @apply not-italic mb-4;
+}
+
+.social-links {
+  @apply flex space-x-4;
+}
+
+.social-link {
+  @apply text-white hover:text-primary-gold transition-colors;
+}
+
+/* Footer Sections */
+.footer-section {
+  @apply text-left;
+}
+
+.footer-title {
+  @apply font-cinzel text-lg font-bold mb-4 text-primary-gold;
+}
+
+.footer-links {
+  @apply space-y-2;
+}
+
+.footer-link {
+  @apply text-white hover:text-primary-gold transition-colors block;
+}
+
+/* Contact Form */
+.contact-form {
+  @apply space-y-3;
+}
+
+.form-group {
+  @apply relative;
+}
+
+.form-input {
+  @apply w-full p-2 rounded bg-primary-blue border border-gray-600 text-white placeholder-gray-400 transition-colors;
+}
+
+.form-input:focus {
+  @apply outline-none border-primary-gold bg-primary-blue-dark;
+}
+
+.form-input.error {
+  @apply border-red-400;
+}
+
+.form-textarea {
+  @apply w-full p-2 rounded bg-primary-blue border border-gray-600 text-white placeholder-gray-400 resize-none transition-colors;
+}
+
+.form-textarea:focus {
+  @apply outline-none border-primary-gold bg-primary-blue-dark;
+}
+
+.form-textarea.error {
+  @apply border-red-400;
+}
+
+.error-message {
+  @apply text-red-400 text-xs mt-1;
+}
+
+.submit-button {
+  @apply w-full bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold py-2 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.submit-message {
+  @apply text-sm mt-2 p-2 rounded;
+}
+
+.submit-message.success {
+  @apply bg-green-100 text-green-800 border border-green-300;
+}
+
+.submit-message.error {
+  @apply bg-red-100 text-red-800 border border-red-300;
+}
+
+/* Bottom Bar */
+.footer-bottom {
+  @apply border-t border-primary-blue;
+}
+
+.bottom-content {
+  @apply flex flex-col md:flex-row justify-between items-center text-sm;
+}
+
+.copyright {
+  @apply mb-2 md:mb-0;
+}
+
+.legal-links {
+  @apply flex space-x-4;
+}
+
+.legal-link {
+  @apply text-white hover:text-primary-gold transition-colors;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .lodge-info {
+    @apply text-center mb-8;
+  }
+  
+  .footer-section {
+    @apply text-center mb-6;
+  }
+  
+  .social-links {
+    @apply justify-center;
+  }
+  
+  .bottom-content {
+    @apply text-center;
+  }
+  
+  .legal-links {
+    @apply justify-center;
+  }
+}
+
+/* Accessibility */
+.footer-link:focus,
+.social-link:focus,
+.legal-link:focus {
+  @apply outline-2 outline-primary-gold outline-offset-2;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  @apply ring-2 ring-primary-gold ring-opacity-50;
+}
+
+/* Animation */
+.social-link {
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+}
+
+.submit-button {
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

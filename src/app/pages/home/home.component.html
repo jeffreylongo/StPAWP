@@ -1,0 +1,204 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <!-- Background Image -->
+  <div class="hero-background"></div>
+  
+  <!-- Overlay -->
+  <div class="hero-overlay"></div>
+  
+  <!-- Content -->
+  <div class="container mx-auto px-4 py-20 md:py-32 relative z-10">
+    <div class="max-w-4xl mx-auto fade-in">
+      <!-- Lodge Emblem -->
+      <div class="text-center mb-8">
+        <app-lodge-emblem 
+          width="200px" 
+          height="200px" 
+          imageClass="emblem-shadow emblem-hover mx-auto">
+        </app-lodge-emblem>
+      </div>
+      
+      <h1 class="hero-title text-center">
+        St. Petersburg Lodge No. 139 F&AM
+      </h1>
+      <h2 class="text-xl md:text-2xl font-cormorant text-primary-gold text-center mb-6">
+        Freemasonry in St. Petersburg Since 1894
+      </h2>
+      <p class="hero-subtitle text-center">
+        The worlds oldest and first Fraternity.
+        We strive to make good men better through moral teachings, charitable works, and fellowship.
+      </p>
+      
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap gap-4 justify-center">
+        <a routerLink="/about-139" class="btn-primary">
+          <span>Learn About Freemasonry</span>
+          <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+        
+        <a routerLink="/calendar" class="btn-secondary">
+          <span>Calendar of Events</span>
+          <i class="fas fa-calendar ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Gradient -->
+  <div class="hero-gradient"></div>
+</section>
+
+<!-- Announcements Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="section-title">Lodge Announcements</h2>
+      <p class="section-subtitle">
+        Stay informed about important lodge news, upcoming events, and community activities.
+      </p>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let item of skeletonItems" class="announcement-skeleton">
+        <div class="skeleton-date"></div>
+        <div class="skeleton-title"></div>
+        <div class="skeleton-content"></div>
+        <div class="skeleton-link"></div>
+      </div>
+    </div>
+    
+    <!-- Announcements Grid -->
+    <div *ngIf="!isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="announcement-card" *ngFor="let announcement of announcements; trackBy: trackByAnnouncementId">
+        <div class="announcement-meta">
+          <i class="fas fa-bullhorn text-primary-gold text-xl mr-3"></i>
+          <span class="text-sm text-gray-500">{{ announcement.date | date:'mediumDate' }}</span>
+        </div>
+        <h3 class="announcement-title" [innerHTML]="announcement.title.rendered"></h3>
+        <div class="announcement-excerpt" [innerHTML]="getExcerpt(announcement.excerpt.rendered)"></div>
+        <a [routerLink]="['/announcements', announcement.slug]" class="announcement-link">
+          <span>Read More</span>
+          <i class="fas fa-chevron-right ml-2"></i>
+        </a>
+      </div>
+      
+      <!-- No Announcements State -->
+      <div *ngIf="announcements.length === 0" class="empty-state">
+        <i class="fas fa-bullhorn text-gray-300 text-5xl mb-4"></i>
+        <p class="text-gray-500 text-lg">No announcements at this time.</p>
+        <p class="text-gray-400">Check back soon for updates from the lodge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Calendar Events Section -->
+<section class="py-16 bg-neutral-light">
+  <div class="container mx-auto px-4">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Lodge Events</h2>
+        <p class="section-description">
+          Stay up to date with upcoming lodge events for the next 10 days.
+        </p>
+      </div>
+      <button class="sync-button" (click)="loadEvents()" [disabled]="isLoadingEvents">
+        <i class="fas fa-sync-alt mr-2" [class.fa-spin]="isLoadingEvents"></i>
+        <span *ngIf="!isLoadingEvents">Sync Calendar</span>
+        <span *ngIf="isLoadingEvents">Syncing...</span>
+      </button>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingEvents" class="events-skeleton">
+      <div class="skeleton-event-large"></div>
+      <div class="skeleton-event"></div>
+      <div class="skeleton-event"></div>
+    </div>
+    
+    <!-- Events List -->
+    <div *ngIf="!isLoadingEvents" class="events-container">
+      <div class="divide-y" *ngIf="upcomingEvents.length > 0; else noEvents">
+        <div *ngFor="let event of upcomingEvents; trackBy: trackByEventId" class="event-item">
+          <div class="flex items-start gap-4">
+            <div class="event-date-badge">
+              <span class="event-day">{{ event.date | date:'d' }}</span>
+              <span class="event-month">{{ event.date | date:'MMM' }}</span>
+            </div>
+            <div class="event-details">
+              <h4 class="event-title">{{ event.title }}</h4>
+              <div class="event-meta">
+                <p class="event-time">
+                  <i class="fas fa-clock mr-1 flex-shrink-0"></i>
+                  <span>{{ event.startTime }} - {{ event.endTime }}</span>
+                </p>
+                <p class="event-location">
+                  <i class="fas fa-map-marker-alt mr-1 flex-shrink-0"></i>
+                  <span class="truncate">{{ event.location }}</span>
+                </p>
+              </div>
+              <p *ngIf="event.description" class="event-description">
+                {{ event.description }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- No Events Template -->
+      <ng-template #noEvents>
+        <div class="empty-events-state">
+          <i class="fas fa-calendar text-gray-300 text-5xl mb-4"></i>
+          <p class="text-gray-500 text-lg">No upcoming events scheduled for the next 10 days.</p>
+          <p class="mt-2 text-sm text-gray-400">Check back soon or visit the full calendar page.</p>
+        </div>
+      </ng-template>
+    </div>
+    
+    <!-- View All Link -->
+    <div class="text-center mt-8">
+      <a routerLink="/calendar" class="view-calendar-btn">
+        <span>View Full Calendar</span>
+        <i class="fas fa-calendar ml-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Info Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Meeting Info -->
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-handshake text-white text-2xl"></i>
+        </div>
+        <h3 class="info-title">Regular Meetings</h3>
+        <p class="info-primary">Third Tuesday of Each Month</p>
+        <p class="info-secondary">Dinner at 6:30 PM | Meeting at 7:30 PM</p>
+      </div>
+      
+      <!-- Location Info -->
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-map-marker-alt text-white text-2xl"></i>
+        </div>
+        <h3 class="info-title">Our Lodge</h3>
+        <p class="info-primary">3325 1st St NE</p>
+        <p class="info-secondary">St. Petersburg, FL 33704</p>
+      </div>
+      
+      <!-- Contact Info -->
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-envelope text-white text-2xl"></i>
+        </div>
+        <h3 class="info-title">Contact Us</h3>
+        <p class="info-primary">(727) 321-1739</p>
+        <p class="info-secondary">secretary&#64;stpetelodge139.org</p>
+      </div>
+    </div>
+  </div>
+</section>

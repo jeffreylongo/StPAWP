@@ -1,0 +1,125 @@
+<footer class="bg-primary-blue-darker text-white">
+  <!-- Main Footer -->
+  <div class="container mx-auto px-4 pt-12 pb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <!-- Lodge Info -->
+      <div class="lodge-info">
+        <div class="lodge-logo">
+          <app-lodge-emblem 
+            width="80px" 
+            height="80px" 
+            imageClass="emblem-shadow">
+          </app-lodge-emblem>
+        </div>
+        <h4 class="lodge-name">St. Petersburg Lodge No. 139</h4>
+        <p class="lodge-subtitle">Free & Accepted Masons</p>
+        <address class="lodge-address">
+          3325 1st St NE<br>
+          St. Petersburg, FL 33704
+        </address>
+        <div class="social-links">
+          <a href="https://facebook.com" target="_blank" class="social-link" aria-label="Facebook">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-link" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://youtube.com" target="_blank" class="social-link" aria-label="YouTube">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li *ngFor="let link of quickLinks">
+            <a [routerLink]="link.route" class="footer-link">{{ link.label }}</a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Masonic Links -->
+      <div class="footer-section">
+        <h4 class="footer-title">Masonic Resources</h4>
+        <ul class="footer-links">
+          <li *ngFor="let link of masonicLinks">
+            <a [href]="link.url" target="_blank" class="footer-link">{{ link.label }}</a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Contact Form -->
+      <div class="footer-section">
+        <h4 class="footer-title">Contact Us</h4>
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+          <div class="form-group">
+            <input 
+              type="text" 
+              formControlName="name"
+              placeholder="Your Name" 
+              class="form-input"
+              [class.error]="isFieldInvalid('name')">
+            <div *ngIf="isFieldInvalid('name')" class="error-message">
+              Name is required
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <input 
+              type="email" 
+              formControlName="email"
+              placeholder="Your Email" 
+              class="form-input"
+              [class.error]="isFieldInvalid('email')">
+            <div *ngIf="isFieldInvalid('email')" class="error-message">
+              <span *ngIf="contactForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="contactForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <textarea 
+              formControlName="message"
+              placeholder="Your Message" 
+              rows="3"
+              class="form-textarea"
+              [class.error]="isFieldInvalid('message')"></textarea>
+            <div *ngIf="isFieldInvalid('message')" class="error-message">
+              Message is required
+            </div>
+          </div>
+          
+          <button 
+            type="submit" 
+            [disabled]="contactForm.invalid || isSubmitting"
+            class="submit-button">
+            <i *ngIf="isSubmitting" class="fas fa-spinner fa-spin mr-2"></i>
+            <span *ngIf="!isSubmitting">Send Message</span>
+            <span *ngIf="isSubmitting">Sending...</span>
+          </button>
+          
+          <!-- Success/Error Messages -->
+          <div *ngIf="submitMessage" class="submit-message" [class.success]="submitSuccess" [class.error]="!submitSuccess">
+            {{ submitMessage }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="container mx-auto px-4 py-4">
+      <div class="bottom-content">
+        <p class="copyright">&copy; {{ currentYear }} St. Petersburg Lodge No. 139 F&AM. All rights reserved.</p>
+        <div class="legal-links">
+          <a *ngFor="let link of legalLinks" [routerLink]="link.route" class="legal-link">
+            {{ link.label }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
