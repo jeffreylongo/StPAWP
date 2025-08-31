@@ -127,10 +127,10 @@ interface ContactForm {
                 <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>Lodge Address
               </h3>
               <p class="text-gray-600 leading-relaxed">
-                240 Mirror Lake Dr N<br>
-                St. Petersburg, FL 33701
+                3325 1st St NE<br>
+                St. Petersburg, FL 33704
               </p>
-              <a href="https://maps.google.com/?q=240+Mirror+Lake+Dr+N,+St.+Petersburg,+FL+33701" 
+              <a href="https://maps.google.com/?q=3325+1st+St+NE,+St.+Petersburg,+FL+33704" 
                  target="_blank"
                  class="text-primary-blue hover:text-primary-gold text-sm font-medium inline-flex items-center mt-2 transition-colors">
                 <i class="fas fa-external-link-alt mr-1"></i>View on Google Maps
