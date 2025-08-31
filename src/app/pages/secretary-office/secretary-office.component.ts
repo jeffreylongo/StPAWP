@@ -54,23 +54,31 @@ import { catchError, map } from 'rxjs/operators';
           </div>
           <div class="p-6">
             <div class="space-y-4">
-              <div class="border-l-4 border-primary-gold pl-4">
-                <h4 class="font-semibold text-primary-blue mb-2">December Stated Communication</h4>
-                <p class="text-gray-700 text-sm mb-2">December 17, 2024</p>
-                <ul class="text-gray-600 space-y-1 text-sm">
-                  <li>• Approved minutes from November meeting</li>
-                  <li>• Discussed upcoming charity drive</li>
-                  <li>• Planned January officer installation</li>
-                  <li>• Welcomed visiting brethren from Lodge 25</li>
-                </ul>
-              </div>
-              <div class="border-l-4 border-primary-blue pl-4">
-                <h4 class="font-semibold text-primary-blue mb-2">Fellowship Dinner</h4>
-                <p class="text-gray-700 text-sm mb-2">December 17, 2024</p>
-                <p class="text-gray-600 text-sm">
-                  Excellent turnout with 45 members and guests enjoying a traditional holiday meal 
-                  prepared by our kitchen committee.
+              <div class="bg-primary-gold-light p-4 rounded-lg mb-4">
+                <p class="text-primary-blue font-semibold text-center italic">
+                  <i class="fas fa-utensils mr-2"></i>
+                  It really goes without saying... If you miss a meeting, you miss a Fantastic Meal!!
                 </p>
+              </div>
+              
+              <div class="border-l-4 border-primary-gold pl-4">
+                <h4 class="font-semibold text-primary-blue mb-2">May Stated Communication</h4>
+                <p class="text-gray-700 text-sm mb-2">May 20, 2025</p>
+                <div class="text-gray-600 space-y-2 text-sm">
+                  <p>We had a very interesting Stated Communication. After opening in the Master Mason Degree, the Worshipful Master dropped down to the Entered Apprentice Degree to permit any Mason the ability to partake of the discussion concerning Masonic Landmarks.</p>
+                  <p>Brother Malek Chevalier, one of our EAs, attended and later stated that he learned quite a lot and was looking forward to the next time he could attend such a presentation.</p>
+                </div>
+              </div>
+              
+              <div class="border-l-4 border-primary-blue pl-4">
+                <h4 class="font-semibold text-primary-blue mb-2">Special Presentations & Awards</h4>
+                <ul class="text-gray-600 space-y-1 text-sm">
+                  <li>• Right Worshipful Oran Ellis gave a very moving presentation on the Volume of Sacred Law Landmark</li>
+                  <li>• Approved By-law change to Section 1.01 correcting the Lodge address</li>
+                  <li>• Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course</li>
+                  <li>• 40 Year Longevity Award presented to Worshipful John Gunter</li>
+                  <li>• 55 Year Longevity Award presented to Worshipful John Gicking</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -87,19 +95,20 @@ import { catchError, map } from 'rxjs/operators';
           <div class="p-6">
             <div class="space-y-4">
               <div class="border-l-4 border-primary-blue pl-4">
-                <h4 class="font-semibold text-primary-blue mb-2">January Stated Communication</h4>
-                <p class="text-gray-700 text-sm mb-2">January 21, 2025 - 7:30 PM</p>
-                <ul class="text-gray-600 space-y-1 text-sm">
-                  <li>• Installation of 2025 Officers</li>
-                  <li>• Presentation of annual awards</li>
-                  <li>• Discussion of lodge improvement projects</li>
-                  <li>• Special guest speaker on Masonic history</li>
+                <h4 class="font-semibold text-primary-blue mb-2">June Stated Communication</h4>
+                <p class="text-gray-700 text-sm mb-2">Tuesday, June 17th - 7:30 PM</p>
+                <div class="text-gray-600 space-y-2 text-sm">
+                  <p>Among other business, we will be receiving the Entered Apprentice Catechism Proficiency from:</p>
+                  <ul class="ml-4 space-y-1">
+                    <li>• Brother Raymond Wilson</li>
+                    <li>• Brother Malek Chevalier</li>
                 </ul>
+                </div>
               </div>
               <div class="bg-primary-gold-light p-3 rounded">
                 <p class="text-primary-blue-darker text-sm font-medium">
-                  <i class="fas fa-star mr-2"></i>
-                  Don't miss the installation ceremony - a cornerstone event of our Masonic year!
+                  <i class="fas fa-graduation-cap mr-2"></i>
+                  Witness these Brothers advance in their Masonic journey!
                 </p>
               </div>
             </div>
@@ -117,49 +126,221 @@ import { catchError, map } from 'rxjs/operators';
         </div>
         <div class="p-6">
           <div class="grid md:grid-cols-2 gap-8">
-            <!-- January Birthdays -->
+            <!-- June Birthdays -->
             <div>
               <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
                 <i class="fas fa-gift text-primary-gold mr-2"></i>
-                January Birthdays
+                June Birthdays
               </h4>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
-                  <span class="font-medium">Brother John Smith</span>
-                  <span class="text-sm text-gray-600">January 5th</span>
+              <div class="max-h-80 overflow-y-auto space-y-2">
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Worshipful George Rovert Gaston, Jr</span>
+                  <span class="text-gray-600">3rd</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
-                  <span class="font-medium">Brother Michael Johnson</span>
-                  <span class="text-sm text-gray-600">January 12th</span>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Raymond Walter Lampe</span>
+                  <span class="text-gray-600">5th</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-neutral-light rounded">
-                  <span class="font-medium">Brother David Wilson</span>
-                  <span class="text-sm text-gray-600">January 28th</span>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Patrick Royal Green</span>
+                  <span class="text-gray-600">6th</span>
                 </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Michael Reed Hutchins</span>
+                  <span class="text-gray-600">6th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Charles Flow Lambeth</span>
+                  <span class="text-gray-600">7th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Robert Theodore Eubank</span>
+                  <span class="text-gray-600">8th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Worshipful David Michael Rosenthal</span>
+                  <span class="text-gray-600">10th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Gregory Jack Jarrell</span>
+                  <span class="text-gray-600">13th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Worshipful Chave Stevens Aspinall</span>
+                  <span class="text-gray-600">16th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Edmund Eugene Olson</span>
+                  <span class="text-gray-600">17th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother John Warren Edds</span>
+                  <span class="text-gray-600">17th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Worshipful William Grant Smith</span>
+                  <span class="text-gray-600">20th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Robert George Faustino</span>
+                  <span class="text-gray-600">21st</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Richard Lee Hoskins</span>
+                  <span class="text-gray-600">22nd</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother James William Lich</span>
+                  <span class="text-gray-600">22nd</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Kenneth J Zeiler</span>
+                  <span class="text-gray-600">23rd</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Stephen Conrad Rannells</span>
+                  <span class="text-gray-600">24th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Charles Traubert</span>
+                  <span class="text-gray-600">25th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Ervin Lee Watkins</span>
+                  <span class="text-gray-600">26th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Richard Patrick Gallagher</span>
+                  <span class="text-gray-600">26th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Brother Justin Stuart King</span>
+                  <span class="text-gray-600">27th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
+                  <span class="font-medium">Worshipful Piero Magliulo</span>
+                  <span class="text-gray-600">30th</span>
+                </div>
+              </div>
+              
+              <!-- Birthday Statistics -->
+              <div class="mt-4 p-4 bg-primary-gold-light rounded-lg">
+                <h5 class="font-semibold text-primary-blue mb-2">Of our 22 Brothers with June Birthdays:</h5>
+                <div class="text-sm text-gray-700 space-y-1">
+                  <div>• Four were born in the 1930's</div>
+                  <div>• Eight were born in the 1940's</div>
+                  <div>• Two were born in the 1950's</div>
+                  <div>• Six were born in the 1960's</div>
+                  <div>• One was born in the 1970's</div>
+                  <div>• One was born in the 1980's</div>
+                </div>
+                <p class="text-primary-blue font-semibold mt-3 text-center">
+                  <i class="fas fa-birthday-cake mr-2"></i>
+                  We wish each and every Brother a Very Happy Birthday!!
+                </p>
               </div>
             </div>
 
-            <!-- Masonic Anniversaries -->
+            <!-- June Masonic Anniversaries -->
             <div>
               <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
                 <i class="fas fa-medal text-primary-gold mr-2"></i>
-                Masonic Anniversaries
+                June Masonic Anniversaries
               </h4>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center p-3 bg-primary-gold-light rounded">
-                  <div>
-                    <span class="font-medium block">Brother Robert Davis</span>
-                    <span class="text-xs text-gray-600">25 Years - Silver Anniversary</span>
-                  </div>
-                  <span class="text-sm text-primary-blue font-bold">Jan 15</span>
+              <div class="max-h-80 overflow-y-auto space-y-2">
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Michael Reed Hutchins</span>
+                  <span class="text-primary-blue font-bold">7th</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-primary-gold-light rounded">
-                  <div>
-                    <span class="font-medium block">Brother James Miller</span>
-                    <span class="text-xs text-gray-600">10 Years</span>
-                  </div>
-                  <span class="text-sm text-primary-blue font-bold">Jan 22</span>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Randy Lee Evans</span>
+                  <span class="text-primary-blue font-bold">7th</span>
                 </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Russell Richard Wurr</span>
+                  <span class="text-primary-blue font-bold">7th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother George Thomas Pierson</span>
+                  <span class="text-primary-blue font-bold">9th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Christopher Aaron Peak</span>
+                  <span class="text-primary-blue font-bold">9th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Christopher Douglas Breton</span>
+                  <span class="text-primary-blue font-bold">9th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Robert Melvin Berry</span>
+                  <span class="text-primary-blue font-bold">11th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother David Harry Gross</span>
+                  <span class="text-primary-blue font-bold">21st</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Worshipful Nicholas Lawrence Mamalis</span>
+                  <span class="text-primary-blue font-bold">22nd</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Kenneth J Zeiler</span>
+                  <span class="text-primary-blue font-bold">23rd</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother James Ross Trubry</span>
+                  <span class="text-primary-blue font-bold">24th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Worshipful John B Livingston</span>
+                  <span class="text-primary-blue font-bold">25th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Robert Neil Talley</span>
+                  <span class="text-primary-blue font-bold">25th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother William John Jacobs</span>
+                  <span class="text-primary-blue font-bold">25th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother John Allen Cotton</span>
+                  <span class="text-primary-blue font-bold">27th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Aaron David Higgs</span>
+                  <span class="text-primary-blue font-bold">27th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Larry D Ferrell</span>
+                  <span class="text-primary-blue font-bold">28th</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
+                  <span class="font-medium">Brother Wyatt Keith Wright</span>
+                  <span class="text-primary-blue font-bold">30th</span>
+                </div>
+              </div>
+              
+              <!-- Anniversary Statistics -->
+              <div class="mt-4 p-4 bg-primary-blue-light rounded-lg">
+                <h5 class="font-semibold text-primary-blue mb-2">Of the 18 Brothers Raised in June:</h5>
+                <div class="text-sm text-gray-700 space-y-1">
+                  <div>• One was Raised in the 1950's</div>
+                  <div>• One was Raised in the 1960's</div>
+                  <div>• Three were Raised in the 1970's</div>
+                  <div>• Two were Raised in the 1980's</div>
+                  <div>• None were Raised in the 1990's</div>
+                  <div>• Three were Raised in the 2000's</div>
+                  <div>• Seven were Raised in the 2010's</div>
+                  <div>• One was Raised in the 2020's</div>
+                </div>
+                <p class="text-sm text-gray-600 mt-3 italic">
+                  Of the seven Raised in the 2010's, two were Raised on the same day in 2015 and three were Raised on the same day in 2016.
+                </p>
+                <p class="text-primary-blue font-semibold mt-3 text-center">
+                  Brothers, whether you were Raised 67 years ago or 9 years ago, your Lodge congratulates you and thanks you for your continuous support!
+                </p>
               </div>
             </div>
           </div>
@@ -218,6 +399,40 @@ import { catchError, map } from 'rxjs/operators';
               </div>
             </div>
 
+            <!-- Lodge Highlights -->
+            <div class="border-t pt-6 mb-6">
+              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
+                <i class="fas fa-star mr-2 text-primary-gold"></i>
+                What to Look Forward To
+              </h4>
+              <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-primary-gold-light p-4 rounded-lg">
+                  <h5 class="font-semibold text-primary-blue mb-2">
+                    <i class="fas fa-newspaper mr-2"></i>The Return of the Trestle Board
+                  </h5>
+                  <p class="text-sm text-gray-700">Stay informed with our restored lodge newsletter</p>
+                </div>
+                <div class="bg-primary-blue-light p-4 rounded-lg">
+                  <h5 class="font-semibold text-primary-blue mb-2">
+                    <i class="fas fa-building mr-2"></i>New Building Updates
+                  </h5>
+                  <p class="text-sm text-gray-700">Progress reports on our lodge improvements</p>
+                </div>
+                <div class="bg-neutral-light p-4 rounded-lg">
+                  <h5 class="font-semibold text-primary-blue mb-2">
+                    <i class="fas fa-book mr-2"></i>Virtual Masonic Library
+                  </h5>
+                  <p class="text-sm text-gray-700">Access countless Masonic books and papers</p>
+                </div>
+                <div class="bg-primary-gold-light p-4 rounded-lg">
+                  <h5 class="font-semibold text-primary-blue mb-2">
+                    <i class="fas fa-users mr-2"></i>New Teams & Training
+                  </h5>
+                  <p class="text-sm text-gray-700">Join our Funeral Team, become a Mentor or Catechism coach</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Detailed Events List -->
             <div class="border-t pt-6">
               <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
@@ -242,7 +457,7 @@ import { catchError, map } from 'rxjs/operators';
                         <i class="fas fa-map-marker-alt mr-1 text-primary-gold"></i>
                         {{ event.location }}
                       </span>
-                    </div>
+                </div>
                     <p *ngIf="event.description" class="text-sm text-gray-700 line-clamp-2">
                       {{ event.description }}
                     </p>
