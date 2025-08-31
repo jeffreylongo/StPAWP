@@ -6,7 +6,7 @@ import { CalendarService } from '../../services/calendar.service';
 import { LodgeEmblemComponent } from '../../components/lodge-emblem/lodge-emblem.component';
 import { WordPressPost, CalendarEvent } from '../../interfaces';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -58,12 +58,17 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  loadEvents(): void {
+    loadEvents(): void {
     this.isLoadingEvents = true;
-    
-    // Load real events from the calendar service
-    this.calendarService.getUpcomingEvents(10)
+
+    // Load real events from the calendar service - filter for St. Pete Lodge only (calendarId = 1)
+    // Use 6-month range but limit display to next 10 events for home page
+    this.calendarService.getNext6MonthsEvents()
       .pipe(
+        map(events => events
+          .filter(event => event.calendarId === 1) // Only St. Pete Lodge events
+          .slice(0, 10) // Limit to next 10 events for home page display
+        ),
         catchError(error => {
           console.error('Error loading calendar events:', error);
           return of(this.generateMockEvents());
@@ -73,6 +78,7 @@ export class HomeComponent implements OnInit {
         next: (events) => {
           this.upcomingEvents = events;
           this.isLoadingEvents = false;
+          console.log(`🏠 Home page loaded ${events.length} upcoming Lodge events from 6-month cache`);
         },
         error: (error) => {
           console.error('Error loading events:', error);

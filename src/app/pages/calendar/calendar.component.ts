@@ -2,9 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday, addMonths, subMonths } from 'date-fns';
 
 import { CalendarService } from '../../services/calendar.service';
+import { ToastService } from '../../services/toast.service';
 import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfaces';
 
 @Component({
@@ -39,27 +41,27 @@ import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfa
     </div>
     
     <div class="container mx-auto px-4 py-12">
-      <!-- Calendar Sources -->
+      <!-- Calendar Views Tabs -->
       <div class="mb-8">
-        <h2 class="font-cinzel text-2xl font-bold text-primary-blue mb-4">Calendar Sources</h2>
-        <div class="grid md:grid-cols-2 gap-4">
-          <div *ngFor="let source of calendarSources" 
-               class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div class="flex items-center">
-              <div class="w-4 h-4 rounded-full mr-3" [style.background-color]="source.color"></div>
-              <div>
-                <h3 class="font-semibold">{{ source.name }}</h3>
-                <p class="text-sm text-gray-600">{{ source.description }}</p>
-              </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button 
+            *ngFor="let view of calendarViews"
+            (click)="setActiveView(view.id)"
+            [class]="getViewButtonClass(view.id)"
+            class="px-4 py-2 rounded-lg font-medium transition-colors">
+            {{ view.name }}
+          </button>
+        </div>
+        
+        <!-- Active Calendar Sources Info -->
+        <div class="grid md:grid-cols-3 gap-4">
+          <div *ngFor="let source of getActiveCalendarSources()" 
+               class="flex items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div class="w-3 h-3 rounded-full mr-3" [style.background-color]="source.color"></div>
+            <div>
+              <h3 class="font-medium text-sm">{{ source.name }}</h3>
+              <p class="text-xs text-gray-600">{{ source.description }}</p>
             </div>
-            <label class="flex items-center">
-              <input 
-                type="checkbox" 
-                [checked]="source.isActive"
-                (change)="toggleCalendarSource(source.id, $event)"
-                class="mr-2">
-              <span class="text-sm">Active</span>
-            </label>
           </div>
         </div>
       </div>
@@ -72,9 +74,16 @@ import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfa
           <i class="fas fa-chevron-left mr-2"></i>
           Previous
         </button>
-        <h2 class="font-cinzel text-3xl font-bold text-primary-blue">
-          {{ format(currentMonth, 'MMMM yyyy') }}
-        </h2>
+        <div class="flex items-center gap-4">
+          <h2 class="font-cinzel text-3xl font-bold text-primary-blue">
+            {{ format(currentMonth, 'MMMM yyyy') }}
+          </h2>
+          <button 
+            (click)="goToToday()"
+            class="px-3 py-1 text-sm bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold rounded transition-colors">
+            Today
+          </button>
+        </div>
         <button 
           (click)="nextMonth()"
           class="flex items-center px-4 py-2 text-primary-blue hover:text-primary-gold transition-colors">
@@ -258,11 +267,23 @@ export class CalendarComponent implements OnInit, OnDestroy {
   calendarSources: CalendarSource[] = [];
   selectedEvent: CalendarEvent | null = null;
   
+  // Calendar views
+  activeView = 'combined';
+  calendarViews = [
+    { id: 'lodge', name: 'St. Petersburg Lodge #139' },
+    { id: 'smma', name: 'SMMA' },
+    { id: 'aasr', name: 'Tampa Scottish Rite' },
+    { id: 'combined', name: 'Combined Calendar' }
+  ];
+  
   // Loading state
   isLoading = false;
   lastSync: Date | null = null;
 
-  constructor(private calendarService: CalendarService) {}
+  constructor(
+    private calendarService: CalendarService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.generateCalendarDays();
@@ -290,6 +311,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.calendarService.events$
       .pipe(takeUntil(this.destroy$))
       .subscribe(events => {
+        console.log('Calendar component received events:', events.length);
+        console.log('Lodge events (calendarId=1):', events.filter(e => e.calendarId === 1).length);
+        console.log('SMMA events (calendarId=2):', events.filter(e => e.calendarId === 2).length);
+        console.log('AASR events (calendarId=3):', events.filter(e => e.calendarId === 3).length);
         this.events = events;
         this.generateCalendarDays();
       });
@@ -308,13 +333,21 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Load upcoming events
+   * Load upcoming events - show all events from all calendars
    */
   private loadUpcomingEvents(): void {
-    this.calendarService.getUpcomingEvents(30)
+    // Load next 6 months of events (180 days) from all 3 calendars
+    this.calendarService.getNext6MonthsEvents()
       .pipe(takeUntil(this.destroy$))
       .subscribe(events => {
+        console.log('📅 Calendar component - 6 months of upcoming events received:', events.length);
+        console.log('🏛️ Lodge upcoming events:', events.filter(e => e.calendarId === 1).length);
+        console.log('🤝 SMMA upcoming events:', events.filter(e => e.calendarId === 2).length);
+        console.log('🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR upcoming events:', events.filter(e => e.calendarId === 3).length);
+        
+        // Show all events in upcoming events section regardless of active view
         this.upcomingEvents = events;
+        console.log('✅ Updated upcomingEvents array with', events.length, 'events for next 6 months');
       });
   }
 
@@ -345,6 +378,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   previousMonth(): void {
     this.currentMonth = subMonths(this.currentMonth, 1);
     this.generateCalendarDays();
+    console.log(`📅 Navigated to ${format(this.currentMonth, 'MMMM yyyy')}`);
   }
 
   /**
@@ -353,6 +387,25 @@ export class CalendarComponent implements OnInit, OnDestroy {
   nextMonth(): void {
     this.currentMonth = addMonths(this.currentMonth, 1);
     this.generateCalendarDays();
+    console.log(`📅 Navigated to ${format(this.currentMonth, 'MMMM yyyy')}`);
+  }
+
+  /**
+   * Navigate to today's month
+   */
+  goToToday(): void {
+    this.currentMonth = new Date();
+    this.generateCalendarDays();
+    console.log(`📅 Navigated to current month: ${format(this.currentMonth, 'MMMM yyyy')}`);
+  }
+
+  /**
+   * Navigate to specific month/year
+   */
+  goToMonth(year: number, month: number): void {
+    this.currentMonth = new Date(year, month, 1);
+    this.generateCalendarDays();
+    console.log(`📅 Navigated to ${format(this.currentMonth, 'MMMM yyyy')}`);
   }
 
   /**
@@ -376,7 +429,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Get events for a specific day
    */
   getEventsForDay(day: Date): CalendarEvent[] {
-    return this.events.filter(event => 
+    return this.getDisplayEvents().filter(event => 
       isSameDay(new Date(event.date), day)
     );
   }
@@ -438,10 +491,73 @@ export class CalendarComponent implements OnInit, OnDestroy {
   syncCalendar(): void {
     this.calendarService.syncCalendarEvents()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(result => {
-        console.log('Calendar sync result:', result);
-        // You could show a toast notification here
+      .subscribe({
+        next: (result) => {
+          console.log('Calendar sync result:', result);
+          if (result.success) {
+            this.toastService.showSuccess(result.message);
+          } else {
+            this.toastService.showWarning(result.message);
+          }
+        },
+        error: (error) => {
+          console.error('Calendar sync error:', error);
+          this.toastService.showError('Failed to sync calendar. Please try again later.');
+        }
       });
+  }
+
+  /**
+   * Set active calendar view
+   */
+  setActiveView(viewId: string): void {
+    this.activeView = viewId;
+    // Don't reload upcoming events - they should show all calendars regardless of view
+  }
+
+  /**
+   * Get CSS class for view button
+   */
+  getViewButtonClass(viewId: string): string {
+    const baseClass = 'px-4 py-2 rounded-lg font-medium transition-colors';
+    if (viewId === this.activeView) {
+      return baseClass + ' bg-primary-blue text-white';
+    }
+    return baseClass + ' bg-gray-200 text-gray-700 hover:bg-gray-300';
+  }
+
+  /**
+   * Get active calendar sources based on current view
+   */
+  getActiveCalendarSources(): CalendarSource[] {
+    switch (this.activeView) {
+      case 'lodge':
+        return this.calendarSources.filter(source => source.id === 1);
+      case 'smma':
+        return this.calendarSources.filter(source => source.id === 2);
+      case 'aasr':
+        return this.calendarSources.filter(source => source.id === 3);
+      case 'combined':
+      default:
+        return this.calendarSources.filter(source => source.isActive);
+    }
+  }
+
+  /**
+   * Get events for display based on active view
+   */
+  getDisplayEvents(): CalendarEvent[] {
+    switch (this.activeView) {
+      case 'lodge':
+        return this.events.filter(event => event.calendarId === 1);
+      case 'smma':
+        return this.events.filter(event => event.calendarId === 2);
+      case 'aasr':
+        return this.events.filter(event => event.calendarId === 3);
+      case 'combined':
+      default:
+        return this.events;
+    }
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LodgeEmblemComponent } from '../lodge-emblem/lodge-emblem.component';
@@ -14,22 +14,23 @@ import { NavigationItem } from '../../interfaces';
 export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   isAboutDropdownOpen = false;
+  
+  @ViewChild('aboutDropdownButton', { static: false }) aboutDropdownButton?: ElementRef;
 
-  // Navigation menu items
+  // Navigation menu items based on stpetelodge139.org structure
   aboutMenuItems: NavigationItem[] = [
-    { label: 'About Our Lodge', route: '/about-139' },
-    { label: 'Our History', route: '/history' },
-    { label: 'Officers', route: '/officers' },
-    { label: 'Past Masters', route: '/past-masters' },
-    { label: 'Become a Mason', route: '/becoming-mason' },
-    { label: 'Forms & Petitions', route: '/forms' }
+    { label: 'About 139', route: '/about-139' },
+    { label: 'Lodge 139 History', route: '/history' },
+    { label: 'Lodge 139 Past Masters', route: '/past-masters' },
+    { label: 'How To Become A Mason', route: '/becoming-mason' },
+    { label: 'Forms & Petitions', route: '/forms' },
+    { label: 'Dues & Donations', route: '/dues-donations' }
   ];
 
   mainMenuItems: NavigationItem[] = [
-    { label: 'CALENDAR', route: '/calendar' },
-    { label: 'MEMBERS', route: '/members' },
-    { label: 'SHOP', route: '/shop' },
-    { label: 'CONTACT', route: '/contact' }
+    { label: 'THE SECRETARY\'S OFFICE', route: '/secretary-office' },
+    { label: 'EVENTS', route: '/calendar' },
+    { label: 'CONTACT US', route: '/contact' }
   ];
 
   ngOnInit(): void {}
@@ -45,6 +46,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleAboutDropdown(): void {
     this.isAboutDropdownOpen = !this.isAboutDropdownOpen;
+    
+    // Position the fixed dropdown menu
+    if (this.isAboutDropdownOpen && this.aboutDropdownButton) {
+      setTimeout(() => {
+        const button = this.aboutDropdownButton!.nativeElement;
+        const dropdown = document.querySelector('.dropdown-menu.show') as HTMLElement;
+        
+        if (dropdown) {
+          const buttonRect = button.getBoundingClientRect();
+          dropdown.style.top = `${buttonRect.bottom}px`;
+          dropdown.style.left = `${buttonRect.left}px`;
+        }
+      }, 0);
+    }
   }
 
   closeDropdowns(): void {

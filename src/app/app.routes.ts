@@ -6,6 +6,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
   },
   {
+    path: 'secretary-office',
+    loadComponent: () => import('./pages/secretary-office/secretary-office.component').then(m => m.SecretaryOfficeComponent)
+  },
+  {
     path: 'about-139',
     loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent)
   },
@@ -28,6 +32,10 @@ export const routes: Routes = [
   {
     path: 'forms',
     loadComponent: () => import('./pages/forms/forms.component').then(m => m.FormsComponent)
+  },
+  {
+    path: 'dues-donations',
+    loadComponent: () => import('./pages/dues-donations/dues-donations.component').then(m => m.DuesDonationsComponent)
   },
   {
     path: 'calendar',

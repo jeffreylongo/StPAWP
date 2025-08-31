@@ -40,6 +40,7 @@ export interface CalendarSource {
   isActive: boolean;
   color?: string;
   description?: string;
+  requiresMultipleMonths?: boolean; // For calendars that need month-specific URLs
 }
 
 export interface CalendarSyncResult {

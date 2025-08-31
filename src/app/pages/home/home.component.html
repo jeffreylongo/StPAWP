@@ -1,42 +1,69 @@
 <!-- Hero Section -->
-<section class="hero-section">
-  <!-- Background Image -->
-  <div class="hero-background"></div>
+<section class="relative min-h-screen flex items-center">
+  <!-- Primary Background -->
+  <div class="absolute inset-0 bg-primary-blue-darker"></div>
   
-  <!-- Overlay -->
-  <div class="hero-overlay"></div>
+
+  
+  <!-- Subtle Overlay with Lodge Meeting Background (50% blended) -->
+  <div class="absolute inset-0 bg-primary-blue-darker bg-opacity-20" 
+       style="z-index: 2;
+              background-image: url('assets/C57BCC22-B2E6-4456-8437-58CD87354A6E_1_105_c.jpeg');
+              background-size: cover;
+              background-position: center center;
+              background-repeat: no-repeat;
+              background-blend-mode: overlay;
+              opacity: 0.5;">
+  </div>
   
   <!-- Content -->
-  <div class="container mx-auto px-4 py-20 md:py-32 relative z-10">
-    <div class="max-w-4xl mx-auto fade-in">
+  <div class="container mx-auto px-4 py-20 md:py-32 relative" style="z-index: 10;">
+    <div class="max-w-4xl mx-auto text-center fade-in">
       <!-- Lodge Emblem -->
-      <div class="text-center mb-8">
-        <app-lodge-emblem 
-          width="200px" 
-          height="200px" 
-          imageClass="emblem-shadow emblem-hover mx-auto">
-        </app-lodge-emblem>
+      <div class="mb-8">
+        <div class="relative inline-block">
+          <!-- Subtle background circle for emblem visibility -->
+          <div class="absolute inset-0 bg-white bg-opacity-10 rounded-full blur-sm transform scale-110"></div>
+          <app-lodge-emblem 
+            width="200px" 
+            height="200px" 
+            imageClass="emblem-shadow emblem-hover mx-auto relative z-10 drop-shadow-xl">
+          </app-lodge-emblem>
+        </div>
       </div>
       
-      <h1 class="hero-title text-center">
-        St. Petersburg Lodge No. 139 F&AM
+      <h1 class="font-cinzel text-4xl md:text-5xl lg:text-6xl text-white font-bold mb-4 drop-shadow-lg" 
+          style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+        St. Petersburg Lodge<br>No. 139
       </h1>
-      <h2 class="text-xl md:text-2xl font-cormorant text-primary-gold text-center mb-6">
-        Freemasonry in St. Petersburg Since 1894
+      <h2 class="font-garamond text-xl md:text-2xl text-primary-gold mb-6 italic drop-shadow-md" 
+          style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
+        Free & Accepted Masons
       </h2>
-      <p class="hero-subtitle text-center">
-        The worlds oldest and first Fraternity.
+      <h3 class="font-cinzel text-lg md:text-xl text-white mb-4 drop-shadow-md" 
+          style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
+        Freemasonry in St. Petersburg Since 1894
+      </h3>
+      <p class="text-primary-gold text-base md:text-lg mb-8 font-garamond font-semibold drop-shadow-md" 
+         style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
+        Stated Communication: Third Tuesday of Each Month at 7:30 PM | Dinner at 6:30 PM
+      </p>
+      <p class="text-white text-lg md:text-xl mb-8 font-garamond leading-relaxed max-w-3xl mx-auto drop-shadow-md" 
+         style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
+        The world's oldest and first Fraternity.
         We strive to make good men better through moral teachings, charitable works, and fellowship.
       </p>
       
       <!-- CTA Buttons -->
       <div class="flex flex-wrap gap-4 justify-center">
-        <a routerLink="/about-139" class="btn-primary">
+        <a routerLink="/about-139" 
+           class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold px-8 py-4 rounded-md transition duration-300 inline-flex items-center text-lg">
           <span>Learn About Freemasonry</span>
           <i class="fas fa-arrow-right ml-2"></i>
         </a>
         
-        <a routerLink="/calendar" class="btn-secondary">
+        <a routerLink="/calendar" 
+           class="border-2 border-white hover:border-primary-gold text-white hover:text-primary-gold px-8 py-4 rounded-md transition duration-300 inline-flex items-center text-lg">
           <span>Calendar of Events</span>
           <i class="fas fa-calendar ml-2"></i>
         </a>
@@ -45,65 +72,21 @@
   </div>
   
   <!-- Bottom Gradient -->
-  <div class="hero-gradient"></div>
-</section>
-
-<!-- Announcements Section -->
-<section class="py-16 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h2 class="section-title">Lodge Announcements</h2>
-      <p class="section-subtitle">
-        Stay informed about important lodge news, upcoming events, and community activities.
-      </p>
-    </div>
-    
-    <!-- Loading State -->
-    <div *ngIf="isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div *ngFor="let item of skeletonItems" class="announcement-skeleton">
-        <div class="skeleton-date"></div>
-        <div class="skeleton-title"></div>
-        <div class="skeleton-content"></div>
-        <div class="skeleton-link"></div>
-      </div>
-    </div>
-    
-    <!-- Announcements Grid -->
-    <div *ngIf="!isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="announcement-card" *ngFor="let announcement of announcements; trackBy: trackByAnnouncementId">
-        <div class="announcement-meta">
-          <i class="fas fa-bullhorn text-primary-gold text-xl mr-3"></i>
-          <span class="text-sm text-gray-500">{{ announcement.date | date:'mediumDate' }}</span>
-        </div>
-        <h3 class="announcement-title" [innerHTML]="announcement.title.rendered"></h3>
-        <div class="announcement-excerpt" [innerHTML]="getExcerpt(announcement.excerpt.rendered)"></div>
-        <a [routerLink]="['/announcements', announcement.slug]" class="announcement-link">
-          <span>Read More</span>
-          <i class="fas fa-chevron-right ml-2"></i>
-        </a>
-      </div>
-      
-      <!-- No Announcements State -->
-      <div *ngIf="announcements.length === 0" class="empty-state">
-        <i class="fas fa-bullhorn text-gray-300 text-5xl mb-4"></i>
-        <p class="text-gray-500 text-lg">No announcements at this time.</p>
-        <p class="text-gray-400">Check back soon for updates from the lodge.</p>
-      </div>
-    </div>
-  </div>
+  <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent"></div>
 </section>
 
 <!-- Calendar Events Section -->
 <section class="py-16 bg-neutral-light">
   <div class="container mx-auto px-4">
-    <div class="section-header">
+    <div class="flex justify-between items-center mb-8">
       <div>
-        <h2 class="section-title">Lodge Events</h2>
-        <p class="section-description">
-          Stay up to date with upcoming lodge events for the next 10 days.
+        <h2 class="font-cinzel text-3xl text-primary-blue font-bold mb-2">Lodge Events</h2>
+        <p class="text-lg text-gray-600">
+          Stay up to date with upcoming lodge events for the next 10 days. See the full calendar for all scheduled activities.
         </p>
       </div>
-      <button class="sync-button" (click)="loadEvents()" [disabled]="isLoadingEvents">
+      <button class="hidden md:flex items-center border border-gray-300 hover:border-primary-blue px-4 py-2 rounded text-sm transition-colors" 
+              (click)="loadEvents()" [disabled]="isLoadingEvents">
         <i class="fas fa-sync-alt mr-2" [class.fa-spin]="isLoadingEvents"></i>
         <span *ngIf="!isLoadingEvents">Sync Calendar</span>
         <span *ngIf="isLoadingEvents">Syncing...</span>
@@ -162,6 +145,54 @@
         <span>View Full Calendar</span>
         <i class="fas fa-calendar ml-2"></i>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- Announcements Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Latest News & Announcements</h2>
+      <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+        Stay informed about important lodge news, upcoming events, and community activities.
+      </p>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let item of skeletonItems" class="announcement-skeleton">
+        <div class="skeleton-date"></div>
+        <div class="skeleton-title"></div>
+        <div class="skeleton-content"></div>
+        <div class="skeleton-link"></div>
+      </div>
+    </div>
+    
+    <!-- Announcements Grid -->
+    <div *ngIf="!isLoadingAnnouncements" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="bg-neutral-light p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 group" 
+           *ngFor="let announcement of announcements; trackBy: trackByAnnouncementId">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-bullhorn text-primary-gold text-xl mr-3"></i>
+          <span class="text-sm text-gray-500">{{ announcement.date | date:'mediumDate' }}</span>
+        </div>
+        <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-3 group-hover:text-primary-gold transition-colors" 
+            [innerHTML]="announcement.title.rendered"></h3>
+        <div class="text-gray-700 mb-4 leading-relaxed" [innerHTML]="getExcerpt(announcement.excerpt.rendered)"></div>
+        <a [routerLink]="['/announcements', announcement.slug]" 
+           class="text-primary-blue hover:text-primary-gold font-semibold inline-flex items-center transition-colors">
+          <span>Read More</span>
+          <i class="fas fa-chevron-right ml-2"></i>
+        </a>
+      </div>
+      
+      <!-- No Announcements State -->
+      <div *ngIf="announcements.length === 0" class="empty-state">
+        <i class="fas fa-bullhorn text-gray-300 text-5xl mb-4"></i>
+        <p class="text-gray-500 text-lg">No announcements at this time.</p>
+        <p class="text-gray-400">Check back soon for updates from the lodge.</p>
+      </div>
     </div>
   </div>
 </section>
