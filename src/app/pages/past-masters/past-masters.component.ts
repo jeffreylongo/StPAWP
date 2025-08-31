@@ -194,7 +194,7 @@ export class PastMastersComponent {
       biography: `Worshipful King was our second Worshipful Master. He was one of the first lumber mill owners in lower Pinellas Point/Maximo Point area. He is credited with spearheading population growth in the 1890s in Lower Pinellas Point/St. Pete Village.`,
       deathDate: 'February 1904 (after long battle with cancer)',
       burialLocation: 'Greenwood Cemetery',
-      imageUrl: 'assets/past-masters/henry-hibbs.jpg'
+      imageUrl: 'assets/past-masters/george-king.png'
     },
     {
       name: 'Robert Johnson',
@@ -211,7 +211,7 @@ export class PastMastersComponent {
       specialNotes: 'He was elected mayor of St. Petersburg in 1894 and again in 1895, making him one of the city\'s earliest civic leaders.',
       deathDate: '1942',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/william-a-sloan.jpg'
+      imageUrl: 'assets/past-masters/henry-hibbs.jpg'
     },
     {
       name: 'W. A. Sloan',
@@ -220,7 +220,7 @@ export class PastMastersComponent {
       biography: `Worshipful Sloan led our Lodge into the 20th Century. He was among the Worshipful Masters who were instrumental in the founding of St. Petersburg. Worshipful Sloan was the first Town Marshal, serving as one of the city's earliest law enforcement officers.`,
       deathDate: 'June 25, 1906',
       burialLocation: 'Greenwood Cemetery',
-      imageUrl: 'assets/past-masters/george-king.png'
+      imageUrl: 'assets/past-masters/william-sloan.jpg'
     },
     {
       name: 'David Murray',
@@ -228,7 +228,7 @@ export class PastMastersComponent {
       period: 'Mayor & Ice Company Pioneer',
       biography: `Worshipful Murray came to St. Petersburg in 1890 to put in the plant for the Crystal Ice Company, the first ice company in St. Petersburg. In April of 1893, he was elected Mayor of St. Petersburg to fill out the term of Mayor Judge Wm. H. Benton, who died suddenly while on his way to Tampa. While Mayor, he laid the cornerstone of the first public school building in St. Petersburg.`,
       specialNotes: 'After serving as Worshipful Master, he moved to California.',
-      imageUrl: 'assets/past-masters/henry-miner.png'
+      imageUrl: 'assets/past-masters/george-king.png'
     },
     {
       name: 'Henry Miner',
