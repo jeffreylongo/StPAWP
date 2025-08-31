@@ -17,7 +17,7 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class HomeComponent implements OnInit {
   upcomingEvents: CalendarEvent[] = [];
-  secretaryData$: Observable<SecretaryOfficeData>;
+  secretaryData$!: Observable<SecretaryOfficeData>;
   isLoadingEvents = true;
 
   constructor(
