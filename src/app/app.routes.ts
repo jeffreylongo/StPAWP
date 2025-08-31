@@ -53,10 +53,7 @@ export const routes: Routes = [
     path: 'contact',
     loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent)
   },
-  {
-    path: 'announcements/:slug',
-    loadComponent: () => import('./pages/announcement-detail/announcement-detail.component').then(m => m.AnnouncementDetailComponent)
-  },
+
   {
     path: '**',
     redirectTo: ''
