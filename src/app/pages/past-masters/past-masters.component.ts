@@ -248,7 +248,7 @@ export class PastMastersComponent {
       specialNotes: 'He later served another four years as District Deputy Grand Master of District 27 from 1912 through 1915, demonstrating his continued commitment to Masonry beyond our lodge.',
       deathDate: 'December 13, 1930 (age 72)',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/william-sloan.jpg'
+      imageUrl: 'assets/past-masters/william-pope.png'
     },
     {
       name: 'Elmer C. Howard',
