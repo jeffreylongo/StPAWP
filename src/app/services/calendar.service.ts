@@ -928,6 +928,7 @@ export class CalendarService {
     if (!source) {
       return of({
         success: false,
+        eventsCount: 0,
         message: 'Calendar source not found'
       });
     }
@@ -946,12 +947,14 @@ export class CalendarService {
 
       return of({
         success: true,
+        eventsCount: 0, // Download doesn't return event count
         message: `Downloading ${source.name} calendar...`
       });
     } catch (error) {
       console.error('Failed to download calendar:', error);
       return of({
         success: false,
+        eventsCount: 0,
         message: 'Failed to download calendar file'
       });
     }
