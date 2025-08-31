@@ -238,7 +238,7 @@ export class PastMastersComponent {
       specialNotes: 'After recuperating, he became Master on one of the Plant system boats and became a blockade runner to Cuba during the Spanish-American war. He contracted yellow fever while in Cuba and would have died if not for Theodore Roosevelt and other officers, all fellow Masons, pulling him through on a diet of brandy and morphine. His health no longer good enough to continue as a sea Captain, he acquired a pilot\'s license and engaged in pilot service on Tampa bay for the next 20 years.',
       deathDate: 'December 20, 1923',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/william-b-pope.png'
+      imageUrl: 'assets/past-masters/henry-miner.png'
     },
     {
       name: 'William B. Pope',
@@ -248,7 +248,7 @@ export class PastMastersComponent {
       specialNotes: 'He later served another four years as District Deputy Grand Master of District 27 from 1912 through 1915, demonstrating his continued commitment to Masonry beyond our lodge.',
       deathDate: 'December 13, 1930 (age 72)',
       burialLocation: 'Royal Palm South Cemetery',
-      imageUrl: 'assets/past-masters/elmer-c-howard.png'
+      imageUrl: 'assets/past-masters/william-b-pope.png'
     },
     {
       name: 'Elmer C. Howard',
@@ -257,7 +257,7 @@ export class PastMastersComponent {
       biography: `Worshipful Howard served two years in a row, 1910 & 1911, helping to guide the lodge through the second decade of its existence.`,
       deathDate: '1931',
       burialLocation: 'Oaklawn Cemetery in Winter Haven, Florida',
-      imageUrl: 'assets/past-masters/willison-h-english.png'
+      imageUrl: 'assets/past-masters/elmer-c-howard.png'
     },
     {
       name: 'Willison H. English',
