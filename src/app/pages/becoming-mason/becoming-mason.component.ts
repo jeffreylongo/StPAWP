@@ -157,10 +157,12 @@ import { RouterModule } from '@angular/router';
               <p class="text-gray-600 mb-4">
                 Complete and submit your petition for membership to begin the process.
               </p>
-              <a routerLink="/forms" 
+              <a href="http://stpetelodge139.org/wp-content/uploads/2023/11/On-Line-Petition-For-Membership.pdf" 
+                 target="_blank"
+                 rel="noopener noreferrer"
                  class="bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold px-6 py-3 rounded-lg transition inline-flex items-center">
                 <i class="fas fa-download mr-2"></i>
-                Get Petition Form
+                Download Petition PDF
               </a>
             </div>
             
