@@ -7,11 +7,12 @@ import { LodgeEmblemComponent } from '../../components/lodge-emblem/lodge-emblem
 import { CalendarEvent } from '../../interfaces';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { StripHtmlPipe } from '../../pipes/strip-html.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LodgeEmblemComponent],
+  imports: [CommonModule, RouterModule, LodgeEmblemComponent, StripHtmlPipe],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

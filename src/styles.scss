@@ -60,6 +60,13 @@ body {
   font-family: var(--font-sans); 
   font-size: 1rem; 
   line-height: 1.6; 
+  padding-top: 120px; /* Account for fixed header */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 140px; /* Slightly more padding for mobile */
+  }
 }
 
 /* Utility Classes */

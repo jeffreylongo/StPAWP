@@ -23,54 +23,64 @@ import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfa
         </nav>
         <div class="flex flex-col md:flex-row md:items-center justify-between">
         <h1 class="font-cinzel text-4xl md:text-5xl font-bold">Event Calendar</h1>
-          <div class="mt-4 md:mt-0 flex items-center gap-4">
-            <button 
-              (click)="syncCalendar()"
-              [disabled]="isLoading"
-              class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold py-2 px-4 rounded transition-colors disabled:opacity-50">
-              <i class="fas fa-sync-alt mr-2" [class.fa-spin]="isLoading"></i>
-              <span *ngIf="!isLoading">Sync Calendar</span>
-              <span *ngIf="isLoading">Syncing...</span>
-            </button>
-            <div *ngIf="lastSync" class="text-sm text-primary-gold">
-              Last sync: {{ lastSync | date:'short' }}
-            </div>
-          </div>
         </div>
       </div>
     </div>
     
     <div class="container mx-auto px-4 py-12">
-      <!-- Calendar Views Tabs -->
+      <!-- Calendar Sources and Views -->
       <div class="mb-8">
-        <div class="flex flex-wrap gap-2 mb-6">
-          <button 
-            *ngFor="let view of calendarViews"
-            (click)="setActiveView(view.id)"
-            [class]="getViewButtonClass(view.id)"
-            class="px-4 py-2 rounded-lg font-medium transition-colors">
-            {{ view.name }}
-          </button>
-        </div>
-        
-        <!-- Active Calendar Sources Info -->
-        <div class="grid md:grid-cols-3 gap-4">
-          <div *ngFor="let source of getActiveCalendarSources()" 
-               class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div class="flex items-center">
-              <div class="w-3 h-3 rounded-full mr-3" [style.background-color]="source.color"></div>
-              <div>
-                <h3 class="font-medium text-sm">{{ source.name }}</h3>
-                <p class="text-xs text-gray-600">{{ source.description }}</p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div *ngFor="let source of calendarSources" 
+               class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            <!-- Source Header -->
+            <div class="p-4 border-b border-gray-100">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 rounded-full mr-3" [style.background-color]="source.color"></div>
+                  <h3 class="font-cinzel font-bold text-base text-primary-blue">{{ source.name }}</h3>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <!-- View Button -->
+                  <button 
+                    (click)="setActiveView(source.id === 1 ? 'lodge' : source.id === 2 ? 'smma' : source.id === 3 ? 'aasr' : 'yorkrite')"
+                    [class]="getSourceViewButtonClass(source.id)"
+                    class="text-xs px-2 py-1 rounded transition-colors">
+                    <i class="fas fa-eye mr-1"></i>
+                    View
+                  </button>
+                  <!-- Download Button -->
+                  <button 
+                    (click)="downloadCalendarICS(source)"
+                    class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker text-xs font-semibold px-2 py-1 rounded transition-colors">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              </div>
+              <p class="text-xs text-gray-600">{{ source.description }}</p>
+            </div>
+            
+            <!-- Source Stats -->
+            <div class="p-3 bg-gray-50">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-gray-600">Events this month:</span>
+                <span class="font-semibold text-primary-blue">
+                  {{ getEventsForSource(source.id).length }}
+                </span>
               </div>
             </div>
-            <button 
-              (click)="downloadCalendarICS(source)"
-              class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker text-xs font-semibold px-3 py-1 rounded transition-colors">
-              <i class="fas fa-download mr-1"></i>
-              Download
-            </button>
           </div>
+        </div>
+        
+        <!-- Combined View Option -->
+        <div class="mt-4 flex justify-center">
+          <button 
+            (click)="setActiveView('combined')"
+            [class]="getCombinedViewButtonClass()"
+            class="px-6 py-3 rounded-lg font-medium transition-colors border-2">
+            <i class="fas fa-layer-group mr-2"></i>
+            View All Calendars Combined
+          </button>
         </div>
       </div>
 
@@ -140,17 +150,19 @@ import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfa
         <div *ngIf="upcomingEvents.length === 0 && !isLoading" class="text-center py-8">
           <i class="fas fa-calendar text-gray-300 text-5xl mb-4"></i>
           <p class="text-gray-500 text-lg">No upcoming events scheduled.</p>
-          <button 
-            (click)="syncCalendar()"
-            class="mt-4 bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold py-2 px-4 rounded transition-colors">
-            <i class="fas fa-sync-alt mr-2"></i>
-            Sync Calendar
-          </button>
         </div>
 
-        <div *ngIf="isLoading" class="space-y-4">
-          <div *ngFor="let item of [1,2,3]" class="animate-pulse">
-            <div class="bg-gray-200 h-24 rounded-lg"></div>
+        <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+          <div class="text-center">
+            <div class="relative inline-block">
+              <!-- Masonic Square and Compasses Spinner -->
+              <div class="w-16 h-16 border-4 border-primary-gold border-t-transparent rounded-full animate-spin"></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-compass text-primary-blue text-xl"></i>
+              </div>
+            </div>
+            <p class="mt-4 text-primary-blue font-cinzel text-lg">Loading Masonic Events</p>
+            <p class="text-gray-500 text-sm">Gathering wisdom from the craft</p>
           </div>
         </div>
 
@@ -281,6 +293,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     { id: 'lodge', name: 'St. Petersburg Lodge #139' },
     { id: 'smma', name: 'Suncoast Master Mason Association' },
     { id: 'aasr', name: 'Tampa Scottish Rite' },
+    { id: 'yorkrite', name: 'Tampa York Rite Bodies' },
     { id: 'combined', name: 'Combined Calendar' }
   ];
   
@@ -298,6 +311,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.loadCalendarSources();
     this.subscribeToEvents();
     this.loadUpcomingEvents();
+    
+    // Automatically force York Rite sync after a short delay to ensure proper loading
+    setTimeout(() => {
+      this.forceYorkRiteSync();
+    }, 2000);
   }
 
   ngOnDestroy(): void {
@@ -323,6 +341,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
         console.log('Lodge events (calendarId=1):', events.filter(e => e.calendarId === 1).length);
         console.log('SMMA events (calendarId=2):', events.filter(e => e.calendarId === 2).length);
         console.log('AASR events (calendarId=3):', events.filter(e => e.calendarId === 3).length);
+        console.log('York Rite events (calendarId=4):', events.filter(e => e.calendarId === 4).length);
         this.events = events;
         this.generateCalendarDays();
       });
@@ -352,6 +371,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
         console.log('🏛️ Lodge upcoming events:', events.filter(e => e.calendarId === 1).length);
         console.log('🤝 SMMA upcoming events:', events.filter(e => e.calendarId === 2).length);
         console.log('🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR upcoming events:', events.filter(e => e.calendarId === 3).length);
+        console.log('⚜️ York Rite upcoming events:', events.filter(e => e.calendarId === 4).length);
         
         // Show all events in upcoming events section regardless of active view
         this.upcomingEvents = events;
@@ -494,28 +514,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Sync calendar events
-   */
-  syncCalendar(): void {
-    this.calendarService.syncCalendarEvents()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          console.log('Calendar sync result:', result);
-          if (result.success) {
-            this.toastService.showSuccess(result.message);
-          } else {
-            this.toastService.showWarning(result.message);
-          }
-        },
-        error: (error) => {
-          console.error('Calendar sync error:', error);
-          this.toastService.showError('Failed to sync calendar. Please try again later.');
-        }
-      });
-  }
-
-  /**
    * Set active calendar view
    */
   setActiveView(viewId: string): void {
@@ -524,14 +522,55 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get CSS class for view button
+   * Get CSS class for source view button
    */
-  getViewButtonClass(viewId: string): string {
-    const baseClass = 'px-4 py-2 rounded-lg font-medium transition-colors';
+  getSourceViewButtonClass(sourceId: number): string {
+    const viewId = sourceId === 1 ? 'lodge' : sourceId === 2 ? 'smma' : sourceId === 3 ? 'aasr' : 'yorkrite';
+    const baseClass = 'text-xs px-2 py-1 rounded transition-colors';
     if (viewId === this.activeView) {
       return baseClass + ' bg-primary-blue text-white';
     }
     return baseClass + ' bg-gray-200 text-gray-700 hover:bg-gray-300';
+  }
+
+  /**
+   * Get CSS class for combined view button
+   */
+  getCombinedViewButtonClass(): string {
+    const baseClass = 'px-6 py-3 rounded-lg font-medium transition-colors border-2';
+    if (this.activeView === 'combined') {
+      return baseClass + ' bg-primary-blue text-white border-primary-blue';
+    }
+    return baseClass + ' bg-white text-primary-blue border-primary-blue hover:bg-primary-blue hover:text-white';
+  }
+
+  /**
+   * Get events for a specific source
+   */
+  getEventsForSource(sourceId: number): CalendarEvent[] {
+    return this.events.filter(event => event.calendarId === sourceId);
+  }
+
+  /**
+   * Force York Rite sync
+   */
+  forceYorkRiteSync(): void {
+    this.calendarService.forceYorkRiteSync();
+  }
+
+  /**
+   * Clear cache and resync
+   */
+  clearCacheAndResync(): void {
+    this.calendarService.clearCacheAndResync().subscribe({
+      next: (result) => {
+        console.log('✅ Cache cleared and resynced:', result);
+        this.loadUpcomingEvents();
+      },
+      error: (error) => {
+        console.error('❌ Cache clear failed:', error);
+      }
+    });
   }
 
   /**
@@ -545,6 +584,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
         return this.calendarSources.filter(source => source.id === 2);
       case 'aasr':
         return this.calendarSources.filter(source => source.id === 3);
+      case 'yorkrite':
+        return this.calendarSources.filter(source => source.id === 4);
       case 'combined':
       default:
         return this.calendarSources.filter(source => source.isActive);
@@ -555,13 +596,15 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Get events for display based on active view
    */
   getDisplayEvents(): CalendarEvent[] {
-    switch (this.activeView) {
+        switch (this.activeView) {
       case 'lodge':
         return this.events.filter(event => event.calendarId === 1);
       case 'smma':
         return this.events.filter(event => event.calendarId === 2);
       case 'aasr':
         return this.events.filter(event => event.calendarId === 3);
+      case 'yorkrite':
+        return this.events.filter(event => event.calendarId === 4);
       case 'combined':
       default:
         return this.events;
@@ -588,6 +631,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+
 
   /**
    * Format utility

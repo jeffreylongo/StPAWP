@@ -284,7 +284,7 @@ export class ShopComponent implements OnInit {
         on_sale: false,
         short_description: 'High-quality embroidered polo shirt with lodge emblem',
         stock_status: 'instock',
-        images: [{ id: 1, src: 'https://via.placeholder.com/400x400?text=Polo+Shirt', alt: 'Lodge Polo Shirt', name: '', date_created: '', date_created_gmt: '', date_modified: '', date_modified_gmt: '' }],
+        images: [{ id: 1, src: 'https://via.placeholder.com/400x400?text=Polo+Shirt', alt: 'Lodge Polo Shirt', name: 'Lodge Polo Shirt', date_created: new Date().toISOString(), date_created_gmt: new Date().toISOString(), date_modified: new Date().toISOString(), date_modified_gmt: new Date().toISOString() }],
         categories: [{ id: 1, name: 'Apparel', slug: 'apparel' }]
       },
       {
@@ -297,7 +297,7 @@ export class ShopComponent implements OnInit {
         on_sale: true,
         short_description: 'Sterling silver ring with traditional Masonic symbols',
         stock_status: 'instock',
-        images: [{ id: 2, src: 'https://via.placeholder.com/400x400?text=Masonic+Ring', alt: 'Masonic Ring', name: '', date_created: '', date_created_gmt: '', date_modified: '', date_modified_gmt: '' }],
+        images: [{ id: 2, src: 'https://via.placeholder.com/400x400?text=Masonic+Ring', alt: 'Masonic Ring', name: 'Masonic Ring', date_created: new Date().toISOString(), date_created_gmt: new Date().toISOString(), date_modified: new Date().toISOString(), date_modified_gmt: new Date().toISOString() }],
         categories: [{ id: 4, name: 'Jewelry', slug: 'jewelry' }]
       },
       {
@@ -310,7 +310,7 @@ export class ShopComponent implements OnInit {
         on_sale: false,
         short_description: 'Complete history of St. Petersburg Lodge No. 139',
         stock_status: 'instock',
-        images: [{ id: 3, src: 'https://via.placeholder.com/400x400?text=History+Book', alt: 'Lodge History Book', name: '', date_created: '', date_created_gmt: '', date_modified: '', date_modified_gmt: '' }],
+        images: [{ id: 3, src: 'https://via.placeholder.com/400x400?text=History+Book', alt: 'Lodge History Book', name: 'Lodge History Book', date_created: new Date().toISOString(), date_created_gmt: new Date().toISOString(), date_modified: new Date().toISOString(), date_modified_gmt: new Date().toISOString() }],
         categories: [{ id: 3, name: 'Books', slug: 'books' }]
       },
       {
@@ -323,7 +323,7 @@ export class ShopComponent implements OnInit {
         on_sale: false,
         short_description: 'Traditional white lambskin apron with lodge emblems',
         stock_status: 'instock',
-        images: [{ id: 4, src: 'https://via.placeholder.com/400x400?text=Masonic+Apron', alt: 'Masonic Apron', name: '', date_created: '', date_created_gmt: '', date_modified: '', date_modified_gmt: '' }],
+        images: [{ id: 4, src: 'https://via.placeholder.com/400x400?text=Masonic+Apron', alt: 'Masonic Apron', name: 'Masonic Apron', date_created: new Date().toISOString(), date_created_gmt: new Date().toISOString(), date_modified: new Date().toISOString(), date_modified_gmt: new Date().toISOString() }],
         categories: [{ id: 2, name: 'Accessories', slug: 'accessories' }]
       },
       {
@@ -336,7 +336,7 @@ export class ShopComponent implements OnInit {
         on_sale: false,
         short_description: 'Ceramic mug with lodge logo and founding date',
         stock_status: 'instock',
-        images: [{ id: 5, src: 'https://via.placeholder.com/400x400?text=Coffee+Mug', alt: 'Lodge Coffee Mug', name: '', date_created: '', date_created_gmt: '', date_modified: '', date_modified_gmt: '' }],
+        images: [{ id: 5, src: 'https://via.placeholder.com/400x400?text=Coffee+Mug', alt: 'Lodge Coffee Mug', name: 'Lodge Coffee Mug', date_created: new Date().toISOString(), date_created_gmt: new Date().toISOString(), date_modified: new Date().toISOString(), date_modified_gmt: new Date().toISOString() }],
         categories: [{ id: 2, name: 'Accessories', slug: 'accessories' }]
       }
     ] as WooCommerceProduct[];
@@ -408,24 +408,15 @@ export class ShopComponent implements OnInit {
   }
 
   addToCart(product: WooCommerceProduct) {
-    const cartItem: CartItem = {
-      product_id: product.id,
-      name: product.name,
-      price: parseFloat(product.price),
-      quantity: 1,
-      image: product.images[0]?.src,
-      total: parseFloat(product.price)
-    };
-
-    this.wooService.addToCart(cartItem);
-    this.updateCartInfo();
+    // The service expects productId and quantity, not a CartItem object
+    this.wooService.addToCart(product.id, 1);
+    // Note: The service redirects to WooCommerce cart, so we don't need to update local cart info
   }
 
   updateCartInfo() {
-    this.wooService.cart$.subscribe(cartItems => {
-      this.cartItemCount = this.wooService.getCartItemCount();
-      this.cartTotal = this.wooService.getCartTotal();
-    });
+    // Since the service redirects to WooCommerce cart, we don't need local cart management
+    // This method is kept for future implementation if needed
+    console.log('Cart info update not implemented - redirecting to WooCommerce cart');
   }
 
   viewCart() {

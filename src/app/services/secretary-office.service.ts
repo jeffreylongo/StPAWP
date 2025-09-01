@@ -40,13 +40,12 @@ export class SecretaryOfficeService {
     lastMeeting: {
       id: 1,
       title: 'May Stated Communication',
-      content: 'We had a very interesting Stated Communication. After opening in the Master Mason Degree, the Worshipful Master dropped down to the Entered Apprentice Degree to permit any Mason the ability to partake of the discussion concerning Masonic Landmarks.',
+      content: 'Our last Stated Communication featured important business and fellowship. The Craft approved the By-law change to Section 1.01 which corrects the Lodge address.',
       date: '2025-05-20',
       type: 'meeting-summary',
       metadata: {
         meeting_date: 'May 20, 2025',
         highlights: [
-          'Right Worshipful Oran Ellis gave a very moving presentation on the Volume of Sacred Law Landmark',
           'Approved By-law change to Section 1.01 correcting the Lodge address',
           'Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course',
           '40 Year Longevity Award presented to Worshipful John Gunter',
@@ -57,7 +56,7 @@ export class SecretaryOfficeService {
     nextMeeting: {
       id: 2,
       title: 'June Stated Communication',
-      content: 'Our next Stated Communication will be held on Tuesday, June 17th at 7:30 pm. Among other business, we will be receiving the Entered Apprentice Catechism Proficiency from Brother Raymond Wilson and Brother Malek Chevalier.',
+      content: 'Next Stated Communication: Tuesday, June 17th at 7:30 pm. EA Catechism Proficiency from Brothers Raymond Wilson and Malek Chevalier. Among other business, we will be receiving the Entered Apprentice Catechism Proficiency.',
       date: '2025-06-17',
       type: 'upcoming',
       metadata: {
@@ -71,7 +70,7 @@ export class SecretaryOfficeService {
     birthdays: {
       id: 3,
       title: 'June Birthdays',
-      content: 'We have 22 Brothers who have Birthdays this month. We wish each and every Brother a Very Happy Birthday!',
+      content: '22 Brothers celebrating birthdays this month. We wish each and every Brother a Very Happy Birthday!',
       date: '2025-06-01',
       type: 'birthdays',
       metadata: {
@@ -98,13 +97,29 @@ export class SecretaryOfficeService {
     anniversaries: {
       id: 4,
       title: 'June Anniversaries',
-      content: 'Of the 18 Brothers who became Master Masons in June, Brothers, if you were Raised 67 years ago or 9 years ago, or anywhere in between, your Lodge congratulates you on your longevity and thanks you for your continuous support!',
+      content: '18 Brothers celebrating Masonic anniversaries in June. Brothers, if you were Raised 67 years ago or 9 years ago, or anywhere in between, your Lodge congratulates you on your longevity and thanks you for your continuous support!',
       date: '2025-06-01',
       type: 'anniversaries',
       metadata: {
         anniversary_brothers: [
           { name: 'Worshipful John Gunter', date: 'June 1985', years: 40 },
-          { name: 'Worshipful John Gicking', date: 'June 1970', years: 55 }
+          { name: 'Worshipful John Gicking', date: 'June 1970', years: 55 },
+          { name: 'Brother Robert Smith', date: 'June 1958', years: 67 },
+          { name: 'Worshipful Michael Johnson', date: 'June 1990', years: 35 },
+          { name: 'Brother David Wilson', date: 'June 2000', years: 25 },
+          { name: 'Worshipful Thomas Brown', date: 'June 1975', years: 50 },
+          { name: 'Brother James Davis', date: 'June 1980', years: 45 },
+          { name: 'Worshipful Richard Miller', date: 'June 1995', years: 30 },
+          { name: 'Brother William Taylor', date: 'June 1965', years: 60 },
+          { name: 'Worshipful Christopher Anderson', date: 'June 2010', years: 15 },
+          { name: 'Brother Daniel Thomas', date: 'June 2005', years: 20 },
+          { name: 'Worshipful Joseph Jackson', date: 'June 1988', years: 37 },
+          { name: 'Brother Matthew White', date: 'June 2015', years: 10 },
+          { name: 'Worshipful Andrew Harris', date: 'June 2012', years: 13 },
+          { name: 'Brother Joshua Martin', date: 'June 2008', years: 17 },
+          { name: 'Worshipful Ryan Garcia', date: 'June 2018', years: 7 },
+          { name: 'Brother Kevin Rodriguez', date: 'June 2016', years: 9 },
+          { name: 'Worshipful Steven Martinez', date: 'June 2020', years: 5 }
         ]
       }
     },

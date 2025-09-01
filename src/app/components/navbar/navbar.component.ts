@@ -22,6 +22,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { label: 'About 139', route: '/about-139' },
     { label: 'Lodge 139 History', route: '/history' },
     { label: 'Lodge 139 Past Masters', route: '/past-masters' },
+    { label: 'Lodge Officers', route: '/officers' },
     { label: 'How To Become A Mason', route: '/becoming-mason' },
     { label: 'Forms & Petitions', route: '/forms' },
     { label: 'Dues & Donations', route: '/dues-donations' }

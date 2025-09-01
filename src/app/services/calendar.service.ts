@@ -54,6 +54,14 @@ export class CalendarService {
       color: '#8B4513',
       description: 'Ancient Accepted Scottish Rite - Valley of Tampa events',
       requiresMultipleMonths: true // Flag to indicate this source needs multiple month fetches
+    },
+    {
+      id: 4,
+      name: 'Tampa York Rite Bodies',
+      url: 'https://tampayorkritebodies.com/events/feed/?ical=1',
+      isActive: true,
+      color: '#2E8B57',
+      description: 'Tampa York Rite Bodies events including Chapter, Council, and Commandery'
     }
   ];
 
@@ -128,6 +136,9 @@ export class CalendarService {
         console.log(`  🏛️ Lodge: ${upcomingEvents.filter(e => e.calendarId === 1).length}`);
         console.log(`  🤝 SMMA: ${upcomingEvents.filter(e => e.calendarId === 2).length}`);
         console.log(`  🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR: ${upcomingEvents.filter(e => e.calendarId === 3).length}`);
+        console.log(`  ⚜️ York Rite: ${upcomingEvents.filter(e => e.calendarId === 4).length}`);
+        
+
         
         return upcomingEvents;
       })
@@ -223,7 +234,9 @@ export class CalendarService {
     // Create observables for each source with error handling
     const sourceObservables = activeSources.map(source => 
       this.fetchIcsFromSource(source).pipe(
-        tap(events => console.log(`📥 Fetched ${events.length} events from ${source.name}`)),
+        tap(events => {
+          console.log(`📥 Fetched ${events.length} events from ${source.name}`);
+        }),
         catchError(error => {
           console.error(`❌ Error fetching from ${source.name}:`, error);
           return of([]); // Return empty array on error, don't break the entire sync
@@ -304,10 +317,21 @@ export class CalendarService {
     }).pipe(
       tap(icsData => {
         console.log(`📄 Received ICS data from ${source.name} (${icsData?.length || 0} characters)`);
+        
+        // Debug York Rite ICS data specifically
+        if (source.id === 4) {
+          console.log(`⚜️ York Rite ICS data preview:`, icsData.substring(0, 200));
+        }
       }),
       map(icsData => {
         const events = this.parseIcsData(icsData, source);
         console.log(`🎯 Parsed ${events.length} events from ${source.name}`);
+        
+        // Debug York Rite events specifically
+        if (source.id === 4) {
+          console.log(`⚜️ York Rite events details:`, events.map(e => `${e.title} on ${e.date}`));
+        }
+        
         return events;
       }),
       catchError(error => {
@@ -450,6 +474,15 @@ export class CalendarService {
       }
 
       console.log(`Parsed ${events.length} events from ${source.name}`);
+      
+      // Debug York Rite parsing specifically
+      if (source.id === 4) {
+        console.log(`⚜️ York Rite ICS parsing: ${events.length} events parsed`);
+        if (events.length === 0) {
+          console.log(`⚜️ York Rite ICS content preview:`, icsContent.substring(0, 500));
+        }
+      }
+      
       return events;
     } catch (error) {
       console.error(`Error parsing ICS content from ${source.name}:`, error);
@@ -477,7 +510,7 @@ export class CalendarService {
       // Determine event type based on summary
       const type = this.determineEventType(icsEvent.SUMMARY);
       
-      return {
+      const calendarEvent = {
         id: Math.floor(id),
         title: icsEvent.SUMMARY || 'Untitled Event',
         date: startDate,
@@ -491,6 +524,13 @@ export class CalendarService {
         uid: icsEvent.UID || `generated-${id}`,
         isRecurring: !!icsEvent.RRULE
       };
+
+      // Debug York Rite events specifically
+      if (source.id === 4) {
+        console.log(`⚜️ York Rite event converted:`, calendarEvent.title, `on`, calendarEvent.date, `(calendarId: ${calendarEvent.calendarId})`);
+      }
+
+      return calendarEvent;
     } catch (error) {
       console.error('Error converting ICS event:', error, icsEvent);
       return null;
@@ -678,10 +718,24 @@ export class CalendarService {
       { title: 'SMMA Social Event', type: 'other' as const, day: 19, time: '18:00', endTime: '22:00' }
     ];
 
+    const yorkRiteEvents = [
+      { title: 'Tampa Cushing Chapter #3 Stated Meetings', type: 'meeting' as const, day: 4, time: '19:30', endTime: '20:30' },
+      { title: 'Tampa Council #3 Stated Meetings', type: 'meeting' as const, day: 4, time: '19:30', endTime: '20:30' },
+      { title: 'York Rite Degree Work', type: 'degree' as const, day: 15, time: '19:00', endTime: '22:00' },
+      { title: 'Commandery Meeting', type: 'meeting' as const, day: 18, time: '19:30', endTime: '21:30' },
+      { title: 'York Rite Practice', type: 'education' as const, day: 25, time: '19:00', endTime: '21:00' },
+      { title: 'York Rite Test Event', type: 'other' as const, day: 1, time: '19:00', endTime: '20:00' }
+    ];
+
     // Generate events for the next 90 days
     for (let dayOffset = 0; dayOffset < 90; dayOffset++) {
       const currentDate = addDays(today, dayOffset);
       const dayOfMonth = currentDate.getDate();
+      
+      // Ensure York Rite events are generated for current month
+      if (dayOffset === 0) {
+        console.log(`🗓️ Generating events for ${currentDate.toDateString()}, day of month: ${dayOfMonth}`);
+      }
 
       // Add lodge events
       lodgeEvents.forEach(eventTemplate => {
@@ -720,6 +774,25 @@ export class CalendarService {
           });
         }
       });
+
+      // Add York Rite events
+      yorkRiteEvents.forEach(eventTemplate => {
+        if (dayOfMonth === eventTemplate.day) {
+          events.push({
+            id: this.hashStringToNumber(`yorkrite-${eventTemplate.title}-${currentDate.toISOString()}`),
+            title: eventTemplate.title,
+            date: currentDate,
+            startTime: eventTemplate.time,
+            endTime: eventTemplate.endTime,
+            location: 'Tampa York Rite Bodies',
+            description: `${eventTemplate.title} - Tampa York Rite Bodies event.`,
+            type: eventTemplate.type,
+            calendarId: 4,
+            calendarName: 'Tampa York Rite Bodies',
+            uid: `yorkrite-${eventTemplate.title}-${currentDate.toISOString()}@tampayorkrite.org`
+          });
+        }
+      });
     }
 
     return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -739,6 +812,10 @@ export class CalendarService {
     // Masters & Wardens events
     const mwEvents = this.generateMockEventsForCalendar(2);
     events.push(...mwEvents);
+
+    // York Rite events
+    const yorkRiteEvents = this.generateMockEventsForCalendar(4);
+    events.push(...yorkRiteEvents);
 
     return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
@@ -805,6 +882,23 @@ export class CalendarService {
             calendarId,
             calendarName: calendarSource.name,
             uid: `mw-meeting-${i}@suncoastmw.org`
+          });
+        }
+      } else if (calendarId === 4) {
+        // York Rite events
+        if (i % 7 === 0) { // Every week for testing
+          events.push({
+            id: this.hashStringToNumber(`yorkrite-meeting-${i}`),
+            title: 'York Rite Meeting',
+            date: eventDate,
+            startTime: '19:30',
+            endTime: '21:30',
+            location: 'Tampa York Rite Bodies',
+            description: 'York Rite meeting and degree work.',
+            type: 'meeting',
+            calendarId,
+            calendarName: calendarSource.name,
+            uid: `yorkrite-meeting-${i}@tampayorkrite.org`
           });
         }
       }
@@ -888,6 +982,61 @@ export class CalendarService {
     } catch (error) {
       console.error('Failed to clear cache:', error);
     }
+  }
+
+  /**
+   * Clear cache and re-sync (public method for testing)
+   */
+  clearCacheAndResync(): Observable<CalendarSyncResult> {
+    this.clearCache();
+    console.log('🔄 Cache cleared, re-syncing calendar events...');
+    return this.syncCalendarEvents();
+  }
+
+  /**
+   * Force immediate sync for York Rite events
+   */
+  forceYorkRiteSync(): void {
+    console.log('⚜️ Forcing York Rite sync...');
+    
+    const yorkRiteSource = this.calendarSources.find(s => s.id === 4);
+    if (!yorkRiteSource) {
+      console.error('❌ York Rite source not found');
+      return;
+    }
+
+    // Check if York Rite events already exist
+    const currentEvents = this.eventsSubject.value;
+    const existingYorkRiteEvents = currentEvents.filter(e => e.calendarId === 4);
+    
+    if (existingYorkRiteEvents.length === 0) {
+      console.log('⚜️ No York Rite events found, clearing cache and forcing fresh sync...');
+      this.clearCache();
+    }
+
+    this.fetchIcsFromSource(yorkRiteSource).subscribe({
+      next: (events) => {
+        console.log(`⚜️ York Rite events fetched: ${events.length}`);
+        events.forEach(event => {
+          console.log(`  - ${event.title} on ${event.date}`);
+        });
+        
+        // Remove any existing York Rite events and add fresh ones
+        const eventsWithoutYorkRite = currentEvents.filter(e => e.calendarId !== 4);
+        const updatedEvents = [...eventsWithoutYorkRite, ...events];
+        this.eventsSubject.next(updatedEvents);
+        
+        console.log(`⚜️ Total events after York Rite sync: ${updatedEvents.length}`);
+        
+        // Save to cache
+        if (events.length > 0) {
+          this.saveEventsToCache(updatedEvents);
+        }
+      },
+      error: (error) => {
+        console.error('❌ York Rite sync failed:', error);
+      }
+    });
   }
 
   /**

@@ -111,7 +111,7 @@
     <!-- Events List -->
     <div *ngIf="!isLoadingEvents" class="events-container">
       <div class="divide-y" *ngIf="upcomingEvents.length > 0; else noEvents">
-        <div *ngFor="let event of upcomingEvents; trackBy: trackByEventId" class="event-item">
+        <div *ngFor="let event of upcomingEvents.slice(0, 5); trackBy: trackByEventId" class="event-item">
           <div class="flex items-start gap-4">
             <div class="event-date-badge">
               <span class="event-day">{{ event.date | date:'d' }}</span>
@@ -157,137 +157,74 @@
   </div>
 </section>
 
-<!-- Lodge Updates & Highlights Section -->
+<!-- Lodge News & Updates Section -->
 <section class="py-16 bg-white">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
-      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Lodge Updates & Highlights</h2>
+      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Lodge News & Updates</h2>
       <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-        Stay informed about recent meetings, upcoming events, and important lodge information.
+        Stay informed about recent meetings, upcoming events, important announcements, and community activities.
       </p>
     </div>
     
-    <!-- Dynamic Content from Secretary Office Service -->
-    <div *ngIf="secretaryData$ | async as data" class="grid lg:grid-cols-2 gap-8 mb-12">
-      <!-- What You Missed at Last Meeting -->
+    <!-- Main Content Grid -->
+    <div *ngIf="secretaryData$ | async as data" class="grid lg:grid-cols-2 gap-8 mb-8">
+      <!-- Meeting Updates -->
       <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
         <div class="bg-primary-blue text-white p-6">
           <div class="flex items-center">
             <i class="fas fa-history text-primary-gold text-2xl mr-3"></i>
-            <h3 class="font-cinzel text-xl font-bold">What You Missed</h3>
+            <h3 class="font-cinzel text-xl font-bold">Meeting Updates</h3>
           </div>
         </div>
         <div class="p-6">
-          <div class="bg-primary-gold-light p-4 rounded-lg mb-4">
-            <p class="text-primary-blue font-semibold text-center italic">
-              <i class="fas fa-utensils mr-2"></i>
-              If you miss a meeting, you miss a Fantastic Meal!!
-            </p>
+          <!-- What You Missed -->
+          <div class="mb-6">
+            <h4 class="font-semibold text-primary-blue mb-3 flex items-center">
+              <i class="fas fa-utensils text-primary-gold mr-2"></i>
+              What You Missed
+            </h4>
+            <div class="bg-primary-gold-light p-4 rounded-lg mb-4">
+              <p class="text-primary-blue font-semibold text-center italic text-sm">
+                If you miss a meeting, you miss a Fantastic Meal!!
+              </p>
+            </div>
+            <div class="text-sm text-gray-700 leading-relaxed">
+              <p class="mb-3">{{ data.lastMeeting.content | stripHtml | slice:0:120 }}{{ (data.lastMeeting.content | stripHtml).length > 120 ? '...' : '' }}</p>
+              <div class="text-xs text-gray-500">
+                <strong>Meeting Date:</strong> {{ data.lastMeeting.metadata?.meeting_date || 'Recent' }}
+              </div>
+            </div>
           </div>
-          <div [innerHTML]="data.lastMeeting.content"></div>
-          <div class="mt-4 text-sm text-gray-600">
-            <strong>Meeting Date:</strong> {{ data.lastMeeting.metadata?.meeting_date || 'Recent' }}
+          
+          <!-- What's Coming Up -->
+          <div>
+            <h4 class="font-semibold text-primary-blue mb-3 flex items-center">
+              <i class="fas fa-calendar-alt text-primary-gold mr-2"></i>
+              What's Coming Up
+            </h4>
+            <div class="text-sm text-gray-700 leading-relaxed">
+              <p class="mb-3">{{ data.nextMeeting.content | stripHtml | slice:0:100 }}{{ (data.nextMeeting.content | stripHtml).length > 100 ? '...' : '' }}</p>
+              <div class="text-xs text-gray-500">
+                <strong>Next Meeting:</strong> {{ data.nextMeeting.metadata?.next_meeting || 'Check calendar for details' }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- What's Coming Up -->
-      <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
-        <div class="bg-primary-gold text-primary-blue-darker p-6">
-          <div class="flex items-center">
-            <i class="fas fa-calendar-alt text-primary-gold text-2xl mr-3"></i>
-            <h3 class="font-cinzel text-xl font-bold">What's Coming Up</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <div [innerHTML]="data.nextMeeting.content"></div>
-          <div class="mt-4 text-sm text-gray-600">
-            <strong>Next Meeting:</strong> {{ data.nextMeeting.metadata?.next_meeting || 'Check calendar for details' }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Additional Highlights Grid -->
-    <div *ngIf="secretaryData$ | async as data" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Birthdays -->
+      <!-- Recent Achievements & Updates -->
       <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-6 rounded-lg shadow-md">
         <div class="flex items-center mb-4">
-          <i class="fas fa-birthday-cake text-primary-gold text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-lg font-bold">June Birthdays</h3>
+          <i class="fas fa-trophy text-primary-gold text-2xl mr-3"></i>
+          <h3 class="font-cinzel text-xl font-bold">Recent Achievements</h3>
         </div>
-        <div class="text-sm">
-          <p class="mb-2">{{ data.birthdays.content }}</p>
-          <div class="text-primary-gold-light">
-            <strong>{{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers</strong> celebrating this month
-          </div>
-        </div>
-      </div>
-
-      <!-- Anniversaries -->
-      <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-6 rounded-lg shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-medal text-primary-blue text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-lg font-bold">Masonic Anniversaries</h3>
-        </div>
-        <div class="text-sm">
-          <p class="mb-2">{{ data.anniversaries.content }}</p>
-          <div class="text-primary-blue">
-            <strong>{{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers</strong> with June anniversaries
-          </div>
-        </div>
-      </div>
-
-      <!-- Upcoming Highlights -->
-      <div class="bg-gradient-to-br from-neutral-light to-gray-200 text-primary-blue p-6 rounded-lg shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-star text-primary-gold text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-lg font-bold">Looking Forward</h3>
-        </div>
-        <div class="text-sm">
-          <p class="mb-2">{{ data.upcomingEvents.content }}</p>
-          <div class="text-primary-blue-dark">
-            <strong>{{ data.upcomingEvents.metadata?.highlights?.length || 0 }} highlights</strong> to look forward to
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Call to Action -->
-    <div class="text-center mt-8">
-      <a routerLink="/secretary-office" 
-         class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
-        <i class="fas fa-file-alt mr-2"></i>
-        <span>Visit Secretary's Office for Full Details</span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- News & Announcements Section -->
-<section class="py-16 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">News & Announcements</h2>
-      <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-        Stay informed about the latest lodge developments, important updates, and community activities.
-      </p>
-    </div>
-    
-    <div class="grid lg:grid-cols-2 gap-8 mb-8">
-      <!-- Lodge News & Updates -->
-      <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-6 rounded-lg shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-newspaper text-primary-gold text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-xl font-bold">Lodge News</h3>
-        </div>
-        <div *ngIf="secretaryData$ | async as data" class="space-y-4">
-          <!-- Recent Achievements -->
+        <div class="space-y-4">
           <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-            <h4 class="font-semibold text-primary-gold mb-2">Recent Achievements</h4>
+            <h4 class="font-semibold text-primary-gold mb-2">Brother Accomplishments</h4>
             <div class="text-sm space-y-2">
               <div class="flex items-center">
-                <i class="fas fa-trophy text-primary-gold mr-2"></i>
+                <i class="fas fa-graduation-cap text-primary-gold mr-2"></i>
                 <span>MM1 Course Completion by Brother Jeff Longo</span>
               </div>
               <div class="flex items-center">
@@ -301,9 +238,8 @@
             </div>
           </div>
           
-          <!-- Important Updates -->
           <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-            <h4 class="font-semibold text-primary-gold mb-2">Important Updates</h4>
+            <h4 class="font-semibold text-primary-gold mb-2">Lodge Updates</h4>
             <div class="text-sm space-y-2">
               <div class="flex items-center">
                 <i class="fas fa-check-circle text-primary-gold mr-2"></i>
@@ -313,52 +249,9 @@
                 <i class="fas fa-building text-primary-gold mr-2"></i>
                 <span>New Lodge Building Planning in Progress</span>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Community Activities -->
-      <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-6 rounded-lg shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-hands-helping text-primary-blue text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-xl font-bold">Community Activities</h3>
-        </div>
-        <div class="space-y-4">
-          <!-- New Teams & Programs -->
-          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
-            <h4 class="font-semibold text-primary-blue mb-2">New Opportunities</h4>
-            <div class="text-sm space-y-2">
               <div class="flex items-center">
-                <i class="fas fa-users text-primary-blue mr-2"></i>
-                <span>Funeral Team Formation</span>
-              </div>
-              <div class="flex items-center">
-                <i class="fas fa-graduation-cap text-primary-blue mr-2"></i>
-                <span>Masonic Mentorship Program</span>
-              </div>
-              <div class="flex items-center">
-                <i class="fas fa-book text-primary-blue mr-2"></i>
-                <span>Catechism Coaching</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Resources Available -->
-          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
-            <h4 class="font-semibold text-primary-blue mb-2">Available Resources</h4>
-            <div class="text-sm space-y-2">
-              <div class="flex items-center">
-                <i class="fas fa-library text-primary-blue mr-2"></i>
-                <span>Virtual Masonic Library Access</span>
-              </div>
-              <div class="flex items-center">
-                <i class="fas fa-file-alt text-primary-blue mr-2"></i>
-                <span>Trestle Board Newsletter</span>
-              </div>
-              <div class="flex items-center">
-                <i class="fas fa-calendar-alt text-primary-blue mr-2"></i>
-                <span>Updated Meeting Calendar</span>
+                <i class="fas fa-newspaper text-primary-gold mr-2"></i>
+                <span>Trestle Board Newsletter Restoration</span>
               </div>
             </div>
           </div>
@@ -366,81 +259,87 @@
       </div>
     </div>
 
-    <!-- Additional News Grid -->
-    <div class="grid md:grid-cols-3 gap-6">
-      <!-- Meeting Information -->
-      <div class="bg-neutral-light border border-gray-200 rounded-lg p-6 shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-handshake text-primary-blue text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-lg font-bold text-primary-blue">Meeting Updates</h3>
+    <!-- Additional Info Grid -->
+    <div *ngIf="secretaryData$ | async as data" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Birthdays -->
+      <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-4 rounded-lg shadow-md">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-birthday-cake text-primary-gold text-xl mr-2"></i>
+          <h4 class="font-cinzel text-base font-bold">June Birthdays</h4>
         </div>
-        <div class="text-sm text-gray-700 space-y-2">
-          <div class="flex items-center">
-            <i class="fas fa-calendar text-primary-gold mr-2"></i>
-            <span>Next Stated Communication: June 17th, 7:30 PM</span>
-          </div>
-          <div class="flex items-center">
-            <i class="fas fa-utensils text-primary-gold mr-2"></i>
-            <span>Dinner at 6:30 PM</span>
-          </div>
-          <div class="flex items-center">
-            <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>
-            <span>Location: 3325 1st St NE</span>
+        <div class="text-xs">
+          <p class="mb-2">{{ data.birthdays.content | stripHtml | slice:0:60 }}{{ (data.birthdays.content | stripHtml).length > 60 ? '...' : '' }}</p>
+          <div class="text-primary-gold-light">
+            <strong>{{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers</strong> celebrating
           </div>
         </div>
       </div>
 
-      <!-- Educational Opportunities -->
-      <div class="bg-neutral-light border border-gray-200 rounded-lg p-6 shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-graduation-cap text-primary-blue text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-lg font-bold text-primary-blue">Education</h3>
+      <!-- Anniversaries -->
+      <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-4 rounded-lg shadow-md">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-medal text-primary-blue text-xl mr-2"></i>
+          <h4 class="font-cinzel text-base font-bold">Masonic Anniversaries</h4>
         </div>
-        <div class="text-sm text-gray-700 space-y-2">
-          <div class="flex items-center">
-            <i class="fas fa-book text-primary-gold mr-2"></i>
-            <span>MM1 Course Materials Available</span>
-          </div>
-          <div class="flex items-center">
-            <i class="fas fa-chalkboard-teacher text-primary-gold mr-2"></i>
-            <span>Catechism Proficiency Training</span>
-          </div>
-          <div class="flex items-center">
-            <i class="fas fa-lightbulb text-primary-gold mr-2"></i>
-            <span>Masonic Landmarks Discussion</span>
+        <div class="text-xs">
+          <p class="mb-2">{{ data.anniversaries.content | stripHtml | slice:0:60 }}{{ (data.anniversaries.content | stripHtml).length > 60 ? '...' : '' }}</p>
+          <div class="text-primary-blue">
+            <strong>{{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers</strong> with anniversaries
           </div>
         </div>
       </div>
 
-      <!-- Contact Information -->
-      <div class="bg-neutral-light border border-gray-200 rounded-lg p-6 shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-envelope text-primary-blue text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-lg font-bold text-primary-blue">Get In Touch</h3>
+      <!-- Community Activities -->
+      <div class="bg-gradient-to-br from-neutral-light to-gray-200 text-primary-blue p-4 rounded-lg shadow-md">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-hands-helping text-primary-gold text-xl mr-2"></i>
+          <h4 class="font-cinzel text-base font-bold">New Opportunities</h4>
         </div>
-        <div class="text-sm text-gray-700 space-y-2">
+        <div class="text-xs space-y-1">
           <div class="flex items-center">
-            <i class="fas fa-phone text-primary-gold mr-2"></i>
-            <span>(727) 418-3356</span>
+            <i class="fas fa-users text-primary-gold mr-1"></i>
+            <span>Funeral Team Formation</span>
           </div>
           <div class="flex items-center">
-            <i class="fas fa-at text-primary-gold mr-2"></i>
-            <span>secretary&#64;stpete139.org</span>
+            <i class="fas fa-graduation-cap text-primary-gold mr-1"></i>
+            <span>Masonic Mentorship Program</span>
           </div>
           <div class="flex items-center">
-            <i class="fas fa-map-marker-alt text-primary-gold mr-2"></i>
-            <span>3325 1st St NE, St. Petersburg</span>
+            <i class="fas fa-book text-primary-gold mr-1"></i>
+            <span>Catechism Coaching</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resources -->
+      <div class="bg-gradient-to-br from-neutral-light to-gray-200 text-primary-blue p-4 rounded-lg shadow-md">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-library text-primary-gold text-xl mr-2"></i>
+          <h4 class="font-cinzel text-base font-bold">Available Resources</h4>
+        </div>
+        <div class="text-xs space-y-1">
+          <div class="flex items-center">
+            <i class="fas fa-book text-primary-gold mr-1"></i>
+            <span>Virtual Masonic Library</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-file-alt text-primary-gold mr-1"></i>
+            <span>Trestle Board Newsletter</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-calendar-alt text-primary-gold mr-1"></i>
+            <span>Updated Meeting Calendar</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Call to Action -->
-    <div class="text-center mt-8">
+    <div class="text-center">
       <a routerLink="/secretary-office" 
          class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
         <i class="fas fa-newspaper mr-2"></i>
-        <span>Get All Latest Updates</span>
+        <span>Visit Secretary's Office for Full Details</span>
       </a>
     </div>
   </div>
@@ -456,102 +355,7 @@
       </p>
     </div>
     
-    <div class="grid lg:grid-cols-2 gap-8 mb-8">
-      <!-- Upcoming Calendar Events -->
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
-        <div class="bg-primary-blue text-white p-6">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <i class="fas fa-calendar-alt text-primary-gold text-2xl mr-3"></i>
-              <h3 class="font-cinzel text-xl font-bold">Upcoming Events</h3>
-            </div>
-            <div *ngIf="isLoadingEvents" class="flex items-center text-primary-gold">
-              <i class="fas fa-spinner fa-spin mr-2"></i>
-              <span class="text-sm">Loading...</span>
-            </div>
-          </div>
-        </div>
-        <div class="p-6">
-          <div *ngIf="!isLoadingEvents && upcomingEvents.length > 0" class="space-y-4">
-            <div *ngFor="let event of upcomingEvents.slice(0, 4); trackBy: trackByEventId" 
-                 class="flex items-start gap-3 p-3 bg-neutral-light rounded-lg hover:bg-gray-100 transition-colors">
-              <div class="bg-primary-gold text-primary-blue-darker rounded-lg min-w-12 h-12 flex flex-col items-center justify-center flex-shrink-0 text-xs font-bold">
-                <span>{{ event.date | date:'d' }}</span>
-                <span>{{ event.date | date:'MMM' }}</span>
-              </div>
-              <div class="flex-1 min-w-0">
-                <h4 class="font-semibold text-primary-blue mb-1">{{ event.title }}</h4>
-                <div class="text-sm text-gray-600">
-                  <span class="flex items-center mb-1">
-                    <i class="fas fa-clock mr-1 text-primary-gold"></i>
-                    {{ event.startTime }} - {{ event.endTime }}
-                  </span>
-                  <span class="flex items-center" *ngIf="event.location">
-                    <i class="fas fa-map-marker-alt mr-1 text-primary-gold"></i>
-                    {{ event.location }}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="text-center pt-2">
-              <a routerLink="/calendar" class="text-primary-blue hover:text-primary-gold font-semibold text-sm">
-                View Full Calendar →
-              </a>
-            </div>
-          </div>
-          <div *ngIf="!isLoadingEvents && upcomingEvents.length === 0" class="text-center py-8">
-            <i class="fas fa-calendar text-gray-300 text-4xl mb-3"></i>
-            <p class="text-gray-500">No upcoming events scheduled</p>
-            <p class="text-gray-400 text-sm">Check back soon for updates</p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Recent Lodge Highlights -->
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
-        <div class="bg-primary-gold text-primary-blue-darker p-6">
-          <div class="flex items-center">
-            <i class="fas fa-star text-primary-blue text-2xl mr-3"></i>
-            <h3 class="font-cinzel text-xl font-bold">Recent Highlights</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <div *ngIf="secretaryData$ | async as data" class="space-y-4">
-            <!-- Last Meeting Summary -->
-            <div class="border-l-4 border-primary-blue pl-4">
-              <h4 class="font-semibold text-primary-blue mb-2">Last Meeting Highlights</h4>
-              <div class="text-sm text-gray-700" [innerHTML]="data.lastMeeting.content"></div>
-              <div class="mt-2 text-xs text-gray-500">
-                <i class="fas fa-calendar mr-1"></i>
-                {{ data.lastMeeting.metadata?.meeting_date || 'Recent meeting' }}
-              </div>
-            </div>
-            
-            <!-- Next Meeting Preview -->
-            <div class="border-l-4 border-primary-gold pl-4">
-              <h4 class="font-semibold text-primary-blue mb-2">Next Meeting Preview</h4>
-              <div class="text-sm text-gray-700" [innerHTML]="data.nextMeeting.content"></div>
-              <div class="mt-2 text-xs text-gray-500">
-                <i class="fas fa-calendar mr-1"></i>
-                {{ data.nextMeeting.metadata?.next_meeting || 'Check calendar for details' }}
-              </div>
-            </div>
-            
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-              <div class="text-center">
-                <div class="text-2xl font-bold text-primary-blue">{{ data.birthdays.metadata?.birthday_brothers?.length || 0 }}</div>
-                <div class="text-xs text-gray-600">June Birthdays</div>
-              </div>
-              <div class="text-center">
-                <div class="text-2xl font-bold text-primary-gold">{{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }}</div>
-                <div class="text-xs text-gray-600">June Anniversaries</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Additional Activity Cards -->
     <div class="grid md:grid-cols-3 gap-6">
@@ -615,72 +419,7 @@
   </div>
 </section>
 
-<!-- Recent Lodge News & Updates Section -->
-<section class="py-16 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Recent Lodge News & Updates</h2>
-      <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-        Stay informed about the latest developments, achievements, and important announcements from our lodge.
-      </p>
-    </div>
-    
-    <div class="grid lg:grid-cols-2 gap-8">
-      <!-- Latest Achievements -->
-      <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-6 rounded-lg shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-trophy text-primary-gold text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-xl font-bold">Recent Achievements</h3>
-        </div>
-        <div class="space-y-3 text-sm">
-          <div class="bg-white bg-opacity-10 p-3 rounded-lg">
-            <h4 class="font-semibold text-primary-gold mb-1">MM1 Course Completion</h4>
-            <p>Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course.</p>
-          </div>
-          <div class="bg-white bg-opacity-10 p-3 rounded-lg">
-            <h4 class="font-semibold text-primary-gold mb-1">Longevity Awards</h4>
-            <p>40 Year Award: Worshipful John Gunter | 55 Year Award: Worshipful John Gicking</p>
-          </div>
-          <div class="bg-white bg-opacity-10 p-3 rounded-lg">
-            <h4 class="font-semibold text-primary-gold mb-1">By-Law Updates</h4>
-            <p>Approved By-law change to Section 1.01 correcting the Lodge address.</p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Important Announcements -->
-      <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-6 rounded-lg shadow-md">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-bullhorn text-primary-blue text-2xl mr-3"></i>
-          <h3 class="font-cinzel text-xl font-bold">Important Announcements</h3>
-        </div>
-        <div class="space-y-3 text-sm">
-          <div class="bg-white bg-opacity-20 p-3 rounded-lg">
-            <h4 class="font-semibold text-primary-blue mb-1">Trestle Board Returns</h4>
-            <p>Our lodge newsletter is being restored and will provide regular updates on lodge activities.</p>
-          </div>
-          <div class="bg-white bg-opacity-20 p-3 rounded-lg">
-            <h4 class="font-semibold text-primary-blue mb-1">Virtual Library Access</h4>
-            <p>Members now have access to countless Masonic books and papers in our virtual library.</p>
-          </div>
-          <div class="bg-white bg-opacity-20 p-3 rounded-lg">
-            <h4 class="font-semibold text-primary-blue mb-1">New Teams Forming</h4>
-            <p>Join our new Funeral Team, become a Masonic Mentor, or serve as a Catechism coach.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Call to Action for News -->
-    <div class="text-center mt-8">
-      <a routerLink="/secretary-office" 
-         class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
-        <i class="fas fa-newspaper mr-2"></i>
-        <span>Get All Latest Updates</span>
-      </a>
-    </div>
-  </div>
-</section>
 
 <!-- Quick Info Section -->
 <section class="py-16 bg-white">
@@ -1244,3 +983,4 @@
     </div>
   </div>
 </section>
+

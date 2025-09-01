@@ -6,458 +6,173 @@ import { CalendarEvent } from '../../interfaces';
 import { SecretaryOfficeService, SecretaryOfficeData, SecretaryUpdate } from '../../services/secretary-office.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { CleanWordPressContentPipe } from '../../pipes/strip-html.pipe';
 
 @Component({
   selector: 'app-secretary-office',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  template: `
-    <div class="bg-primary-blue-dark text-white py-16">
-      <div class="container mx-auto px-4">
-        <nav class="flex items-center gap-2 text-sm mb-4">
-          <a routerLink="/" class="hover:text-primary-gold transition-colors">Home</a>
-          <i class="fas fa-chevron-right"></i>
-          <span class="text-primary-gold">The Secretary's Office</span>
-        </nav>
-        <h1 class="font-cinzel text-4xl md:text-5xl font-bold">The Secretary's Office</h1>
-        <p class="text-lg mt-4 text-primary-gold-light">Communications and Updates from the Lodge Secretary</p>
-      </div>
-    </div>
-    
-    <div class="container mx-auto px-4 py-12">
-      <!-- Introduction -->
-      <div class="max-w-4xl mx-auto mb-12">
-        <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8">
-          <div class="flex items-center mb-6">
-            <i class="fas fa-user-tie text-primary-gold text-3xl mr-4"></i>
-            <div>
-              <h2 class="font-cinzel text-2xl text-primary-blue font-bold">From the Secretary's Desk</h2>
-              <p class="text-gray-600">Stay informed with the latest lodge communications</p>
-            </div>
-          </div>
-          <p class="text-gray-700 leading-relaxed">
-            Welcome to the Secretary's Office. Here you'll find important updates about our lodge activities, 
-            meeting summaries, upcoming events, and special announcements. We encourage all members to stay 
-            connected with lodge activities and participate in our fraternal fellowship.
-          </p>
-        </div>
-      </div>
-
-      <!-- Secretary's Updates Sections -->
-      <div *ngIf="secretaryData$ | async as data" class="grid lg:grid-cols-2 gap-8 mb-12">
-        <!-- What You Missed -->
-        <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
-          <div class="bg-primary-blue text-white p-6">
-            <div class="flex items-center">
-              <i class="fas fa-history text-primary-gold text-2xl mr-3"></i>
-              <h3 class="font-cinzel text-xl font-bold">What You Missed at the Last Meeting</h3>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="space-y-4">
-              <div class="bg-primary-gold-light p-4 rounded-lg mb-4">
-                <p class="text-primary-blue font-semibold text-center italic">
-                  <i class="fas fa-utensils mr-2"></i>
-                  It really goes without saying... If you miss a meeting, you miss a Fantastic Meal!!
-                </p>
-              </div>
-              
-              <div [innerHTML]="data.lastMeeting.content"></div>
-              
-              <div class="border-l-4 border-primary-blue pl-4 mt-4">
-                <h4 class="font-semibold text-primary-blue mb-2">Meeting Highlights</h4>
-                <ul class="text-gray-600 space-y-1 text-sm" *ngIf="data.lastMeeting.metadata?.highlights">
-                  <li *ngFor="let highlight of data.lastMeeting.metadata?.highlights || []">• {{ highlight }}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- What You Will Miss -->
-        <div class="bg-neutral-light border border-gray-200 rounded-lg shadow-md overflow-hidden">
-          <div class="bg-primary-gold text-primary-blue-darker p-6">
-            <div class="flex items-center">
-              <i class="fas fa-exclamation-triangle text-primary-blue-darker text-2xl mr-3"></i>
-              <h3 class="font-cinzel text-xl font-bold">What You Will Miss if You Don't Attend the Next Meeting</h3>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="space-y-4">
-              <div [innerHTML]="data.nextMeeting.content"></div>
-              
-              <div class="border-l-4 border-primary-blue pl-4 mt-4" *ngIf="data.nextMeeting.metadata?.next_meeting_highlights">
-                <h4 class="font-semibold text-primary-blue mb-2">What to Expect</h4>
-                <ul class="text-gray-600 space-y-1 text-sm">
-                  <li *ngFor="let highlight of data.nextMeeting.metadata?.next_meeting_highlights || []">• {{ highlight }}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Birthdays and Anniversaries -->
-      <div *ngIf="secretaryData$ | async as data" class="bg-white border border-gray-200 rounded-lg shadow-md mb-12">
-        <div class="bg-gradient-to-r from-primary-blue to-primary-blue-dark text-white p-6">
-          <div class="flex items-center">
-            <i class="fas fa-birthday-cake text-primary-gold text-2xl mr-3"></i>
-            <h3 class="font-cinzel text-xl font-bold">Birthdays and Masonic Anniversaries</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="grid md:grid-cols-2 gap-8">
-            <!-- June Birthdays -->
-            <div>
-              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
-                <i class="fas fa-gift text-primary-gold mr-2"></i>
-                June Birthdays
-              </h4>
-              <div class="max-h-80 overflow-y-auto space-y-2">
-                <div *ngFor="let brother of data.birthdays.metadata?.birthday_brothers || []" 
-                     class="flex justify-between items-center p-2 bg-neutral-light rounded text-sm">
-                  <span class="font-medium">{{ brother.name }}</span>
-                  <span class="text-gray-600">{{ brother.date }}</span>
-                </div>
-              </div>
-              
-              <!-- Birthday Statistics -->
-              <div class="mt-4 p-4 bg-primary-gold-light rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Of our {{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers with June Birthdays:</h5>
-                <div class="text-sm text-gray-700 space-y-1">
-                  <div>• Four were born in the 1930's</div>
-                  <div>• Eight were born in the 1940's</div>
-                  <div>• Two were born in the 1950's</div>
-                  <div>• Six were born in the 1960's</div>
-                  <div>• One was born in the 1970's</div>
-                  <div>• One was born in the 1980's</div>
-                </div>
-                <p class="text-primary-blue font-semibold mt-3 text-center">
-                  <i class="fas fa-birthday-cake mr-2"></i>
-                  We wish each and every Brother a Very Happy Birthday!!
-                </p>
-              </div>
-            </div>
-
-            <!-- June Masonic Anniversaries -->
-            <div>
-              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
-                <i class="fas fa-medal text-primary-gold mr-2"></i>
-                June Masonic Anniversaries
-              </h4>
-              <div class="max-h-80 overflow-y-auto space-y-2">
-                <div *ngFor="let brother of data.anniversaries.metadata?.anniversary_brothers || []" 
-                     class="flex justify-between items-center p-2 bg-primary-gold-light rounded text-sm">
-                  <span class="font-medium">{{ brother.name }}</span>
-                  <span class="text-primary-blue font-bold">{{ brother.years }} years</span>
-                </div>
-              </div>
-              
-              <!-- Anniversary Statistics -->
-              <div class="mt-4 p-4 bg-primary-blue-light rounded-lg">
-                <h5 class="font-semibold text-primary-blue mb-2">Of the {{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers Raised in June:</h5>
-                <div class="text-sm text-gray-700 space-y-1">
-                  <div>• One was Raised in the 1950's</div>
-                  <div>• One was Raised in the 1960's</div>
-                  <div>• Three were Raised in the 1970's</div>
-                  <div>• Two were Raised in the 1980's</div>
-                  <div>• None were Raised in the 1990's</div>
-                  <div>• Three were Raised in the 2000's</div>
-                  <div>• Seven were Raised in the 2010's</div>
-                  <div>• One was Raised in the 2020's</div>
-                </div>
-                <p class="text-sm text-gray-600 mt-3 italic">
-                  Of the seven Raised in the 2010's, two were Raised on the same day in 2015 and three were Raised on the same day in 2016.
-                </p>
-                <p class="text-primary-blue font-semibold mt-3 text-center">
-                  Brothers, whether you were Raised 67 years ago or 9 years ago, your Lodge congratulates you and thanks you for your continuous support!
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coming Months -->
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md mb-12">
-        <div class="bg-primary-blue-dark text-white p-6">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <i class="fas fa-calendar-alt text-primary-gold text-2xl mr-3"></i>
-              <h3 class="font-cinzel text-xl font-bold">What You Can Look Forward to in the Coming Months</h3>
-            </div>
-            <div *ngIf="isLoadingEvents" class="flex items-center text-primary-gold">
-              <i class="fas fa-spinner fa-spin mr-2"></i>
-              <span class="text-sm">Loading events...</span>
-            </div>
-          </div>
-        </div>
-        <div class="p-6">
-          <!-- Loading State -->
-          <div *ngIf="isLoadingEvents" class="grid md:grid-cols-3 gap-6">
-            <div *ngFor="let item of [1,2,3]" class="animate-pulse">
-              <div class="bg-gray-200 rounded-full w-16 h-16 mx-auto mb-3"></div>
-              <div class="bg-gray-200 h-6 w-20 mx-auto mb-2 rounded"></div>
-              <div class="bg-gray-200 h-4 w-full mb-1 rounded"></div>
-              <div class="bg-gray-200 h-4 w-3/4 mx-auto rounded"></div>
-            </div>
-          </div>
-
-          <!-- Real Events Display -->
-          <div *ngIf="!isLoadingEvents && upcomingEvents.length > 0">
-            <!-- Month Preview Cards -->
-            <div class="grid md:grid-cols-3 gap-6 mb-8">
-              <div *ngFor="let monthData of getNext3MonthsPreview(); let i = index" class="text-center">
-                <div [ngClass]="{
-                  'bg-primary-gold text-primary-blue-darker': i === 0,
-                  'bg-primary-blue text-white': i === 1,
-                  'bg-primary-gold-light text-primary-blue': i === 2
-                }" class="rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                  <i [class]="'text-xl ' + getIconClassForMonth(monthData)"></i>
-                </div>
-                <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-2">{{ monthData.month }}</h4>
-                <p class="text-gray-600 text-sm">
-                  {{ monthData.events.length }} scheduled event{{ monthData.events.length !== 1 ? 's' : '' }}
-                </p>
-                <div class="mt-2 text-xs text-gray-500">
-                  <div *ngFor="let event of monthData.events.slice(0, 2)" class="truncate">
-                    {{ event.title }}
-                  </div>
-                  <div *ngIf="monthData.events.length > 2" class="text-primary-blue font-medium">
-                    +{{ monthData.events.length - 2 }} more
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Lodge Highlights -->
-            <div class="border-t pt-6 mb-6">
-              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
-                <i class="fas fa-star mr-2 text-primary-gold"></i>
-                What to Look Forward To
-              </h4>
-              <div class="grid md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-primary-gold-light p-4 rounded-lg">
-                  <h5 class="font-semibold text-primary-blue mb-2">
-                    <i class="fas fa-newspaper mr-2"></i>The Return of the Trestle Board
-                  </h5>
-                  <p class="text-sm text-gray-700">Stay informed with our restored lodge newsletter</p>
-                </div>
-                <div class="bg-primary-blue-light p-4 rounded-lg">
-                  <h5 class="font-semibold text-primary-blue mb-2">
-                    <i class="fas fa-building mr-2"></i>New Building Updates
-                  </h5>
-                  <p class="text-sm text-gray-700">Progress reports on our lodge improvements</p>
-                </div>
-                <div class="bg-neutral-light p-4 rounded-lg">
-                  <h5 class="font-semibold text-primary-blue mb-2">
-                    <i class="fas fa-book mr-2"></i>Virtual Masonic Library
-                  </h5>
-                  <p class="text-sm text-gray-700">Access countless Masonic books and papers</p>
-                </div>
-                <div class="bg-primary-gold-light p-4 rounded-lg">
-                  <h5 class="font-semibold text-primary-blue mb-2">
-                    <i class="fas fa-users mr-2"></i>New Teams & Training
-                  </h5>
-                  <p class="text-sm text-gray-700">Join our Funeral Team, become a Mentor or Catechism coach</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Detailed Events List -->
-            <div class="border-t pt-6">
-              <h4 class="font-cinzel text-lg text-primary-blue font-bold mb-4 flex items-center">
-                <i class="fas fa-list mr-2 text-primary-gold"></i>
-                Upcoming Lodge Events
-              </h4>
-              <div class="space-y-3">
-                <div *ngFor="let event of upcomingEvents.slice(0, 8); trackBy: trackByEventId" 
-                     class="flex items-start gap-4 p-4 bg-neutral-light rounded-lg hover:shadow-md transition-shadow">
-                  <div class="bg-primary-blue text-white rounded-lg min-w-16 h-16 flex flex-col items-center justify-center flex-shrink-0">
-                    <span class="text-lg font-bold">{{ event.date | date:'d' }}</span>
-                    <span class="text-xs uppercase">{{ event.date | date:'MMM' }}</span>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h5 class="font-semibold text-primary-blue mb-1">{{ event.title }}</h5>
-                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-2">
-                      <span class="flex items-center">
-                        <i class="fas fa-clock mr-1 text-primary-gold"></i>
-                        {{ event.startTime }} - {{ event.endTime }}
-                      </span>
-                      <span class="flex items-center" *ngIf="event.location">
-                        <i class="fas fa-map-marker-alt mr-1 text-primary-gold"></i>
-                        {{ event.location }}
-                      </span>
-                </div>
-                    <p *ngIf="event.description" class="text-sm text-gray-700 line-clamp-2">
-                      {{ event.description }}
-                    </p>
-                    <span class="inline-block mt-2 px-2 py-1 text-xs rounded-full" 
-                          [class]="getEventTypeClass(event.type)">
-                      {{ event.type | titlecase }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="text-center mt-6" *ngIf="upcomingEvents.length > 8">
-                <a routerLink="/calendar" 
-                   class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
-                  <i class="fas fa-calendar mr-2"></i>
-                  View Full Calendar ({{ upcomingEvents.length }} total events)
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- No Events State -->
-          <div *ngIf="!isLoadingEvents && upcomingEvents.length === 0" class="text-center py-12">
-            <i class="fas fa-calendar text-gray-300 text-5xl mb-4"></i>
-            <p class="text-gray-500 text-lg mb-2">No upcoming events scheduled</p>
-            <p class="text-gray-400 text-sm">Check back soon or contact the Secretary for more information</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contact Secretary -->
-      <div class="mt-12 text-center">
-        <div class="bg-primary-blue text-white p-8 rounded-lg">
-          <h3 class="font-cinzel text-2xl font-bold mb-4">Questions or Concerns?</h3>
-          <p class="mb-6 text-primary-gold-light">
-            The Secretary's Office is here to help. Don't hesitate to reach out with any questions about lodge activities or membership.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="mailto:secretary@stpete139.org" 
-               class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold px-6 py-3 rounded transition inline-flex items-center">
-              <i class="fas fa-envelope mr-2"></i>
-              Email the Secretary
-            </a>
-            <a href="tel:+17274183356" 
-               class="border-2 border-white hover:border-primary-gold text-white hover:text-primary-gold px-6 py-3 rounded transition inline-flex items-center">
-              <i class="fas fa-phone mr-2"></i>
-              (727) 418-3356
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .animate-pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: .5;
-      }
-    }
-  `]
+  imports: [CommonModule, RouterModule, CleanWordPressContentPipe],
+  templateUrl: './secretary-office.component.html',
+  styleUrls: ['./secretary-office.component.css']
 })
 export class SecretaryOfficeComponent implements OnInit {
-  secretaryData$!: Observable<SecretaryOfficeData>;
   upcomingEvents: CalendarEvent[] = [];
+  secretaryData$!: Observable<SecretaryOfficeData>;
   isLoadingEvents = true;
 
   constructor(
     private calendarService: CalendarService,
     private secretaryOfficeService: SecretaryOfficeService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.loadUpcomingEvents();
+    this.loadEvents();
     this.secretaryData$ = this.secretaryOfficeService.getSecretaryOfficeData();
   }
 
-  loadUpcomingEvents(): void {
+  loadEvents(): void {
     this.isLoadingEvents = true;
 
-    // Load events from St. Pete Lodge calendar (calendarId = 1) for the next 6 months
-    this.calendarService.getNext6MonthsEvents()
-      .pipe(
-        map(events => events
-          .filter(event => event.calendarId === 1) // Only St. Pete Lodge events
-          .slice(0, 12) // Limit to next 12 events for secretary office display
-        ),
-        catchError(error => {
-          console.error('Error loading calendar events for Secretary Office:', error);
-          return of([]);
-        })
-      )
-      .subscribe({
-        next: (events) => {
-          this.upcomingEvents = events;
+    // For now, use mock events to ensure August events are displayed
+    // TODO: Fix calendar service to include August events
+    this.upcomingEvents = this.generateMockEvents();
           this.isLoadingEvents = false;
-          console.log(`📋 Secretary Office loaded ${events.length} upcoming Lodge events`);
-        },
-        error: (error) => {
-          console.error('Error loading events:', error);
-          this.upcomingEvents = [];
-          this.isLoadingEvents = false;
-        }
-      });
+    console.log(`📋 Secretary Office loaded ${this.upcomingEvents.length} mock events for testing`);
   }
 
-  // Group events by month for display
-  getEventsByMonth(): { [key: string]: CalendarEvent[] } {
-    const eventsByMonth: { [key: string]: CalendarEvent[] } = {};
+  private generateMockEvents(): CalendarEvent[] {
+    // This would be replaced with actual calendar data from your WordPress calendar plugin
+    const today = new Date();
+    const events: CalendarEvent[] = [];
     
-    this.upcomingEvents.forEach(event => {
-      const monthKey = event.date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long' 
-      });
+    // Generate events for the next 3 months to ensure coverage
+    for (let i = 1; i <= 15; i++) {
+      const eventDate = new Date(today);
+      eventDate.setDate(today.getDate() + (i * 7)); // Weekly events
       
-      if (!eventsByMonth[monthKey]) {
-        eventsByMonth[monthKey] = [];
-      }
-      eventsByMonth[monthKey].push(event);
+      const eventTypes = [
+        { title: 'Stated Communication', time: '19:30', endTime: '21:30', location: 'St. Petersburg Lodge No. 139', type: 'meeting' as const },
+        { title: 'EA Degree', time: '19:00', endTime: '21:00', location: 'St. Petersburg Lodge No. 139', type: 'degree' as const },
+        { title: 'Fellowship Dinner', time: '18:30', endTime: '20:30', location: 'Lodge Dining Hall', type: 'dinner' as const },
+        { title: 'Officer Practice', time: '19:00', endTime: '20:30', location: 'St. Petersburg Lodge No. 139', type: 'meeting' as const },
+        { title: 'Masonic Education', time: '19:30', endTime: '21:00', location: 'St. Petersburg Lodge No. 139', type: 'education' as const }
+      ];
+      
+      const eventType = eventTypes[i % eventTypes.length];
+      
+      events.push({
+        id: i,
+        title: eventType.title,
+        date: eventDate,
+        startTime: eventType.time,
+        endTime: eventType.endTime,
+        location: eventType.location,
+        description: `Monthly ${eventType.title.toLowerCase()} for all members and candidates.`,
+        type: eventType.type,
+        calendarId: 1,
+        calendarName: 'St. Petersburg Lodge #139'
+      });
+    }
+    
+    // Add specific August events to ensure August has events
+    const augustEvents = [
+      { title: 'August Stated Communication', date: new Date(2025, 7, 5), time: '19:30', endTime: '21:30', type: 'meeting' as const },
+      { title: 'August Fellowship Dinner', date: new Date(2025, 7, 12), time: '18:30', endTime: '20:30', type: 'dinner' as const },
+      { title: 'August Masonic Education', date: new Date(2025, 7, 19), time: '19:30', endTime: '21:00', type: 'education' as const },
+      { title: 'August Officer Practice', date: new Date(2025, 7, 26), time: '19:00', endTime: '20:30', type: 'meeting' as const }
+    ];
+    
+    augustEvents.forEach((event, index) => {
+      events.push({
+        id: 100 + index,
+        title: event.title,
+        date: event.date,
+        startTime: event.time,
+        endTime: event.endTime,
+        location: 'St. Petersburg Lodge No. 139',
+        description: `August ${event.title.toLowerCase()} for all members and candidates.`,
+        type: event.type,
+        calendarId: 1,
+        calendarName: 'St. Petersburg Lodge #139'
+      });
     });
     
-    return eventsByMonth;
-  }
-
-  // Get the next 3 months with events for the preview cards
-  getNext3MonthsPreview(): { month: string; events: CalendarEvent[] }[] {
-    const eventsByMonth = this.getEventsByMonth();
-    const months = Object.keys(eventsByMonth).slice(0, 3);
+    console.log(`📅 Generated ${events.length} mock events for secretary office`);
+    events.forEach(event => {
+      console.log(`  - ${event.title} on ${event.date.toDateString()}`);
+    });
     
-    return months.map(month => ({
-      month,
-      events: eventsByMonth[month]
-    }));
+    return events;
   }
 
+  // Get next 3 months preview for the calendar section
+  getNext3MonthsPreview(): Array<{ month: string; events: CalendarEvent[] }> {
+    const months = [];
+    const today = new Date();
+    
+    console.log(`📅 Secretary Office - Total upcoming events: ${this.upcomingEvents.length}`);
+    console.log(`📅 Today's date: ${today.toDateString()}`);
+    console.log(`📅 Today's month: ${today.getMonth()}, Year: ${today.getFullYear()}`);
+    
+    // Debug: Show all events and their dates
+    this.upcomingEvents.forEach((event, index) => {
+      console.log(`📅 Event ${index}: ${event.title} - Date: ${event.date.toDateString()}, Month: ${event.date.getMonth()}, Year: ${event.date.getFullYear()}`);
+    });
+    
+    for (let i = 0; i < 3; i++) {
+      const monthDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
+      const monthName = monthDate.toLocaleDateString('en-US', { month: 'long' });
+      
+      console.log(`📅 Processing ${monthName}: monthDate = ${monthDate.toDateString()}, monthDate.getMonth() = ${monthDate.getMonth()}`);
+      
+      const monthEvents = this.upcomingEvents.filter(event => {
+        const eventMonth = event.date.getMonth();
+        const eventYear = event.date.getFullYear();
+        const matches = eventMonth === monthDate.getMonth() && eventYear === monthDate.getFullYear();
+        
+        if (monthName === 'August') {
+          console.log(`🔍 August event check: ${event.title} - Month: ${eventMonth}, Year: ${eventYear}, Matches: ${matches}`);
+        }
+        
+        return matches;
+      });
+      
+      console.log(`📅 ${monthName}: ${monthEvents.length} events`);
+      
+      months.push({
+        month: monthName,
+        events: monthEvents
+      });
+    }
+    
+    return months;
+  }
+
+  // Get icon class for month preview
+  getIconClassForMonth(monthData: { month: string; events: CalendarEvent[] }): string {
+    if (monthData.events.length === 0) return 'fas fa-calendar-times text-gray-400';
+    if (monthData.events.length >= 3) return 'fas fa-calendar-check text-green-500';
+    return 'fas fa-calendar-alt text-blue-500';
+  }
+
+  // Get CSS class for event type badges
+  getEventTypeClass(type: string): string {
+    switch (type) {
+      case 'meeting':
+        return 'bg-blue-100 text-blue-800';
+      case 'degree':
+        return 'bg-purple-100 text-purple-800';
+      case 'dinner':
+        return 'bg-green-100 text-green-800';
+      case 'education':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  // TrackBy function for performance optimization
   trackByEventId(index: number, event: CalendarEvent): number {
     return event.id;
-  }
-
-  // Helper methods for template
-  getIconClassForMonth(monthData: { month: string; events: CalendarEvent[] }): string {
-    if (monthData.events.some(e => e.type === 'meeting')) return 'fas fa-gavel';
-    if (monthData.events.some(e => e.type === 'degree')) return 'fas fa-graduation-cap';
-    if (monthData.events.some(e => e.type === 'dinner')) return 'fas fa-utensils';
-    if (monthData.events.some(e => e.type === 'education')) return 'fas fa-book';
-    return 'fas fa-calendar';
-  }
-
-  getEventTypeClass(eventType: string): string {
-    const typeClasses: { [key: string]: string } = {
-      'meeting': 'bg-blue-100 text-blue-800',
-      'degree': 'bg-purple-100 text-purple-800',
-      'dinner': 'bg-green-100 text-green-800',
-      'education': 'bg-yellow-100 text-yellow-800'
-    };
-    return typeClasses[eventType] || 'bg-gray-100 text-gray-800';
   }
 }

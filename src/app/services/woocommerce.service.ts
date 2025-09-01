@@ -52,7 +52,11 @@ export class WooCommerceService {
         id: 1,
         src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: '2025 Dues with Contribution',
-        alt: '2025 Dues with Contribution'
+        alt: '2025 Dues with Contribution',
+        date_created: new Date().toISOString(),
+        date_created_gmt: new Date().toISOString(),
+        date_modified: new Date().toISOString(),
+        date_modified_gmt: new Date().toISOString()
       }],
       categories: [{
         id: 1,
@@ -75,7 +79,11 @@ export class WooCommerceService {
         id: 2,
         src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: '2025 Dues Only',
-        alt: '2025 Dues Only'
+        alt: '2025 Dues Only',
+        date_created: new Date().toISOString(),
+        date_created_gmt: new Date().toISOString(),
+        date_modified: new Date().toISOString(),
+        date_modified_gmt: new Date().toISOString()
       }],
       categories: [{
         id: 1,
@@ -98,7 +106,11 @@ export class WooCommerceService {
         id: 3,
         src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: 'Voluntary Contribution',
-        alt: 'Voluntary Contribution'
+        alt: 'Voluntary Contribution',
+        date_created: new Date().toISOString(),
+        date_created_gmt: new Date().toISOString(),
+        date_modified: new Date().toISOString(),
+        date_modified_gmt: new Date().toISOString()
       }],
       categories: [{
         id: 2,
@@ -121,7 +133,11 @@ export class WooCommerceService {
         id: 4,
         src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: 'Prepay Meal Plan',
-        alt: 'Prepay Meal Plan'
+        alt: 'Prepay Meal Plan',
+        date_created: new Date().toISOString(),
+        date_created_gmt: new Date().toISOString(),
+        date_modified: new Date().toISOString(),
+        date_modified_gmt: new Date().toISOString()
       }],
       categories: [{
         id: 3,
@@ -216,9 +232,39 @@ export class WooCommerceService {
       catchError(() => {
         // Fallback categories
         return of([
-          { id: 1, name: 'Dues', slug: 'dues', description: 'Annual lodge dues', count: 2 },
-          { id: 2, name: 'Contributions', slug: 'contributions', description: 'Voluntary contributions', count: 1 },
-          { id: 3, name: 'Meals', slug: 'meals', description: 'Meal plans and dining', count: 1 }
+          { 
+            id: 1, 
+            name: 'Dues', 
+            slug: 'dues', 
+            description: 'Annual lodge dues', 
+            count: 2,
+            parent: 0,
+            display: 'default',
+            image: null,
+            menu_order: 0
+          },
+          { 
+            id: 2, 
+            name: 'Contributions', 
+            slug: 'contributions', 
+            description: 'Voluntary contributions', 
+            count: 1,
+            parent: 0,
+            display: 'default',
+            image: null,
+            menu_order: 0
+          },
+          { 
+            id: 3, 
+            name: 'Meals', 
+            slug: 'meals', 
+            description: 'Meal plans and dining', 
+            count: 1,
+            parent: 0,
+            display: 'default',
+            image: null,
+            menu_order: 0
+          }
         ]);
       })
     );
