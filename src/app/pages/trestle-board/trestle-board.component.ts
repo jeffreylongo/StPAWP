@@ -15,8 +15,8 @@ export class TrestleBoardComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
   currentMonth: string = new Date().toLocaleDateString('en-US', { month: 'long' });
   
-  currentNewsletter: WordPressPost | null = null;
-  newsletters: WordPressPost[] = [];
+  currentMonthNewsletters: WordPressPost[] = [];
+  archivedNewsletters: WordPressPost[] = [];
   loading: boolean = true;
   error: string | null = null;
 
@@ -30,30 +30,32 @@ export class TrestleBoardComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    // Load current/latest newsletter
-    this.wordpressService.getCurrentTrestleBoard().subscribe({
-      next: (post) => {
-        if (post) {
-          this.currentNewsletter = post;
-          // Update current month/year from the latest post date
-          const postDate = new Date(post.date);
-          this.currentMonth = postDate.toLocaleDateString('en-US', { month: 'long' });
-          this.currentYear = postDate.getFullYear();
-        }
+    // Load all posts from current month
+    this.wordpressService.getCurrentMonthTrestleBoards().subscribe({
+      next: (posts) => {
+        this.currentMonthNewsletters = posts;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading current Trestle Board:', err);
+        console.error('Error loading current month Trestle Boards:', err);
         this.error = 'Unable to load newsletter content. Please try again later.';
         this.loading = false;
       }
     });
 
-    // Load archive of previous newsletters
-    this.wordpressService.getTrestleBoardPosts({ per_page: 10 }).subscribe({
+    // Load all posts for archive (will filter out current month posts in the archive section)
+    this.wordpressService.getTrestleBoardPosts({ per_page: 50 }).subscribe({
       next: (posts) => {
-        // Skip the first post (current newsletter) and show the rest as archives
-        this.newsletters = posts.slice(1);
+        // Filter out posts from current month - only show older posts in archive
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        this.archivedNewsletters = posts.filter(post => {
+          const postDate = new Date(post.date);
+          return !(postDate.getMonth() === currentMonth && 
+                   postDate.getFullYear() === currentYear);
+        }).slice(0, 12); // Show up to 12 archived posts
       },
       error: (err) => {
         console.error('Error loading Trestle Board archive:', err);

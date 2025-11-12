@@ -152,7 +152,7 @@ export class WordPressService {
     if (params?.per_page) {
       httpParams = httpParams.set('per_page', params.per_page.toString());
     } else {
-      httpParams = httpParams.set('per_page', '10'); // Default to 10 most recent
+      httpParams = httpParams.set('per_page', '50'); // Get more posts to filter by month
     }
     
     // Fetch posts tagged with 'trestle-board' or from 'Trestle Board' category
@@ -163,15 +163,26 @@ export class WordPressService {
     return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params: httpParams });
   }
 
-  // Get latest/current Trestle Board post
-  getCurrentTrestleBoard(): Observable<WordPressPost | null> {
+  // Get all posts from current month
+  getCurrentMonthTrestleBoards(): Observable<WordPressPost[]> {
     const params = new HttpParams()
-      .set('per_page', '1')
+      .set('per_page', '50')
       .set('orderby', 'date')
       .set('order', 'desc');
     
     return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params }).pipe(
-      map(posts => posts.length > 0 ? posts[0] : null)
+      map(posts => {
+        // Filter posts to only include those from current month/year
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        return posts.filter(post => {
+          const postDate = new Date(post.date);
+          return postDate.getMonth() === currentMonth && 
+                 postDate.getFullYear() === currentYear;
+        });
+      })
     );
   }
 }
