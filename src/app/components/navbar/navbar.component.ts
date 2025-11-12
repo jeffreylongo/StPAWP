@@ -14,8 +14,10 @@ import { NavigationItem } from '../../interfaces';
 export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   isAboutDropdownOpen = false;
+  isSecretaryDropdownOpen = false;
   
   @ViewChild('aboutDropdownButton', { static: false }) aboutDropdownButton?: ElementRef;
+  @ViewChild('secretaryDropdownButton', { static: false }) secretaryDropdownButton?: ElementRef;
 
   // Navigation menu items based on stpetelodge139.org structure
   aboutMenuItems: NavigationItem[] = [
@@ -28,8 +30,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { label: 'Dues & Donations', route: '/dues-donations' }
   ];
 
+  secretaryMenuItems: NavigationItem[] = [
+    { label: 'The Secretary\'s Office', route: '/secretary-office' },
+    { label: 'The Trestle Board', route: '/trestle-board' }
+  ];
+
   mainMenuItems: NavigationItem[] = [
-    { label: 'THE SECRETARY\'S OFFICE', route: '/secretary-office' },
     { label: 'EVENTS', route: '/calendar' },
     { label: 'CONTACT US', route: '/contact' }
   ];
@@ -47,6 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleAboutDropdown(): void {
     this.isAboutDropdownOpen = !this.isAboutDropdownOpen;
+    this.isSecretaryDropdownOpen = false; // Close other dropdowns
     
     // Position the fixed dropdown menu
     if (this.isAboutDropdownOpen && this.aboutDropdownButton) {
@@ -63,8 +70,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleSecretaryDropdown(): void {
+    this.isSecretaryDropdownOpen = !this.isSecretaryDropdownOpen;
+    this.isAboutDropdownOpen = false; // Close other dropdowns
+    
+    // Position the fixed dropdown menu
+    if (this.isSecretaryDropdownOpen && this.secretaryDropdownButton) {
+      setTimeout(() => {
+        const button = this.secretaryDropdownButton!.nativeElement;
+        const dropdown = document.querySelectorAll('.dropdown-menu.show')[1] as HTMLElement || document.querySelector('.dropdown-menu.show') as HTMLElement;
+        
+        if (dropdown) {
+          const buttonRect = button.getBoundingClientRect();
+          dropdown.style.top = `${buttonRect.bottom}px`;
+          dropdown.style.left = `${buttonRect.left}px`;
+        }
+      }, 0);
+    }
+  }
+
   closeDropdowns(): void {
     this.isAboutDropdownOpen = false;
+    this.isSecretaryDropdownOpen = false;
   }
 
   closeMenu(): void {

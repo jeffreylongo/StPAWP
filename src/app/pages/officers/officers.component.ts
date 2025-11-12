@@ -120,12 +120,10 @@ import { RouterModule } from '@angular/router';
           <!-- Secretary -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-blue to-primary-blue-dark flex items-center justify-center">
-                <div class="text-center text-white">
-                  <i class="fas fa-pen-fancy text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/John Livingston Secretary.jpg" 
+                   alt="Secretary John Livingston" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Secretary
@@ -151,12 +149,10 @@ import { RouterModule } from '@angular/router';
           <!-- Treasurer -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-blue to-primary-blue-dark flex items-center justify-center">
-                <div class="text-center text-white">
-                  <i class="fas fa-coins text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/Michael Mignone Treasurer.jpg" 
+                   alt="Treasurer Michael Mignone" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Treasurer
@@ -164,7 +160,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Michael Mignon</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Michael Mignone</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Assisting with lodge financial matters and transactions.
               </p>
@@ -178,12 +174,10 @@ import { RouterModule } from '@angular/router';
           <!-- Chaplain -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-blue to-primary-blue-dark flex items-center justify-center">
-                <div class="text-center text-white">
-                  <i class="fas fa-pray text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/Leo Laskin Chaplain.jpg" 
+                   alt="Chaplain Leo Laskin" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Chaplain
@@ -205,12 +199,10 @@ import { RouterModule } from '@angular/router';
           <!-- Marshall -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-blue to-primary-blue-dark flex items-center justify-center">
-                <div class="text-center text-white">
-                  <i class="fas fa-flag text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/Chriss Webb Marshal 1.jpg" 
+                   alt="Marshal Chris Webb" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Marshall
@@ -232,12 +224,10 @@ import { RouterModule } from '@angular/router';
           <!-- Senior Deacon -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-blue to-primary-blue-dark flex items-center justify-center">
-                <div class="text-center text-white">
-                  <i class="fas fa-handshake text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/Craig Hull Sr Deacon 1.jpg" 
+                   alt="Senior Deacon Craig Hull" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Senior Deacon
@@ -334,12 +324,10 @@ import { RouterModule } from '@angular/router';
           <!-- Tyler -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-blue to-primary-blue-dark flex items-center justify-center">
-                <div class="text-center text-white">
-                  <i class="fas fa-shield-alt text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/Justin King Tyler 2.jpg" 
+                   alt="Tyler Justin King" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Tyler
@@ -386,12 +374,10 @@ import { RouterModule } from '@angular/router';
           <!-- Petitions Committee Chairman -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <div class="w-full h-64 bg-gradient-to-br from-primary-gold to-primary-gold-light flex items-center justify-center">
-                <div class="text-center text-primary-blue-darker">
-                  <i class="fas fa-clipboard-list text-6xl mb-4 opacity-70"></i>
-                  <p class="text-sm opacity-80">Photo Coming Soon</p>
-                </div>
-              </div>
+              <img src="assets/officers/Chris Webb Past Master.jpg" 
+                   alt="Petitions Chairman Chris Webb" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-gold text-primary-blue-darker px-3 py-1 rounded text-sm font-bold">
                   Petitions Chairman

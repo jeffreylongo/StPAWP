@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of, from, combineLatest } from 'rxjs';
-import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, from, combineLatest, throwError } from 'rxjs';
+import { map, catchError, switchMap, tap, retry, retryWhen, delay, take, concat } from 'rxjs/operators';
 import { format, parseISO, isAfter, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { CalendarEvent, CalendarSource, CalendarSyncResult, ICalendarEvent } from '../interfaces';
 
@@ -41,7 +41,7 @@ export class CalendarService {
     {
       id: 2,
       name: 'Suncoast Master Mason Association',
-      url: 'https://localendar.com/public/MastersAndWardens?style=X2',
+      url: 'https://localendar.com/public/MastersAndWardens.ics',
       isActive: true,
       color: '#c6a84a',
       description: 'Suncoast Master Mason Association events'
@@ -66,31 +66,58 @@ export class CalendarService {
   ];
 
   constructor(private http: HttpClient) {
-    // Check for cached data first
+    // Show cached data IMMEDIATELY for instant UI, then sync in background
     const cachedData = this.loadCachedEvents();
     if (cachedData && cachedData.events.length > 0) {
-      console.log(`📦 Loaded ${cachedData.events.length} cached events from ${cachedData.lastSync}`);
+      console.log(`⚡ Instantly showing ${cachedData.events.length} cached events from ${cachedData.lastSync}`);
+      
+      // IMMEDIATELY show cached data - don't wait for validation
       this.eventsSubject.next(cachedData.events);
       this.lastSyncSubject.next(cachedData.lastSync);
       
-      // Check if cache is still valid
-      if (new Date() > cachedData.expiresAt) {
-        console.log('⏰ Cache expired, syncing fresh data...');
-        this.syncCalendarEvents().subscribe();
-      }
+      // Sync fresh data in background - will progressively update UI as each calendar loads
+      console.log('🔄 Syncing fresh data in background...');
+      this.syncCalendarEventsProgressively().subscribe({
+        next: (result) => {
+          console.log('✅ Background sync complete:', result);
+        },
+        error: (error) => {
+          console.error('❌ Background sync failed:', error);
+        }
+      });
     } else {
-      // No cache, try to sync fresh data
-      console.log('🔄 No cache found, syncing fresh data...');
-      this.syncCalendarEvents().subscribe({
+      // No cache - load with progressive updates
+      console.log('🔄 No cache found, loading calendars progressively...');
+      this.loadingSubject.next(true);
+      this.syncCalendarEventsProgressively().subscribe({
         next: (result) => {
           console.log('✅ Initial calendar sync result:', result);
+          this.loadingSubject.next(false);
         },
         error: (error) => {
           console.error('❌ Initial calendar sync failed:', error);
           this.loadEnhancedMockEvents();
+          this.loadingSubject.next(false);
         }
       });
     }
+  }
+
+  /**
+   * Validate that cached events contain data from active calendar sources
+   */
+  private validateCachedEvents(events: CalendarEvent[]): boolean {
+    const activeSourceIds = this.calendarSources
+      .filter(source => source.isActive)
+      .map(source => source.id);
+    
+    // Check if we have events from at least some of the active sources
+    const eventCalendarIds = new Set(events.map(e => e.calendarId));
+    const hasEventsFromSources = activeSourceIds.some(id => eventCalendarIds.has(id));
+    
+    console.log(`📊 Cache validation: Active sources [${activeSourceIds.join(', ')}], Found events from [${Array.from(eventCalendarIds).join(', ')}]`);
+    
+    return hasEventsFromSources;
   }
 
   /**
@@ -214,6 +241,72 @@ export class CalendarService {
   }
 
   /**
+   * Sync calendar events progressively - updates UI as each calendar loads
+   * Much faster perceived performance!
+   */
+  syncCalendarEventsProgressively(): Observable<CalendarSyncResult> {
+    const activeSources = this.calendarSources.filter(source => source.isActive);
+    
+    console.log(`⚡ Progressive sync: Loading ${activeSources.length} calendars individually...`);
+    
+    if (activeSources.length === 0) {
+      return of({
+        success: false,
+        eventsCount: 0,
+        message: 'No active calendar sources configured',
+        errors: ['No active calendar sources']
+      });
+    }
+
+    let allEvents: CalendarEvent[] = [];
+    let loadedCount = 0;
+    const errors: string[] = [];
+
+    // Fetch each calendar source individually and update UI immediately as each completes
+    activeSources.forEach((source, index) => {
+      this.fetchIcsFromSource(source).subscribe({
+        next: (events) => {
+          loadedCount++;
+          
+          if (events && events.length > 0) {
+            console.log(`⚡ ${loadedCount}/${activeSources.length} - Loaded ${events.length} events from ${source.name}`);
+            
+            // IMMEDIATELY add these events and update UI
+            allEvents = [...allEvents, ...events];
+            this.eventsSubject.next(allEvents);
+            
+          } else {
+            console.warn(`⚠️ ${loadedCount}/${activeSources.length} - No events from ${source.name}`);
+            errors.push(`No events from ${source.name}`);
+          }
+
+          // If this is the last calendar, save to cache and update sync time
+          if (loadedCount === activeSources.length) {
+            this.lastSyncSubject.next(new Date());
+            if (allEvents.length > 0) {
+              this.saveEventsToCache(allEvents);
+            }
+            console.log(`✅ All ${activeSources.length} calendars loaded! Total: ${allEvents.length} events`);
+          }
+        },
+        error: (error) => {
+          loadedCount++;
+          console.error(`❌ ${loadedCount}/${activeSources.length} - Failed: ${source.name}`, error);
+          errors.push(`Failed: ${source.name}`);
+        }
+      });
+    });
+
+    // Return immediately - updates happen via subscriptions above
+    return of({
+      success: true,
+      eventsCount: 0,
+      message: `Progressive loading started for ${activeSources.length} calendars`,
+      errors: errors.length > 0 ? errors : undefined
+    });
+  }
+
+  /**
    * Fetch calendar data from ICS sources
    */
   private fetchFromIcsSources(): Observable<CalendarSyncResult> {
@@ -255,10 +348,10 @@ export class CalendarService {
           if (events && events.length > 0) {
             allEvents.push(...events);
             totalEvents += events.length;
-            console.log(`Loaded ${events.length} events from ${activeSources[index].name}`);
+            console.log(`✅ Loaded ${events.length} events from ${activeSources[index].name}`);
           } else {
-            const errorMsg = `No events loaded from ${activeSources[index].name}`;
-            console.warn(errorMsg);
+            const errorMsg = `❌ Failed to load events from ${activeSources[index].name}`;
+            console.error(errorMsg);
             errors.push(errorMsg);
           }
         });
@@ -294,7 +387,7 @@ export class CalendarService {
   }
 
   /**
-   * Fetch ICS data from a single source using CORS proxy
+   * Fetch ICS data from a single source using CORS proxy with fallbacks
    */
   private fetchIcsFromSource(source: CalendarSource): Observable<CalendarEvent[]> {
     // Handle AASR calendar which requires multiple month URLs
@@ -302,19 +395,16 @@ export class CalendarService {
       return this.fetchMultipleMonthsFromSource(source);
     }
 
-    // Regular single URL fetch
-    const proxyUrl = 'https://api.allorigins.win/raw?url=';
-    const proxiedUrl = proxyUrl + encodeURIComponent(source.url);
+    // Try multiple CORS proxies for better reliability
+    const proxies = [
+      'https://api.allorigins.win/raw?url=',
+      'https://corsproxy.io/?',
+      'https://api.codetabs.com/v1/proxy?quest='
+    ];
     
     console.log(`🌐 Fetching ICS data from ${source.name}...`);
-    console.log(`📡 Proxy URL: ${proxiedUrl}`);
 
-    return this.http.get(proxiedUrl, { 
-      responseType: 'text',
-      headers: {
-        'Accept': 'text/calendar, text/plain, */*'
-      }
-    }).pipe(
+    return this.fetchWithProxyFallback(source.url, proxies, source).pipe(
       tap(icsData => {
         console.log(`📄 Received ICS data from ${source.name} (${icsData?.length || 0} characters)`);
         
@@ -335,10 +425,34 @@ export class CalendarService {
         return events;
       }),
       catchError(error => {
-        console.error(`❌ Failed to fetch calendar from ${source.name}:`, error);
-        console.error(`📡 Attempted URL: ${proxiedUrl}`);
+        console.error(`❌ All proxies failed for ${source.name}:`, error);
         // Return empty array on error, don't fail the entire sync
         return of([]);
+      })
+    );
+  }
+
+  /**
+   * Try multiple CORS proxies with fallback
+   */
+  private fetchWithProxyFallback(url: string, proxies: string[], source: CalendarSource, proxyIndex: number = 0): Observable<string> {
+    if (proxyIndex >= proxies.length) {
+      return throwError(() => new Error('All CORS proxies failed'));
+    }
+
+    const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
+    console.log(`📡 Trying proxy ${proxyIndex + 1}/${proxies.length}: ${proxies[proxyIndex]}`);
+
+    return this.http.get(proxiedUrl, { 
+      responseType: 'text',
+      headers: {
+        'Accept': 'text/calendar, text/plain, */*'
+      }
+    }).pipe(
+      catchError(error => {
+        console.warn(`⚠️ Proxy ${proxyIndex + 1} failed for ${source.name}, trying next...`);
+        // Try next proxy
+        return this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1);
       })
     );
   }

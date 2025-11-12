@@ -1,0 +1,22 @@
+.contact-card {
+  transition: transform 0.2s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-2px);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.quick-link {
+  transition: all 0.2s ease;
+}
+
+.quick-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+

@@ -1,0 +1,23 @@
+# === APP: Angular deep-link support under /app ===
+
+Options -Indexes -MultiViews
+
+DirectoryIndex index.html
+
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType text/css .css
+  AddType application/wasm .wasm
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /app/
+  # Do not rewrite the actual index.html
+  RewriteRule ^index\.html$ - [L]
+  # If not a real file/dir, serve the SPA entry
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /app/index.html [L]
+</IfModule>
+

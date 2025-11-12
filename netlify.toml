@@ -1,0 +1,34 @@
+[build]
+  command = "npm run build"
+  publish = "dist/stpete-lodge139-angular-head-v1"
+
+[[redirects]]
+  from = "/wp-json/*"
+  to = "https://stpetelodge139.org/wp-json/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/wp-content/*"
+  to = "https://stpetelodge139.org/wp-content/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/wp-includes/*"
+  to = "https://stpetelodge139.org/wp-includes/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/wp-admin/*"
+  to = "https://stpetelodge139.org/wp-admin/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+

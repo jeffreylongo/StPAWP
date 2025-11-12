@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/secretary-office/secretary-office.component').then(m => m.SecretaryOfficeComponent)
   },
   {
+    path: 'trestle-board',
+    loadComponent: () => import('./pages/trestle-board/trestle-board.component').then(m => m.TrestleBoardComponent)
+  },
+  {
     path: 'about-139',
     loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent)
   },

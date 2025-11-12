@@ -71,6 +71,11 @@ import { RouterModule } from '@angular/router';
             <div class="grid md:grid-cols-2 gap-8 items-start">
               <div>
                 <div class="bg-neutral-light p-6 rounded-lg mb-6">
+                  <div class="mb-6 flex justify-center">
+                    <img src="assets/past-masters/walter-w-coleman.jpg" 
+                         alt="W.W. Coleman - First Worshipful Master" 
+                         class="w-48 h-auto rounded-lg shadow-md">
+                  </div>
                   <h4 class="font-cinzel text-xl font-bold text-primary-blue mb-2">W.W. Coleman</h4>
                   <p class="text-primary-gold font-medium mb-2">1894-1895</p>
                   <p class="text-gray-700 mb-4">1st Worshipful Master of St.Petersburg Lodge 139 F&AM</p>

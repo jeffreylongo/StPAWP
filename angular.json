@@ -25,7 +25,8 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/.htaccess"
             ],
             "styles": [
               "src/styles.scss"
@@ -34,6 +35,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/app/",
               "budgets": [
                 {
                   "type": "initial",
@@ -46,7 +48,34 @@
                   "maximumError": "50kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "staging": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "20kb",
+                  "maximumError": "50kb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -61,6 +90,9 @@
           "configurations": {
             "production": {
               "buildTarget": "stpete-lodge139-angular-head-v1:build:production"
+            },
+            "staging": {
+              "buildTarget": "stpete-lodge139-angular-head-v1:build:staging"
             },
             "development": {
               "buildTarget": "stpete-lodge139-angular-head-v1:build:development"

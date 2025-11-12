@@ -1,0 +1,48 @@
+/* Trestle Board Component Styles */
+
+/* Animation for newsletter cards */
+.newsletter-card-enter {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effect for newsletter cards */
+.newsletter-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+/* PDF icon pulse animation on hover */
+.fa-file-pdf:hover {
+  animation: pulse 1s infinite;
+}
+
+/* Custom scrollbar for long content */
+.newsletter-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.newsletter-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.newsletter-content::-webkit-scrollbar-thumb {
+  background: var(--primary-blue);
+  border-radius: 4px;
+}
+
+.newsletter-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-blue-dark);
+}
+

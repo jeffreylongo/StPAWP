@@ -1,0 +1,138 @@
+# ================================================
+# .htaccess for Angular + WordPress Hybrid Setup
+# ================================================
+# This file should be placed in your public_html/ directory on GoDaddy
+# Rename to .htaccess when uploading
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # ==========================================
+  # WordPress Protection (runs in /wp folder)
+  # ==========================================
+  # Don't rewrite WordPress admin, API, or assets
+  RewriteRule ^wp/ - [L]
+  RewriteRule ^wp-admin/ - [L]
+  RewriteRule ^wp-json/ - [L]
+  RewriteRule ^wp-includes/ - [L]
+  RewriteRule ^wp-content/ - [L]
+  
+  # WordPress .php files
+  RewriteRule ^wp/.*\.php$ - [L]
+  
+  # ==========================================
+  # Angular App Routing (Single Page App)
+  # ==========================================
+  # Don't rewrite files or directories that actually exist
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  
+  # Rewrite everything else to Angular's index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ==========================================
+# Security Headers
+# ==========================================
+<IfModule mod_headers.c>
+  # Prevent MIME type sniffing
+  Header set X-Content-Type-Options "nosniff"
+  
+  # Prevent clickjacking
+  Header set X-Frame-Options "SAMEORIGIN"
+  
+  # XSS Protection
+  Header set X-XSS-Protection "1; mode=block"
+  
+  # Referrer Policy
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  
+  # Remove X-Powered-By header (if present)
+  Header unset X-Powered-By
+</IfModule>
+
+# ==========================================
+# GZIP Compression
+# ==========================================
+<IfModule mod_deflate.c>
+  # Compress HTML, CSS, JavaScript, Text, XML and fonts
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE font/truetype
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ==========================================
+# Browser Caching
+# ==========================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # Images
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  
+  # CSS and JavaScript
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+  
+  # Fonts
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  
+  # HTML (no cache for SPA)
+  ExpiresByType text/html "access plus 0 seconds"
+  
+  # Data
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType application/xml "access plus 0 seconds"
+  ExpiresByType text/xml "access plus 0 seconds"
+</IfModule>
+
+# ==========================================
+# Force HTTPS (if SSL is installed)
+# ==========================================
+# Uncomment these lines after SSL certificate is active:
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ==========================================
+# Additional Security
+# ==========================================
+# Disable directory browsing
+Options -Indexes
+
+# Protect .htaccess and other hidden files
+<FilesMatch "^\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Protect sensitive Angular files
+<FilesMatch "(package\.json|tsconfig\.json|angular\.json)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+

@@ -1,0 +1,144 @@
+<div class="bg-neutral-light min-h-screen">
+  <!-- Hero Section -->
+  <section class="bg-primary-blue-dark text-white py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 font-cinzel">The Trestle Board</h1>
+        <p class="text-xl text-primary-gold-light font-garamond italic">
+          Monthly Newsletter of St. Petersburg Lodge No. 139 F&AM
+        </p>
+        <p class="mt-4 text-lg">
+          Stay informed with our monthly updates, upcoming events, and important lodge announcements.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Current Newsletter Highlight -->
+  <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12">
+          <div class="flex items-center mb-6">
+            <i class="fas fa-newspaper text-primary-gold text-4xl mr-4"></i>
+            <div>
+              <h2 class="text-3xl font-bold font-cinzel">Latest Edition</h2>
+              <p class="text-primary-gold-light font-garamond italic">{{ currentMonth }} {{ currentYear }}</p>
+            </div>
+          </div>
+          <p class="text-lg mb-6">
+            Read the latest news, upcoming events, degree work schedules, and messages from our Worshipful Master and Secretary.
+          </p>
+          <div class="text-center">
+          <button 
+            disabled
+            class="bg-primary-gold text-primary-blue-darker font-bold py-3 px-8 rounded-lg shadow-lg cursor-not-allowed opacity-90">
+            <i class="fas fa-clock mr-2"></i>
+            Coming Soon!
+          </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Archive -->
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl font-bold text-primary-blue mb-8 font-cinzel text-center">Newsletter Archive</h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div 
+            *ngFor="let newsletter of newsletters"
+            class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200">
+            <div class="bg-primary-blue p-4">
+              <div class="flex items-center justify-between text-white">
+                <div>
+                  <h3 class="text-xl font-bold font-cinzel">{{ newsletter.month }} {{ newsletter.year }}</h3>
+                  <p class="text-sm text-primary-gold-light">Published {{ newsletter.publishDate | date: 'MMM d, yyyy' }}</p>
+                </div>
+                <i class="fas fa-file-pdf text-primary-gold text-3xl"></i>
+              </div>
+            </div>
+            
+            <div class="p-6">
+              <p class="text-gray-700 mb-4">{{ newsletter.description }}</p>
+              
+              <button 
+                disabled
+                class="w-full bg-primary-gold text-primary-blue-darker font-bold py-2 px-4 rounded cursor-not-allowed opacity-90">
+                <i class="fas fa-clock mr-2"></i>
+                Coming Soon!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State (if no newsletters) -->
+        <div *ngIf="newsletters.length === 0" class="text-center py-12">
+          <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
+          <p class="text-xl text-gray-600">No newsletters available at this time.</p>
+          <p class="text-gray-500 mt-2">Check back soon for our monthly updates!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Information Section -->
+  <section class="py-12 bg-primary-blue text-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6 font-cinzel">About The Trestle Board</h2>
+        <div class="space-y-4 text-lg">
+          <p>
+            The Trestle Board is the official monthly newsletter of St. Petersburg Lodge No. 139 F&AM. 
+            Published at the beginning of each month, it contains:
+          </p>
+          <div class="grid md:grid-cols-2 gap-6 mt-8">
+            <div class="bg-primary-blue-dark p-6 rounded-lg">
+              <i class="fas fa-calendar-alt text-primary-gold text-3xl mb-3"></i>
+              <h3 class="font-bold mb-2 font-cinzel">Events & Calendar</h3>
+              <p class="text-sm">Upcoming meetings, degree work, and special events</p>
+            </div>
+            <div class="bg-primary-blue-dark p-6 rounded-lg">
+              <i class="fas fa-gavel text-primary-gold text-3xl mb-3"></i>
+              <h3 class="font-bold mb-2 font-cinzel">Lodge News</h3>
+              <p class="text-sm">Updates from the Worshipful Master and officers</p>
+            </div>
+            <div class="bg-primary-blue-dark p-6 rounded-lg">
+              <i class="fas fa-book text-primary-gold text-3xl mb-3"></i>
+              <h3 class="font-bold mb-2 font-cinzel">Masonic Education</h3>
+              <p class="text-sm">Educational articles and historical information</p>
+            </div>
+            <div class="bg-primary-blue-dark p-6 rounded-lg">
+              <i class="fas fa-users text-primary-gold text-3xl mb-3"></i>
+              <h3 class="font-bold mb-2 font-cinzel">Member Updates</h3>
+              <p class="text-sm">Birthdays, anniversaries, and member news</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subscription CTA -->
+  <section class="py-12 bg-neutral-light">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold text-primary-blue mb-4 font-cinzel">Stay Informed</h2>
+        <p class="text-lg text-gray-700 mb-8">
+          Members receive the Trestle Board automatically via email. 
+          For questions or to update your contact information, please contact the Secretary's Office.
+        </p>
+        <a 
+          routerLink="/secretary-office" 
+          class="inline-block bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 shadow-lg">
+          <i class="fas fa-envelope mr-2"></i>
+          Contact Secretary's Office
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+

@@ -55,30 +55,35 @@ export class FooterComponent implements OnInit {
       this.isSubmitting = true;
       this.submitMessage = '';
 
-      // Simulate form submission (replace with actual service call)
+      const formValue = this.contactForm.value;
+      
+      // Build mailto link with form data
+      const recipient = 'secretary@stpete139.org';
+      const subject = encodeURIComponent('Contact Form Submission from Footer');
+      
+      // Build email body with all form information
+      let body = `Name: ${formValue.name}\n`;
+      body += `Email: ${formValue.email}\n`;
+      body += `\nMessage:\n${formValue.message}`;
+      
+      const encodedBody = encodeURIComponent(body);
+      const mailtoLink = `mailto:${recipient}?subject=${subject}&body=${encodedBody}`;
+      
+      // Open mailto link
+      window.location.href = mailtoLink;
+      
+      // Reset form and show success message
       setTimeout(() => {
-        try {
-          // Here you would typically call a service to send the email
-          // this.contactService.sendMessage(this.contactForm.value).subscribe(...)
-          
-          console.log('Form submitted:', this.contactForm.value);
-          
-          this.submitMessage = 'Thank you for your message! We\'ll get back to you soon.';
-          this.submitSuccess = true;
-          this.contactForm.reset();
-          
-        } catch (error) {
-          this.submitMessage = 'Failed to send message. Please try again or contact us directly.';
-          this.submitSuccess = false;
-        } finally {
-          this.isSubmitting = false;
-          
-          // Clear message after 5 seconds
-          setTimeout(() => {
-            this.submitMessage = '';
-          }, 5000);
-        }
-      }, 2000);
+        this.submitMessage = 'Opening your email client...';
+        this.submitSuccess = true;
+        this.contactForm.reset();
+        this.isSubmitting = false;
+        
+        // Clear message after 5 seconds
+        setTimeout(() => {
+          this.submitMessage = '';
+        }, 5000);
+      }, 500);
     } else {
       // Mark all fields as touched to show validation errors
       this.markFormGroupTouched();
