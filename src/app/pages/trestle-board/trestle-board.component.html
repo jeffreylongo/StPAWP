@@ -58,16 +58,7 @@
             </div>
             
             <!-- WordPress Content -->
-            <div class="prose prose-invert max-w-none mb-6" [innerHTML]="newsletter.content.rendered"></div>
-            
-            <div class="text-center mt-8">
-              <button 
-                (click)="downloadNewsletter(newsletter)"
-                class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-bold py-3 px-8 rounded-lg shadow-lg transition-all">
-                <i class="fas fa-external-link-alt mr-2"></i>
-                View on WordPress
-              </button>
-            </div>
+            <div class="prose prose-invert max-w-none" [innerHTML]="newsletter.content.rendered"></div>
             
             <!-- Divider between posts (except for last post) -->
             <div *ngIf="i < currentMonthNewsletters.length - 1" class="mt-8 pt-8 border-t border-primary-gold-light opacity-30"></div>
