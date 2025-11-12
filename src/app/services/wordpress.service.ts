@@ -144,4 +144,34 @@ export class WordPressService {
   submitContactForm(formId: number, formData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/contact-form-7/v1/contact-forms/${formId}/feedback`, formData);
   }
+
+  // Trestle Board Newsletter methods
+  getTrestleBoardPosts(params?: { per_page?: number }): Observable<WordPressPost[]> {
+    let httpParams = new HttpParams();
+    
+    if (params?.per_page) {
+      httpParams = httpParams.set('per_page', params.per_page.toString());
+    } else {
+      httpParams = httpParams.set('per_page', '10'); // Default to 10 most recent
+    }
+    
+    // Fetch posts tagged with 'trestle-board' or from 'Trestle Board' category
+    // Secretary will need to add posts with category "Trestle Board"
+    httpParams = httpParams.set('orderby', 'date');
+    httpParams = httpParams.set('order', 'desc');
+    
+    return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params: httpParams });
+  }
+
+  // Get latest/current Trestle Board post
+  getCurrentTrestleBoard(): Observable<WordPressPost | null> {
+    const params = new HttpParams()
+      .set('per_page', '1')
+      .set('orderby', 'date')
+      .set('order', 'desc');
+    
+    return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params }).pipe(
+      map(posts => posts.length > 0 ? posts[0] : null)
+    );
+  }
 }
