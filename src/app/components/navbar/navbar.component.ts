@@ -92,6 +92,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   closeDropdowns(): void {
     this.isAboutDropdownOpen = false;
     this.isSecretaryDropdownOpen = false;
+    // Also close the mobile menu when clicking nested links
+    this.isMenuOpen = false;
   }
 
   closeMenu(): void {
