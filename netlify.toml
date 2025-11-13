@@ -26,9 +26,12 @@
   status = 200
   force = true
 
+# SPA fallback - redirect to index.html for client-side routing
+# But NOT for files that actually exist (Netlify checks file existence by default when force = false)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
 
 
