@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "dist/stpete-lodge139-angular-head-v1"
+  publish = "dist/stpete-lodge139-angular-head-v1/browser"
 
 [[redirects]]
   from = "/wp-json/*"
