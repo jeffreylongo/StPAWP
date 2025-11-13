@@ -1,7 +1,8 @@
 [build]
-  command = "npm run build"
+  command = "npm run build -- --configuration=production --base-href=/ --deploy-url=/"
   publish = "dist/stpete-lodge139-angular-head-v1/browser"
 
+# WordPress API proxying
 [[redirects]]
   from = "/wp-json/*"
   to = "https://stpetelodge139.org/wp-json/:splat"
@@ -26,12 +27,10 @@
   status = 200
   force = true
 
-# SPA fallback - redirect to index.html for client-side routing
-# But NOT for files that actually exist (Netlify checks file existence by default when force = false)
+# SPA fallback for Angular routing - only for HTML pages, not files
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
 
 
