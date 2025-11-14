@@ -1,0 +1,83 @@
+<div [class]="getContainerClasses()" *ngIf="!isLoading && currentQuote">
+  <!-- Hero Variant (for main page hero section) -->
+  <div *ngIf="variant === 'hero'" 
+       class="bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-lg p-6 max-w-4xl mx-auto">
+    <blockquote class="text-white text-lg md:text-xl font-garamond leading-relaxed italic drop-shadow-md" 
+                style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
+      "{{ currentQuote.quote }}"
+    </blockquote>
+    <div class="flex justify-between items-center mt-4">
+      <cite class="text-primary-gold font-cinzel font-semibold text-base md:text-lg drop-shadow-md" 
+            style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
+        — {{ getAuthorDisplay() }}
+      </cite>
+      <button 
+        (click)="nextQuote()" 
+        class="text-primary-gold hover:text-primary-gold-light transition-colors ml-4"
+        title="Next Quote"
+        aria-label="Load next quote">
+        <i class="fas fa-sync-alt text-xl"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Section Variant (for content sections) -->
+  <div *ngIf="variant === 'section'" class="relative">
+    <div class="absolute -top-6 -left-6 text-primary-gold opacity-30">
+      <i class="fas fa-quote-left text-6xl"></i>
+    </div>
+    
+    <blockquote class="text-xl md:text-2xl font-garamond italic leading-relaxed mb-8 relative z-10">
+      "{{ currentQuote.quote }}"
+    </blockquote>
+    
+    <div class="flex justify-between items-center">
+      <div class="text-primary-gold font-semibold">
+        — {{ getAuthorDisplay() }}
+      </div>
+      <button 
+        (click)="nextQuote()" 
+        class="text-primary-gold hover:text-primary-gold-light transition-colors ml-4"
+        title="Next Quote"
+        aria-label="Load next quote">
+        <i class="fas fa-sync-alt text-lg"></i>
+      </button>
+    </div>
+    
+    <div class="absolute -bottom-6 -right-6 text-primary-gold opacity-30">
+      <i class="fas fa-quote-right text-6xl"></i>
+    </div>
+  </div>
+
+  <!-- Compact Variant (for smaller spaces) -->
+  <div *ngIf="variant === 'compact'" 
+       class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-lg p-6">
+    <div class="flex items-start gap-4">
+      <i class="fas fa-quote-left text-primary-gold text-2xl flex-shrink-0 mt-1"></i>
+      <div class="flex-grow">
+        <blockquote class="text-base md:text-lg font-garamond italic leading-relaxed mb-3">
+          "{{ currentQuote.quote }}"
+        </blockquote>
+        <div class="flex justify-between items-center">
+          <cite class="text-primary-gold font-cinzel text-sm font-semibold">
+            — {{ getAuthorDisplay() }}
+          </cite>
+          <button 
+            (click)="nextQuote()" 
+            class="text-primary-gold hover:text-primary-gold-light transition-colors ml-4"
+            title="Next Quote"
+            aria-label="Load next quote">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="text-center py-8">
+  <i class="fas fa-spinner fa-spin text-primary-gold text-3xl"></i>
+  <p class="text-primary-gold mt-2">Loading wisdom...</p>
+</div>
+

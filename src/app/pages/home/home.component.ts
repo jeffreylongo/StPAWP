@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { CalendarService } from '../../services/calendar.service';
 import { SecretaryOfficeService, SecretaryOfficeData } from '../../services/secretary-office.service';
 import { LodgeEmblemComponent } from '../../components/lodge-emblem/lodge-emblem.component';
+import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/masonic-quote.component';
 import { CalendarEvent } from '../../interfaces';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -12,7 +13,7 @@ import { StripHtmlPipe } from '../../pipes/strip-html.pipe';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LodgeEmblemComponent, StripHtmlPipe],
+  imports: [CommonModule, RouterModule, LodgeEmblemComponent, MasonicQuoteComponent, StripHtmlPipe],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
