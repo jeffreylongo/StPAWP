@@ -1,0 +1,388 @@
+[
+  {
+    "id": 1,
+    "quote": "So far as I am acquainted with the principles and doctrines of Freemasonry, I conceive it to be founded in benevolence and to be exercised only for the good of mankind.",
+    "person": "George Washington",
+    "yearsServed": "U.S. President 1789–1797",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Fredericksburg Lodge No. 4, Virginia",
+      "Charter Worshipful Master of Alexandria Lodge No. 22"
+    ],
+    "source": "Letter to the Grand Lodge of Maryland, November 8, 1798"
+  },
+  {
+    "id": 2,
+    "quote": "Being persuaded that a just application of the principles on which the Masonic fraternity is founded must be promotive of private virtue and public prosperity, I shall always be happy to advance the interests of the Society.",
+    "person": "George Washington",
+    "yearsServed": "U.S. President 1789–1797",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Fredericksburg Lodge No. 4, Virginia",
+      "Charter Worshipful Master of Alexandria Lodge No. 22"
+    ],
+    "source": "Address to the Masons of Newport, Rhode Island, 1791"
+  },
+  {
+    "id": 3,
+    "quote": "I sincerely wish that the conduct of every member of the fraternity, as well as those publications that discover the principles which actuate them, may tend to convince mankind that the great object of Masonry is the promotion of virtue and the happiness of mankind.",
+    "person": "George Washington",
+    "yearsServed": "U.S. President 1789–1797",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Fredericksburg Lodge No. 4, Virginia",
+      "Charter Worshipful Master of Alexandria Lodge No. 22"
+    ],
+    "source": "Letter to King David's Lodge in Newport, Rhode Island, 1790"
+  },
+  {
+    "id": 4,
+    "quote": "To enlarge the sphere of social happiness is worthy of the benevolent design of a Masonic institution; the grand object of Masonry is to promote the happiness of the human race.",
+    "person": "George Washington",
+    "yearsServed": "U.S. President 1789–1797",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Fredericksburg Lodge No. 4, Virginia",
+      "Charter Worshipful Master of Alexandria Lodge No. 22"
+    ],
+    "source": "Letter to the Grand Lodge of Massachusetts, January 1793"
+  },
+  {
+    "id": 5,
+    "quote": "Freemasonry is founded on the immutable laws of truth and justice, and its grand object is to promote the happiness of the human race.",
+    "person": "George Washington",
+    "yearsServed": "U.S. President 1789–1797",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Fredericksburg Lodge No. 4, Virginia",
+      "Charter Worshipful Master of Alexandria Lodge No. 22"
+    ],
+    "source": "Statement on the purpose of Freemasonry, attributed"
+  },
+  {
+    "id": 6,
+    "quote": "Masonic labor is purely a labor of love. He who seeks to draw Masonic wages in gold and silver will be disappointed.",
+    "person": "Benjamin Franklin",
+    "yearsServed": "1706–1790",
+    "masonicTitles": [
+      "Past Grand Master, Grand Lodge of Pennsylvania"
+    ],
+    "source": "Attributed Masonic address on the \"wages of a Mason\""
+  },
+  {
+    "id": 7,
+    "quote": "Freemasonry is a moral order, instituted by virtuous men with the praiseworthy design of recalling to our remembrance the most sublime truths.",
+    "person": "Andrew Jackson",
+    "yearsServed": "U.S. President 1829–1837",
+    "masonicTitles": [
+      "Member of St. Tammany Lodge No. 1 (later Harmony Lodge No. 1)",
+      "Grand Master of the Grand Lodge of Tennessee, 1822–1824"
+    ],
+    "source": "Masonic Address, Tennessee (attributed contemporary record)"
+  },
+  {
+    "id": 8,
+    "quote": "Freemasonry is an institution calculated to benefit mankind.",
+    "person": "Andrew Jackson",
+    "yearsServed": "U.S. President 1829–1837",
+    "masonicTitles": [
+      "Member of St. Tammany Lodge No. 1 (later Harmony Lodge No. 1)",
+      "Grand Master of the Grand Lodge of Tennessee, 1822–1824"
+    ],
+    "source": "Masonic Address, Tennessee (attributed contemporary record)"
+  },
+  {
+    "id": 9,
+    "quote": "I have long been connected with the Masonic Fraternity, and I trust I shall never do anything unworthy of the character of a Mason.",
+    "person": "James K. Polk",
+    "yearsServed": "U.S. President 1845–1849",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Columbia Lodge No. 31, Tennessee",
+      "Companion in Royal Arch Masonry",
+      "Knight Templar"
+    ],
+    "source": "Statement recorded by the Grand Lodge of Tennessee (Polk Papers)"
+  },
+  {
+    "id": 10,
+    "quote": "I became a Mason long before I entered public life, and I have ever been grateful for the lessons of charity and brotherly love which the institution teaches.",
+    "person": "James Buchanan",
+    "yearsServed": "U.S. President 1857–1861",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Lodge No. 43, Lancaster, Pennsylvania"
+    ],
+    "source": "Recorded by Pennsylvania Grand Lodge archives (public address summary)"
+  },
+  {
+    "id": 11,
+    "quote": "The spirit of Masonry is the spirit of kindness, helpfulness, and brotherly love.",
+    "person": "William McKinley",
+    "yearsServed": "U.S. President 1897–1901",
+    "masonicTitles": [
+      "Raised in Hiram Lodge No. 21, Winchester, Virginia"
+    ],
+    "source": "Masonic remarks recorded during political address (Ohio Masonic archives)"
+  },
+  {
+    "id": 12,
+    "quote": "I am glad to meet my brethren of the Masonic fraternity and to acknowledge my allegiance to the principles which have guided so many good and noble men.",
+    "person": "William McKinley",
+    "yearsServed": "U.S. President 1897–1901",
+    "masonicTitles": [
+      "Raised in Hiram Lodge No. 21, Winchester, Virginia"
+    ],
+    "source": "Masonic gathering, recorded in Ohio Grand Lodge proceedings"
+  },
+  {
+    "id": 13,
+    "quote": "I violate no secret when I say that one of the greatest values in Masonry is that it affords an opportunity for men of all walks of life to meet on common ground where all men are equal.",
+    "person": "Theodore Roosevelt",
+    "yearsServed": "U.S. President 1901–1909",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Matinecock Lodge No. 806, Oyster Bay, New York"
+    ],
+    "source": "Masonic Address, 1902"
+  },
+  {
+    "id": 14,
+    "quote": "Freemasonry teaches not merely temperance, fortitude, prudence, justice, brotherly love, relief, and truth, but liberty, equality, and fraternity.",
+    "person": "Theodore Roosevelt",
+    "yearsServed": "U.S. President 1901–1909",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Matinecock Lodge No. 806, Oyster Bay, New York"
+    ],
+    "source": "Masonic speech attributed to Theodore Roosevelt"
+  },
+  {
+    "id": 15,
+    "quote": "The Masonic fraternity is one of the most helpful mediating and conserving organizations among men.",
+    "person": "William Howard Taft",
+    "yearsServed": "U.S. President 1909–1913",
+    "masonicTitles": [
+      "Made a Mason at Sight in Kilwinning Lodge No. 356, Cincinnati, Ohio"
+    ],
+    "source": "Masonic Address, Ohio, early 1900s"
+  },
+  {
+    "id": 16,
+    "quote": "Masonry aims at the promotion of morality and higher living by rousing in man the instincts of charity and love of his kind.",
+    "person": "William Howard Taft",
+    "yearsServed": "U.S. President 1909–1913",
+    "masonicTitles": [
+      "Made a Mason at Sight in Kilwinning Lodge No. 356, Cincinnati, Ohio"
+    ],
+    "source": "Address on the moral aims of Masonry"
+  },
+  {
+    "id": 17,
+    "quote": "I have seen the splendid work that Masonry is doing for our fellow man, and the more I come in contact with it the more impressed I am by its great charitable work.",
+    "person": "Franklin D. Roosevelt",
+    "yearsServed": "U.S. President 1933–1945",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Holland Lodge No. 8, New York",
+      "Honorary Grand Master, Order of DeMolay",
+      "32° Scottish Rite Mason",
+      "Noble, Ancient Arabic Order of the Nobles of the Mystic Shrine"
+    ],
+    "source": "Masonic Address, New York"
+  },
+  {
+    "id": 18,
+    "quote": "Freemasonry is a system of morals which makes it easier to live with your fellow man, whether he understands it or not.",
+    "person": "Harry S. Truman",
+    "yearsServed": "U.S. President 1945–1953",
+    "masonicTitles": [
+      "Past Grand Master of Masons in Missouri",
+      "33° Scottish Rite Mason"
+    ],
+    "source": "Letter to Senator Frank P. Briggs, 1939"
+  },
+  {
+    "id": 19,
+    "quote": "The greatest lessons I ever learned came from my Masonic brethren.",
+    "person": "Harry S. Truman",
+    "yearsServed": "U.S. President 1945–1953",
+    "masonicTitles": [
+      "Past Grand Master of Masons in Missouri",
+      "33° Scottish Rite Mason"
+    ],
+    "source": "Public Masonic remarks, Missouri archives"
+  },
+  {
+    "id": 20,
+    "quote": "Although I hold the highest civil honor in the world, I have always regarded my rank as a Past Grand Master of Masons the greatest honor that ever came to me.",
+    "person": "Harry S. Truman",
+    "yearsServed": "U.S. President 1945–1953",
+    "masonicTitles": [
+      "Past Grand Master of Masons in Missouri",
+      "33° Scottish Rite Mason"
+    ],
+    "source": "Remarks reflecting on his Masonic service"
+  },
+  {
+    "id": 21,
+    "quote": "Masonry has enriched my life immeasurably. It has taught me tolerance, charity, and the true meaning of brotherhood.",
+    "person": "Gerald Ford",
+    "yearsServed": "U.S. President 1974–1977",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Malta Lodge No. 465, Grand Rapids, Michigan",
+      "33° Scottish Rite Mason"
+    ],
+    "source": "Scottish Rite Biennial Session Speech"
+  },
+  {
+    "id": 22,
+    "quote": "The Masonic order's work in the field of charity, education, and service is exemplary, and I am proud to be a Mason.",
+    "person": "Gerald Ford",
+    "yearsServed": "U.S. President 1974–1977",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Malta Lodge No. 465, Grand Rapids, Michigan",
+      "33° Scottish Rite Mason"
+    ],
+    "source": "Scottish Rite Supreme Council remarks"
+  },
+  {
+    "id": 23,
+    "quote": "Masonic principles—internal, not external—and our order's vision of duty to country and acceptance of God as a Supreme Being have sustained me during my years of public service.",
+    "person": "Gerald R. Ford",
+    "yearsServed": "U.S. President 1974–1977",
+    "masonicTitles": [
+      "Initiated, Passed, and Raised in Malta Lodge No. 465, Grand Rapids, Michigan",
+      "Master Mason, Columbia Lodge No. 3, Washington, D.C.",
+      "33° Scottish Rite Mason",
+      "Noble, Saladin Shriners",
+      "Honorary Grand Master, Order of DeMolay"
+    ],
+    "source": "Remarks at the George Washington Masonic National Memorial, 1975"
+  },
+  {
+    "id": 24,
+    "quote": "Freemasonry embraces the highest moral laws and will bear the test of any system of ethics or philosophy ever promulgated for the uplift of man.",
+    "person": "Douglas MacArthur",
+    "yearsServed": "1880–1964",
+    "masonicTitles": [
+      "Master Mason, Manila Lodge No. 1, Philippines",
+      "Honorary Grand Master, Grand Lodge of the Philippines"
+    ],
+    "source": "Masonic address attributed to Douglas MacArthur"
+  },
+  {
+    "id": 25,
+    "quote": "There is no doubt in my mind that Masonry is the cornerstone of America.",
+    "person": "Dave Thomas",
+    "yearsServed": "1932–2002",
+    "masonicTitles": [
+      "Master Mason, Sol. D. Bayless Lodge No. 359, Indiana"
+    ],
+    "source": "Quote attributed to Dave Thomas, Founder of Wendy's"
+  },
+  {
+    "id": 26,
+    "quote": "We Masons are among the fortunate ones who are taught to meet together with others of opposing convictions and yet respect each other as Brothers.",
+    "person": "Albert Pike",
+    "yearsServed": "1809–1891",
+    "masonicTitles": [
+      "Sovereign Grand Commander, Scottish Rite Southern Jurisdiction, USA"
+    ],
+    "source": "Masonic address attributed to Albert Pike"
+  },
+  {
+    "id": 27,
+    "quote": "We make a living by what we get, but we make a life by what we give.",
+    "person": "Winston Churchill",
+    "yearsServed": "UK Prime Minister 1940–1945, 1951–1955",
+    "masonicTitles": [
+      "Member, Studholme Lodge No. 1591, London"
+    ],
+    "source": "Popularly attributed saying, often quoted in Masonic contexts"
+  },
+  {
+    "id": 28,
+    "quote": "God gave us the gift of life; it is up to us to give ourselves the gift of living well.",
+    "person": "Voltaire (François-Marie Arouet)",
+    "yearsServed": "1694–1778",
+    "masonicTitles": [
+      "Entered Apprentice, Lodge of the Nine Sisters, Paris"
+    ],
+    "source": "Philosophical reflection often cited by Freemasons"
+  },
+  {
+    "id": 29,
+    "quote": "Man created God, not God created man.",
+    "person": "Giuseppe Garibaldi",
+    "yearsServed": "1807–1882",
+    "masonicTitles": [
+      "Grand Master, Grand Orient of Italy"
+    ],
+    "source": "Later-life reflection on religion and Freemasonry"
+  },
+  {
+    "id": 30,
+    "quote": "No, dear brethren: the modern Mason works and should still work, so long as the world nurtures a tyrant or gathers the moans of the oppressed.",
+    "person": "José Rizal",
+    "yearsServed": "1861–1896",
+    "masonicTitles": [
+      "Master Mason, Acacia Lodge No. 9, Madrid",
+      "Member, Solidaridad Lodge No. 53"
+    ],
+    "source": "Masonic oration, 1880s"
+  },
+  {
+    "id": 31,
+    "quote": "I always prefer to believe the best of everybody; it saves so much trouble.",
+    "person": "Rudyard Kipling",
+    "yearsServed": "1865–1936",
+    "masonicTitles": [
+      "Master Mason, Hope and Perseverance Lodge No. 782, Lahore"
+    ],
+    "source": "Short story and essay collection; widely quoted"
+  },
+  {
+    "id": 32,
+    "quote": "When I was a King and a Mason, a Master proven and skilled, I cleared me ground for a palace such as a King should build.",
+    "person": "Rudyard Kipling",
+    "yearsServed": "1865–1936",
+    "masonicTitles": [
+      "Master Mason, Hope and Perseverance Lodge No. 782, Lahore"
+    ],
+    "source": "Poem \"The Palace\""
+  },
+  {
+    "id": 33,
+    "quote": "Music is the melody whose very source is the heart of man.",
+    "person": "Wolfgang Amadeus Mozart",
+    "yearsServed": "1756–1791",
+    "masonicTitles": [
+      "Master Mason, Lodge Zur Wohltätigkeit, Vienna"
+    ],
+    "source": "Quote attributed to Mozart, often cited in Masonic music writings"
+  },
+  {
+    "id": 34,
+    "quote": "Freemasonry has no dogma or theology. It teaches that it is important for every man to have a religion of his choice and to be faithful to it.",
+    "person": "Norman Vincent Peale",
+    "yearsServed": "1898–1993",
+    "masonicTitles": [
+      "Master Mason",
+      "Christian minister and author"
+    ],
+    "source": "Explanation of Masonic religious tolerance"
+  },
+  {
+    "id": 35,
+    "quote": "The Masonic fraternity is one of the most helpful mediating and conserving organizations among men, and I have never wavered from that impression.",
+    "person": "George W. Truett",
+    "yearsServed": "1867–1944",
+    "masonicTitles": [
+      "Southern Baptist pastor",
+      "Freemason"
+    ],
+    "source": "Address on the value of Freemasonry"
+  },
+  {
+    "id": 36,
+    "quote": "Masonry is the science of life in a society of men, by signs, symbols and ceremonies; its purpose is the perfection and happiness of the individual and the race.",
+    "person": "G.F. Moore",
+    "yearsServed": "19th‑century Masonic writer",
+    "masonicTitles": [
+      "Masonic author"
+    ],
+    "source": "Masonic lecture on the nature of Masonry"
+  }
+]
+
