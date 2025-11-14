@@ -2,11 +2,11 @@
   <!-- Hero Variant (for main page hero section) -->
   <div *ngIf="variant === 'hero'" 
        class="bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-lg p-6 max-w-4xl mx-auto">
-    <blockquote class="text-white text-lg md:text-xl font-garamond leading-relaxed italic drop-shadow-md" 
+    <blockquote class="text-white text-lg md:text-xl font-garamond leading-relaxed italic drop-shadow-md text-center" 
                 style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
       "{{ currentQuote.quote }}"
     </blockquote>
-    <div class="text-right mt-4">
+    <div class="text-center mt-4">
       <cite class="text-primary-gold font-cinzel font-semibold text-base md:text-lg drop-shadow-md" 
             style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
         — {{ getAuthorDisplay() }}
@@ -20,11 +20,11 @@
       <i class="fas fa-quote-left text-6xl"></i>
     </div>
     
-    <blockquote class="text-xl md:text-2xl font-garamond italic leading-relaxed mb-8 relative z-10">
+    <blockquote class="text-xl md:text-2xl font-garamond italic leading-relaxed mb-8 relative z-10 text-center">
       "{{ currentQuote.quote }}"
     </blockquote>
     
-    <div class="text-primary-gold font-semibold">
+    <div class="text-primary-gold font-semibold text-center">
       — {{ getAuthorDisplay() }}
     </div>
     
@@ -36,16 +36,14 @@
   <!-- Compact Variant (for smaller spaces) -->
   <div *ngIf="variant === 'compact'" 
        class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-lg p-6">
-    <div class="flex items-start gap-4">
-      <i class="fas fa-quote-left text-primary-gold text-2xl flex-shrink-0 mt-1"></i>
-      <div class="flex-grow">
-        <blockquote class="text-base md:text-lg font-garamond italic leading-relaxed mb-3">
-          "{{ currentQuote.quote }}"
-        </blockquote>
-        <cite class="text-primary-gold font-cinzel text-sm font-semibold">
-          — {{ getAuthorDisplay() }}
-        </cite>
-      </div>
+    <div class="text-center">
+      <i class="fas fa-quote-left text-primary-gold text-2xl mb-3 inline-block"></i>
+      <blockquote class="text-base md:text-lg font-garamond italic leading-relaxed mb-3">
+        "{{ currentQuote.quote }}"
+      </blockquote>
+      <cite class="text-primary-gold font-cinzel text-sm font-semibold">
+        — {{ getAuthorDisplay() }}
+      </cite>
     </div>
   </div>
 </div>
