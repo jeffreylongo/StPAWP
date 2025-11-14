@@ -27,7 +27,8 @@
               "src/favicon.ico",
               "src/assets",
               "src/.htaccess",
-              "src/_headers"
+              "src/_headers",
+              "src/_redirects"
             ],
             "styles": [
               "src/styles.scss"
@@ -36,7 +37,7 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/app/",
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",

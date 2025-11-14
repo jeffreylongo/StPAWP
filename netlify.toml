@@ -28,9 +28,11 @@
   force = true
 
 # SPA fallback for Angular routing - only for HTML pages, not files
+# This must be the LAST redirect rule
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
 
 

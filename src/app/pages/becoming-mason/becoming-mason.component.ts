@@ -236,11 +236,13 @@ import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/mas
             </div>
           </div>
           
+          <!--
           <div class="mt-8 text-center">
             <p class="text-primary-blue font-semibold text-lg">
               "Freemasonry takes good men and makes them better."
             </p>
           </div>
+          -->
         </div>
       </div>
 
