@@ -1,4 +1,4 @@
-<div [class]="getContainerClasses()" *ngIf="!isLoading && currentQuote">
+<div [class]="getContainerClasses()" *ngIf="!isLoading && currentQuote" style="margin-bottom: 20px;">
   <!-- Hero Variant (for main page hero section) -->
   <div *ngIf="variant === 'hero'" 
        class="bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-lg p-6 max-w-4xl mx-auto">
@@ -6,18 +6,11 @@
                 style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
       "{{ currentQuote.quote }}"
     </blockquote>
-    <div class="flex justify-between items-center mt-4">
+    <div class="text-right mt-4">
       <cite class="text-primary-gold font-cinzel font-semibold text-base md:text-lg drop-shadow-md" 
             style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
         — {{ getAuthorDisplay() }}
       </cite>
-      <button 
-        (click)="nextQuote()" 
-        class="text-primary-gold hover:text-primary-gold-light transition-colors ml-4"
-        title="Next Quote"
-        aria-label="Load next quote">
-        <i class="fas fa-sync-alt text-xl"></i>
-      </button>
     </div>
   </div>
 
@@ -31,17 +24,8 @@
       "{{ currentQuote.quote }}"
     </blockquote>
     
-    <div class="flex justify-between items-center">
-      <div class="text-primary-gold font-semibold">
-        — {{ getAuthorDisplay() }}
-      </div>
-      <button 
-        (click)="nextQuote()" 
-        class="text-primary-gold hover:text-primary-gold-light transition-colors ml-4"
-        title="Next Quote"
-        aria-label="Load next quote">
-        <i class="fas fa-sync-alt text-lg"></i>
-      </button>
+    <div class="text-primary-gold font-semibold">
+      — {{ getAuthorDisplay() }}
     </div>
     
     <div class="absolute -bottom-6 -right-6 text-primary-gold opacity-30">
@@ -58,18 +42,9 @@
         <blockquote class="text-base md:text-lg font-garamond italic leading-relaxed mb-3">
           "{{ currentQuote.quote }}"
         </blockquote>
-        <div class="flex justify-between items-center">
-          <cite class="text-primary-gold font-cinzel text-sm font-semibold">
-            — {{ getAuthorDisplay() }}
-          </cite>
-          <button 
-            (click)="nextQuote()" 
-            class="text-primary-gold hover:text-primary-gold-light transition-colors ml-4"
-            title="Next Quote"
-            aria-label="Load next quote">
-            <i class="fas fa-sync-alt"></i>
-          </button>
-        </div>
+        <cite class="text-primary-gold font-cinzel text-sm font-semibold">
+          — {{ getAuthorDisplay() }}
+        </cite>
       </div>
     </div>
   </div>
