@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/masonic-quote.component';
 
 @Component({
   selector: 'app-becoming-mason',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MasonicQuoteComponent],
   template: `
     <div class="bg-primary-blue-dark text-white py-16">
       <div class="container mx-auto px-4">
@@ -196,7 +197,7 @@ import { RouterModule } from '@angular/router';
       </div>
 
       <!-- What to Expect Section -->
-      <div class="max-w-4xl mx-auto">
+      <div class="max-w-4xl mx-auto mb-16">
         <div class="bg-gradient-to-r from-neutral-light to-white rounded-lg p-8 shadow-md">
           <h3 class="font-cinzel text-2xl font-bold text-primary-blue mb-6 text-center">
             <i class="fas fa-lightbulb text-primary-gold mr-3"></i>
@@ -241,6 +242,11 @@ import { RouterModule } from '@angular/router';
             </p>
           </div>
         </div>
+      </div>
+
+      <!-- Masonic Quote Section -->
+      <div class="max-w-4xl mx-auto">
+        <app-masonic-quote variant="section" [autoRotate]="true" [rotateInterval]="30000"></app-masonic-quote>
       </div>
     </div>
   `
