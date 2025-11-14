@@ -283,36 +283,6 @@
   },
   {
     "id": 27,
-    "quote": "We make a living by what we get, but we make a life by what we give.",
-    "person": "Winston Churchill",
-    "yearsServed": "UK Prime Minister 1940–1945, 1951–1955",
-    "masonicTitles": [
-      "Member, Studholme Lodge No. 1591, London"
-    ],
-    "source": "Popularly attributed saying, often quoted in Masonic contexts"
-  },
-  {
-    "id": 28,
-    "quote": "God gave us the gift of life; it is up to us to give ourselves the gift of living well.",
-    "person": "Voltaire (François-Marie Arouet)",
-    "yearsServed": "1694–1778",
-    "masonicTitles": [
-      "Entered Apprentice, Lodge of the Nine Sisters, Paris"
-    ],
-    "source": "Philosophical reflection often cited by Freemasons"
-  },
-  {
-    "id": 29,
-    "quote": "Man created God, not God created man.",
-    "person": "Giuseppe Garibaldi",
-    "yearsServed": "1807–1882",
-    "masonicTitles": [
-      "Grand Master, Grand Orient of Italy"
-    ],
-    "source": "Later-life reflection on religion and Freemasonry"
-  },
-  {
-    "id": 30,
     "quote": "No, dear brethren: the modern Mason works and should still work, so long as the world nurtures a tyrant or gathers the moans of the oppressed.",
     "person": "José Rizal",
     "yearsServed": "1861–1896",
@@ -323,17 +293,7 @@
     "source": "Masonic oration, 1880s"
   },
   {
-    "id": 31,
-    "quote": "I always prefer to believe the best of everybody; it saves so much trouble.",
-    "person": "Rudyard Kipling",
-    "yearsServed": "1865–1936",
-    "masonicTitles": [
-      "Master Mason, Hope and Perseverance Lodge No. 782, Lahore"
-    ],
-    "source": "Short story and essay collection; widely quoted"
-  },
-  {
-    "id": 32,
+    "id": 28,
     "quote": "When I was a King and a Mason, a Master proven and skilled, I cleared me ground for a palace such as a King should build.",
     "person": "Rudyard Kipling",
     "yearsServed": "1865–1936",
@@ -343,17 +303,7 @@
     "source": "Poem \"The Palace\""
   },
   {
-    "id": 33,
-    "quote": "Music is the melody whose very source is the heart of man.",
-    "person": "Wolfgang Amadeus Mozart",
-    "yearsServed": "1756–1791",
-    "masonicTitles": [
-      "Master Mason, Lodge Zur Wohltätigkeit, Vienna"
-    ],
-    "source": "Quote attributed to Mozart, often cited in Masonic music writings"
-  },
-  {
-    "id": 34,
+    "id": 29,
     "quote": "Freemasonry has no dogma or theology. It teaches that it is important for every man to have a religion of his choice and to be faithful to it.",
     "person": "Norman Vincent Peale",
     "yearsServed": "1898–1993",
@@ -364,7 +314,7 @@
     "source": "Explanation of Masonic religious tolerance"
   },
   {
-    "id": 35,
+    "id": 30,
     "quote": "The Masonic fraternity is one of the most helpful mediating and conserving organizations among men, and I have never wavered from that impression.",
     "person": "George W. Truett",
     "yearsServed": "1867–1944",
@@ -375,7 +325,7 @@
     "source": "Address on the value of Freemasonry"
   },
   {
-    "id": 36,
+    "id": 31,
     "quote": "Masonry is the science of life in a society of men, by signs, symbols and ceremonies; its purpose is the perfection and happiness of the individual and the race.",
     "person": "G.F. Moore",
     "yearsServed": "19th‑century Masonic writer",
@@ -385,4 +335,3 @@
     "source": "Masonic lecture on the nature of Masonry"
   }
 ]
-
