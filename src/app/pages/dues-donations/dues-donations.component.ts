@@ -35,6 +35,7 @@ import { RouterModule } from '@angular/router';
             Your financial support helps maintain our historic lodge building, supports our charitable activities, 
             and ensures we can continue our Masonic work in the community.
           </p>
+          <!-- TEMPORARILY COMMENTED OUT
           <div class="text-center">
             <a href="https://stpetelodge139.org/cart/" 
                target="_blank"
@@ -43,6 +44,7 @@ import { RouterModule } from '@angular/router';
               Go To Cart
             </a>
           </div>
+          -->
         </div>
       </div>
 
@@ -66,11 +68,12 @@ import { RouterModule } from '@angular/router';
       </div>
 
       <!-- WooCommerce Products Grid -->
+      <!-- TEMPORARILY COMMENTED OUT
       <div class="mb-12">
         <h2 class="font-cinzel text-3xl text-primary-blue font-bold text-center mb-8">Available Products</h2>
         
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- 2025 Dues with Contribution -->
+          <-- 2025 Dues with Contribution --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
               <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png" 
@@ -97,7 +100,7 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
-          <!-- 2025 Dues Only -->
+          <-- 2025 Dues Only --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
               <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-1-300x300.png" 
@@ -119,7 +122,7 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
-          <!-- Voluntary Contribution -->
+          <-- Voluntary Contribution --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
               <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/Pennies-300x300.png" 
@@ -140,7 +143,7 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
-          <!-- Prepay Meal Plan -->
+          <-- Prepay Meal Plan --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
               <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/meals-300x300.png" 
@@ -168,6 +171,7 @@ import { RouterModule } from '@angular/router';
           </div>
         </div>
       </div>
+      -->
 
       <!-- Additional Information -->
       <div class="grid lg:grid-cols-2 gap-8 mb-12">
