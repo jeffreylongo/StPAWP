@@ -49,7 +49,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-6">
-              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Worshipful Brother Valentino Pine</h4>
+              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Worshipful Brother Valentino Pine, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-4">
                 <i class="fas fa-phone mr-2"></i>
                 <span class="text-sm">(727) 637-3106</span>
@@ -74,7 +74,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-6">
-              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Brother Ricardo Colon-Marquez</h4>
+              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Brother Ricardo Colon-Marquez, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-4">
                 <i class="fas fa-phone mr-2"></i>
                 <span class="text-sm">(315) 412-1672</span>
@@ -99,7 +99,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-6">
-              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Brother Alan Rosenthal</h4>
+              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Brother Alan Rosenthal, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-4">
                 <i class="fas fa-phone mr-2"></i>
                 <span class="text-sm">(727) 504-7310</span>
@@ -131,7 +131,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother John Livingston</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother John Livingston, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-3 text-xs">
                 <i class="fas fa-phone mr-2"></i>
                 <span>(727) 418-3356</span>
@@ -160,7 +160,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Michael Mignone</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Michael Mignone, P∴M∴</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Assisting with lodge financial matters and transactions.
               </p>
@@ -185,7 +185,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Leo Laskin</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Leo Laskin, P∴M∴</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Supporting lodge spiritual activities and ceremonies.
               </p>
@@ -360,7 +360,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother John Gunter</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother John Gunter, P∴M∴</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Supporting Masonic education and development.
               </p>
@@ -385,7 +385,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Chris Webb</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Chris Webb, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-3 text-xs">
                 <i class="fas fa-phone mr-2"></i>
                 <span>(727) 393-6007</span>
