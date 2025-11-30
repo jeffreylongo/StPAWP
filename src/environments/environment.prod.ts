@@ -1,10 +1,10 @@
 export const environment = {
   production: true,
   wordpress: {
-    baseUrl: 'https://stpetelodge139.org',
-    // WordPress is in /wp subdirectory
-    apiUrl: 'https://stpetelodge139.org/wp/wp-json/wp/v2',
-    woocommerceUrl: 'https://stpetelodge139.org/wp/wp-json/wc/v3'
+    // Production WordPress server
+    baseUrl: 'https://y91.b3b.myftpupload.com',
+    apiUrl: 'https://y91.b3b.myftpupload.com/wp-json/wp/v2',
+    woocommerceUrl: 'https://y91.b3b.myftpupload.com/wp-json/wc/v3'
   },
   woocommerce: {
     // Get these from WordPress Admin → WooCommerce → Settings → Advanced → REST API
