@@ -82,9 +82,21 @@ export class TrestleBoardComponent implements OnInit {
     return postDate.getFullYear();
   }
 
-  downloadNewsletter(post: WordPressPost): void {
+  downloadNewsletter(post: WordPressPost, event?: Event): void {
+    console.log('downloadNewsletter called for:', post.title.rendered);
+    console.log('Post link:', post.link);
+    console.log('Post slug:', post.slug);
+    
+    // Prevent any default behavior
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     // Show the newsletter content inline by setting it as selected
     this.selectedNewsletter = post;
+    
+    console.log('Selected newsletter set:', this.selectedNewsletter?.title.rendered);
     
     // Scroll to the top of the page to show the selected newsletter
     window.scrollTo({ top: 0, behavior: 'smooth' });
