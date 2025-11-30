@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { WordPressService } from '../../services/wordpress.service';
 import { WordPressPost } from '../../interfaces';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-trestle-board',
@@ -81,8 +82,29 @@ export class TrestleBoardComponent implements OnInit {
   }
 
   downloadNewsletter(post: WordPressPost): void {
-    // Open the WordPress post in a new tab
-    window.open(post.link, '_blank');
+    // Construct the correct WordPress URL using the actual WordPress host
+    // The post.link might have the old domain, so we need to rebuild it
+    const wpBaseUrl = environment.wordpress.baseUrl;
+    
+    // Extract the slug from the post link or use the post slug if available
+    let postUrl: string;
+    
+    if (post.slug) {
+      // Build URL using slug and WordPress base URL
+      postUrl = `${wpBaseUrl}/${post.slug}/`;
+    } else {
+      // Fallback: try to extract path from the link and append to base URL
+      try {
+        const url = new URL(post.link);
+        postUrl = `${wpBaseUrl}${url.pathname}`;
+      } catch {
+        // If URL parsing fails, just use the original link
+        postUrl = post.link;
+      }
+    }
+    
+    console.log(`Opening newsletter: ${postUrl}`);
+    window.open(postUrl, '_blank');
   }
 }
 
