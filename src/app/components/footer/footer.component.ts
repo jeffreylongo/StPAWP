@@ -32,7 +32,8 @@ export class FooterComponent implements OnInit {
     { label: 'Grand Lodge of Florida', url: 'https://grandlodgefl.com' },
     { label: 'Scottish Rite', url: 'https://scottishrite.org' },
     { label: 'York Rite', url: 'https://yorkrite.org' },
-    { label: 'Shrine', url: 'https://shrinersinternational.org' }
+    { label: 'Shrine', url: 'https://shrinersinternational.org' },
+    { label: 'Grottoes International', url: 'https://scgrotto.org' }
   ];
 
   legalLinks: NavigationItem[] = [

@@ -539,10 +539,11 @@ export class CalendarService {
    */
   private parseIcsData(icsContent: string, source: CalendarSource): CalendarEvent[] {
     try {
-      console.log(`Parsing ICS data from ${source.name}...`);
+      console.log(`🔍 Parsing ICS data from ${source.name}...`);
+      console.log(`📄 ICS content length: ${icsContent?.length || 0} characters`);
       
       if (!icsContent || typeof icsContent !== 'string') {
-        console.error('Invalid ICS content received');
+        console.error('❌ Invalid ICS content received');
         return [];
       }
 
@@ -550,6 +551,7 @@ export class CalendarService {
       const lines = icsContent.split(/\r?\n/);
       let currentEvent: any = null;
       let isInEvent = false;
+      let totalEventsInFile = 0;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
@@ -557,6 +559,7 @@ export class CalendarService {
         if (line === 'BEGIN:VEVENT') {
           isInEvent = true;
           currentEvent = {};
+          totalEventsInFile++;
           continue;
         }
         
@@ -564,7 +567,15 @@ export class CalendarService {
           if (currentEvent && currentEvent.DTSTART && currentEvent.SUMMARY) {
             const calendarEvent = this.convertIcsEventToCalendarEvent(currentEvent, source);
             if (calendarEvent) {
+              // Debug SMMA events specifically
+              if (source.id === 2) {
+                console.log(`🤝 SMMA event parsed: "${calendarEvent.title}" on ${calendarEvent.date}`);
+              }
               events.push(calendarEvent);
+            }
+          } else {
+            if (source.id === 2) {
+              console.log(`⚠️ SMMA event skipped - missing DTSTART or SUMMARY:`, currentEvent);
             }
           }
           isInEvent = false;
@@ -587,7 +598,17 @@ export class CalendarService {
         }
       }
 
-      console.log(`Parsed ${events.length} events from ${source.name}`);
+      console.log(`✅ Parsed ${events.length} valid events from ${source.name} (total events in file: ${totalEventsInFile})`);
+      
+      // Debug SMMA parsing specifically
+      if (source.id === 2) {
+        console.log(`🤝 SMMA ICS parsing: ${events.length} valid events from ${totalEventsInFile} total events`);
+        if (events.length === 0) {
+          console.log(`⚠️ SMMA ICS content preview:`, icsContent.substring(0, 500));
+        } else {
+          console.log(`🤝 SMMA events summary:`, events.map(e => `${e.title} (${e.date})`));
+        }
+      }
       
       // Debug York Rite parsing specifically
       if (source.id === 4) {
@@ -657,8 +678,6 @@ export class CalendarService {
   private parseIcsDateTime(dateTimeString: string): Date | null {
     try {
       if (!dateTimeString) return null;
-      
-      console.log('Parsing date:', dateTimeString);
       
       // Handle timezone format: DTSTART;TZID=America/New_York:20080728T183000
       if (dateTimeString.includes(';TZID=')) {

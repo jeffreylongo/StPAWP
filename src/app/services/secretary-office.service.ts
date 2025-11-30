@@ -3,6 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { WordPressPage } from '../interfaces/wordpress.interface';
+import { 
+  getLastMeetingDate, 
+  getNextMeetingDate, 
+  formatMeetingDate, 
+  formatNextMeeting 
+} from '../utils/meeting-dates.util';
 
 export interface SecretaryUpdate {
   id: number;
@@ -36,43 +42,47 @@ export class SecretaryOfficeService {
   private readonly baseUrl = 'https://stpetelodge139.org/wp-json/wp/v2';
   
   // Fallback data if WordPress is unavailable
-  private fallbackData: SecretaryOfficeData = {
-    lastMeeting: {
-      id: 1,
-      title: 'May Stated Communication',
-      content: 'Our last Stated Communication featured important business and fellowship. The Craft approved the By-law change to Section 1.01 which corrects the Lodge address.',
-      date: '2025-05-20',
-      type: 'meeting-summary',
-      metadata: {
-        meeting_date: 'May 20, 2025',
-        highlights: [
-          'Approved By-law change to Section 1.01 correcting the Lodge address',
-          'Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course',
-          '40 Year Longevity Award presented to Worshipful John Gunter',
-          '55 Year Longevity Award presented to Worshipful John Gicking'
-        ]
-      }
-    },
-    nextMeeting: {
-      id: 2,
-      title: 'June Stated Communication',
-      content: 'Next Stated Communication: Tuesday, June 17th at 7:30 pm. EA Catechism Proficiency from Brothers Raymond Wilson and Malek Chevalier. Among other business, we will be receiving the Entered Apprentice Catechism Proficiency.',
-      date: '2025-06-17',
-      type: 'upcoming',
-      metadata: {
-        next_meeting: 'Tuesday, June 17th - 7:30 PM',
-        next_meeting_highlights: [
-          'Entered Apprentice Catechism Proficiency from Brother Raymond Wilson',
-          'Entered Apprentice Catechism Proficiency from Brother Malek Chevalier'
-        ]
-      }
-    },
-    birthdays: {
-      id: 3,
-      title: 'June Birthdays',
-      content: '22 Brothers celebrating birthdays this month. We wish each and every Brother a Very Happy Birthday!',
-      date: '2025-06-01',
-      type: 'birthdays',
+  private get fallbackData(): SecretaryOfficeData {
+    const lastMeeting = getLastMeetingDate();
+    const nextMeeting = getNextMeetingDate();
+    
+    return {
+      lastMeeting: {
+        id: 1,
+        title: `${lastMeeting.toLocaleDateString('en-US', { month: 'long' })} Stated Communication`,
+        content: 'Our last Stated Communication featured important business and fellowship. The Craft approved the By-law change to Section 1.01 which corrects the Lodge address.',
+        date: lastMeeting.toISOString().split('T')[0],
+        type: 'meeting-summary',
+        metadata: {
+          meeting_date: formatMeetingDate(lastMeeting),
+          highlights: [
+            'Approved By-law change to Section 1.01 correcting the Lodge address',
+            'Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course',
+            '40 Year Longevity Award presented to Worshipful John Gunter',
+            '55 Year Longevity Award presented to Worshipful John Gicking'
+          ]
+        }
+      },
+      nextMeeting: {
+        id: 2,
+        title: `${nextMeeting.toLocaleDateString('en-US', { month: 'long' })} Stated Communication`,
+        content: `Next Stated Communication: ${formatNextMeeting(nextMeeting)}. EA Catechism Proficiency from Brothers Raymond Wilson and Malek Chevalier. Among other business, we will be receiving the Entered Apprentice Catechism Proficiency.`,
+        date: nextMeeting.toISOString().split('T')[0],
+        type: 'upcoming',
+        metadata: {
+          next_meeting: formatNextMeeting(nextMeeting),
+          next_meeting_highlights: [
+            'Entered Apprentice Catechism Proficiency from Brother Raymond Wilson',
+            'Entered Apprentice Catechism Proficiency from Brother Malek Chevalier'
+          ]
+        }
+      },
+      birthdays: {
+        id: 3,
+        title: `${nextMeeting.toLocaleDateString('en-US', { month: 'long' })} Birthdays`,
+        content: '22 Brothers celebrating birthdays this month. We wish each and every Brother a Very Happy Birthday!',
+        date: new Date(nextMeeting.getFullYear(), nextMeeting.getMonth(), 1).toISOString().split('T')[0],
+        type: 'birthdays',
       metadata: {
         birthday_brothers: [
           { name: 'Worshipful George Rovert Gaston, Jr', date: '3rd' },
@@ -93,14 +103,14 @@ export class SecretaryOfficeService {
           { name: 'Brother Kenneth J Zeiler', date: '23rd' }
         ]
       }
-    },
-    anniversaries: {
-      id: 4,
-      title: 'June Anniversaries',
-      content: '18 Brothers celebrating Masonic anniversaries in June. Brothers, if you were Raised 67 years ago or 9 years ago, or anywhere in between, your Lodge congratulates you on your longevity and thanks you for your continuous support!',
-      date: '2025-06-01',
-      type: 'anniversaries',
-      metadata: {
+      },
+      anniversaries: {
+        id: 4,
+        title: `${nextMeeting.toLocaleDateString('en-US', { month: 'long' })} Anniversaries`,
+        content: `18 Brothers celebrating Masonic anniversaries in ${nextMeeting.toLocaleDateString('en-US', { month: 'long' })}. Brothers, if you were Raised 67 years ago or 9 years ago, or anywhere in between, your Lodge congratulates you on your longevity and thanks you for your continuous support!`,
+        date: new Date(nextMeeting.getFullYear(), nextMeeting.getMonth(), 1).toISOString().split('T')[0],
+        type: 'anniversaries',
+        metadata: {
         anniversary_brothers: [
           { name: 'Worshipful John Gunter', date: 'June 1985', years: 40 },
           { name: 'Worshipful John Gicking', date: 'June 1970', years: 55 },
@@ -122,25 +132,26 @@ export class SecretaryOfficeService {
           { name: 'Worshipful Steven Martinez', date: 'June 2020', years: 5 }
         ]
       }
-    },
-    upcomingEvents: {
-      id: 5,
-      title: 'What You Can Look Forward to in the Coming Months',
-      content: 'The return of the Trestle Board, Updates on the progress of the new building, Access to countless Masonic books and papers in our virtual library, Learning how to become a member of our new Funeral Team, Attend classes to become a Masonic Mentor and/or Catechism coach, And much more!',
-      date: '2025-06-01',
-      type: 'upcoming',
-      metadata: {
-        highlights: [
-          'The return of the Trestle Board',
-          'Updates on the progress of the new building',
-          'Access to countless Masonic books and papers in our virtual library',
-          'Learning how to become a member of our new Funeral Team',
-          'Attend classes to become a Masonic Mentor and/or Catechism coach',
-          'And much more!'
-        ]
+      },
+      upcomingEvents: {
+        id: 5,
+        title: 'What You Can Look Forward to in the Coming Months',
+        content: 'The return of the Trestle Board, Updates on the progress of the new building, Access to countless Masonic books and papers in our virtual library, Learning how to become a member of our new Funeral Team, Attend classes to become a Masonic Mentor and/or Catechism coach, And much more!',
+        date: new Date(nextMeeting.getFullYear(), nextMeeting.getMonth(), 1).toISOString().split('T')[0],
+        type: 'upcoming',
+        metadata: {
+          highlights: [
+            'The return of the Trestle Board',
+            'Updates on the progress of the new building',
+            'Access to countless Masonic books and papers in our virtual library',
+            'Learning how to become a member of our new Funeral Team',
+            'Attend classes to become a Masonic Mentor and/or Catechism coach',
+            'And much more!'
+          ]
+        }
       }
-    }
-  };
+    };
+  }
 
   constructor(private http: HttpClient) {}
 

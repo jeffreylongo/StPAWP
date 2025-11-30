@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMMA Calendar Test</title>
+</head>
+<body>
+    <h1>SMMA Calendar ICS Test</h1>
+    <button onclick="fetchSMMA()">Fetch SMMA Calendar</button>
+    <div id="output"></div>
+
+    <script>
+        async function fetchSMMA() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<p>Fetching...</p>';
+
+            const proxies = [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?',
+                'https://api.codetabs.com/v1/proxy?quest='
+            ];
+
+            const smmaUrl = 'https://localendar.com/public/MastersAndWardens.ics';
+
+            for (let proxy of proxies) {
+                try {
+                    output.innerHTML += `<p>Trying ${proxy}...</p>`;
+                    const response = await fetch(proxy + encodeURIComponent(smmaUrl));
+                    const text = await response.text();
+                    
+                    output.innerHTML += `<p>✅ Success! Received ${text.length} characters</p>`;
+                    
+                    // Parse events
+                    const events = parseICS(text);
+                    output.innerHTML += `<p>📅 Found ${events.length} total events</p>`;
+                    
+                    // Filter for 2025/2026
+                    const recent = events.filter(e => {
+                        const year = parseInt(e.start.substring(0, 4));
+                        return year >= 2025;
+                    });
+                    
+                    output.innerHTML += `<p>🎯 Found ${recent.length} events in 2025+:</p>`;
+                    output.innerHTML += '<ul>';
+                    recent.forEach(e => {
+                        output.innerHTML += `<li>${e.summary} - ${e.start}</li>`;
+                    });
+                    output.innerHTML += '</ul>';
+                    
+                    break;
+                } catch (error) {
+                    output.innerHTML += `<p>❌ Failed: ${error.message}</p>`;
+                }
+            }
+        }
+
+        function parseICS(icsContent) {
+            const events = [];
+            const lines = icsContent.split(/\r?\n/);
+            let currentEvent = null;
+            let isInEvent = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line === 'BEGIN:VEVENT') {
+                    isInEvent = true;
+                    currentEvent = {};
+                    continue;
+                }
+                
+                if (line === 'END:VEVENT' && isInEvent) {
+                    if (currentEvent && currentEvent.start && currentEvent.summary) {
+                        events.push(currentEvent);
+                    }
+                    isInEvent = false;
+                    currentEvent = null;
+                    continue;
+                }
+                
+                if (isInEvent && line.includes(':')) {
+                    const colonIndex = line.indexOf(':');
+                    const property = line.substring(0, colonIndex);
+                    const value = line.substring(colonIndex + 1);
+                    
+                    if (property.startsWith('DTSTART')) {
+                        currentEvent.start = value;
+                    } else if (property === 'SUMMARY') {
+                        currentEvent.summary = value;
+                    }
+                }
+            }
+
+            return events;
+        }
+    </script>
+</body>
+</html>
+
