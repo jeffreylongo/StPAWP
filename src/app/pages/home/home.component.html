@@ -256,7 +256,7 @@
       <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-4 rounded-lg shadow-md">
         <div class="flex items-center mb-3">
           <i class="fas fa-birthday-cake text-primary-gold text-xl mr-2"></i>
-          <h4 class="font-cinzel text-base font-bold">June Birthdays</h4>
+          <h4 class="font-cinzel text-base font-bold">{{ data.birthdays.title }}</h4>
         </div>
         <div class="text-xs">
           <p class="mb-2">{{ data.birthdays.content | stripHtml | slice:0:60 }}{{ (data.birthdays.content | stripHtml).length > 60 ? '...' : '' }}</p>
@@ -270,7 +270,7 @@
       <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-4 rounded-lg shadow-md">
         <div class="flex items-center mb-3">
           <i class="fas fa-medal text-primary-blue text-xl mr-2"></i>
-          <h4 class="font-cinzel text-base font-bold">Masonic Anniversaries</h4>
+          <h4 class="font-cinzel text-base font-bold">{{ data.anniversaries.title }}</h4>
         </div>
         <div class="text-xs">
           <p class="mb-2">{{ data.anniversaries.content | stripHtml | slice:0:60 }}{{ (data.anniversaries.content | stripHtml).length > 60 ? '...' : '' }}</p>
