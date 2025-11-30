@@ -20,6 +20,7 @@ export class TrestleBoardComponent implements OnInit {
   archivedNewsletters: WordPressPost[] = [];
   loading: boolean = true;
   error: string | null = null;
+  selectedNewsletter: WordPressPost | null = null;
 
   constructor(private wordpressService: WordPressService) {}
 
@@ -82,29 +83,15 @@ export class TrestleBoardComponent implements OnInit {
   }
 
   downloadNewsletter(post: WordPressPost): void {
-    // Construct the correct WordPress URL using the actual WordPress host
-    // The post.link might have the old domain, so we need to rebuild it
-    const wpBaseUrl = environment.wordpress.baseUrl;
+    // Show the newsletter content inline by setting it as selected
+    this.selectedNewsletter = post;
     
-    // Extract the slug from the post link or use the post slug if available
-    let postUrl: string;
-    
-    if (post.slug) {
-      // Build URL using slug and WordPress base URL
-      postUrl = `${wpBaseUrl}/${post.slug}/`;
-    } else {
-      // Fallback: try to extract path from the link and append to base URL
-      try {
-        const url = new URL(post.link);
-        postUrl = `${wpBaseUrl}${url.pathname}`;
-      } catch {
-        // If URL parsing fails, just use the original link
-        postUrl = post.link;
-      }
-    }
-    
-    console.log(`Opening newsletter: ${postUrl}`);
-    window.open(postUrl, '_blank');
+    // Scroll to the top of the page to show the selected newsletter
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  closeNewsletter(): void {
+    this.selectedNewsletter = null;
   }
 }
 

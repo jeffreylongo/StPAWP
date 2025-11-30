@@ -42,8 +42,33 @@
           </button>
         </div>
 
+        <!-- Selected Archived Newsletter (shown when user clicks archive item) -->
+        <div *ngIf="selectedNewsletter && !loading" class="space-y-8 mb-8">
+          <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker rounded-lg shadow-xl p-8 md:p-12 relative">
+            <!-- Close Button -->
+            <button 
+              (click)="closeNewsletter()"
+              class="absolute top-4 right-4 text-primary-blue-darker hover:text-white bg-white hover:bg-primary-blue rounded-full w-10 h-10 flex items-center justify-center transition-all shadow-md">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div class="flex items-center mb-6">
+              <i class="fas fa-newspaper text-primary-blue-darker text-4xl mr-4"></i>
+              <div>
+                <h3 class="text-3xl font-bold font-cinzel">{{ selectedNewsletter.title.rendered }}</h3>
+                <p class="text-primary-blue font-garamond italic">
+                  Published {{ selectedNewsletter.date | date: 'MMMM d, yyyy' }}
+                </p>
+              </div>
+            </div>
+            
+            <!-- WordPress Content -->
+            <div class="prose prose-lg max-w-none" [innerHTML]="selectedNewsletter.content.rendered"></div>
+          </div>
+        </div>
+
         <!-- All Current Month Newsletter Posts (stacked vertically) -->
-        <div *ngIf="currentMonthNewsletters.length > 0 && !loading" class="space-y-8">
+        <div *ngIf="currentMonthNewsletters.length > 0 && !loading && !selectedNewsletter" class="space-y-8">
           <div 
             *ngFor="let newsletter of currentMonthNewsletters; let i = index"
             class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12">
@@ -66,7 +91,7 @@
         </div>
 
         <!-- No Content State (when no WordPress posts exist for current month) -->
-        <div *ngIf="currentMonthNewsletters.length === 0 && !loading && !error" class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12">
+        <div *ngIf="currentMonthNewsletters.length === 0 && !loading && !error && !selectedNewsletter" class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12">
           <div class="flex items-center mb-6">
             <i class="fas fa-newspaper text-primary-gold text-4xl mr-4"></i>
             <div>
@@ -118,8 +143,8 @@
               <button 
                 (click)="downloadNewsletter(newsletter)"
                 class="w-full bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-bold py-2 px-4 rounded transition-all">
-                <i class="fas fa-external-link-alt mr-2"></i>
-                Read More
+                <i class="fas fa-book-open mr-2"></i>
+                Read Newsletter
               </button>
             </div>
           </div>
