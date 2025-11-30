@@ -38,8 +38,7 @@ export class TrestleBoardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading current month Trestle Boards:', err);
-        // Don't show error to user if WordPress isn't set up yet - just show empty state
-        this.currentMonthNewsletters = [];
+        this.error = 'Unable to load newsletter content. Please try again later.';
         this.loading = false;
       }
     });
@@ -60,8 +59,6 @@ export class TrestleBoardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading Trestle Board archive:', err);
-        // Silently fail - WordPress not set up yet
-        this.archivedNewsletters = [];
       }
     });
   }

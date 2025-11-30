@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { WordPressPost, WordPressPage, WordPressCategory, WordPressMedia, WordPressQueryParams } from '../interfaces';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WordPressService {
-  private readonly baseUrl = 'https://stpetelodge139.org/wp-json/wp/v2';
+  private readonly baseUrl = environment.wordpress.apiUrl;
 
   constructor(private http: HttpClient) {}
 

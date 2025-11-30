@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   wordpress: {
     baseUrl: 'https://stpetelodge139.org',
-    // After moving WordPress to /wp subdirectory
+    // WordPress is in /wp subdirectory
     apiUrl: 'https://stpetelodge139.org/wp/wp-json/wp/v2',
     woocommerceUrl: 'https://stpetelodge139.org/wp/wp-json/wc/v3'
   },
