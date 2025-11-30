@@ -305,7 +305,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Get events for a specific calendar source
    */
   getEventsForSource(sourceId: number): CalendarEvent[] {
-    return this.events.filter(event => event.calendarId === sourceId);
+    // Filter events for this source AND the current displayed month
+    const monthStart = startOfMonth(this.currentMonth);
+    const monthEnd = endOfMonth(this.currentMonth);
+    
+    return this.events.filter(event => {
+      if (event.calendarId !== sourceId) return false;
+      
+      const eventDate = new Date(event.date);
+      return eventDate >= monthStart && eventDate <= monthEnd;
+    });
   }
 
   /**
