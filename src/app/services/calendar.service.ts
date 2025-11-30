@@ -18,6 +18,7 @@ export class CalendarService {
   private eventsSubject = new BehaviorSubject<CalendarEvent[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private lastSyncSubject = new BehaviorSubject<Date | null>(null);
+  private initialized = false;
 
   public events$ = this.eventsSubject.asObservable();
   public loading$ = this.loadingSubject.asObservable();
@@ -66,6 +67,18 @@ export class CalendarService {
   ];
 
   constructor(private http: HttpClient) {
+    // Don't initialize calendar on service creation - wait until first request
+    // This prevents blocking the initial app load
+  }
+
+  /**
+   * Initialize calendar data - called on first access
+   */
+  private initializeIfNeeded(): void {
+    if (this.initialized) return;
+    
+    this.initialized = true;
+    
     // Show cached data IMMEDIATELY for instant UI, then sync in background
     const cachedData = this.loadCachedEvents();
     if (cachedData && cachedData.events.length > 0) {
@@ -124,6 +137,7 @@ export class CalendarService {
    * Get all calendar events
    */
   getEvents(): Observable<CalendarEvent[]> {
+    this.initializeIfNeeded();
     return this.events$;
   }
 
@@ -131,6 +145,7 @@ export class CalendarService {
    * Get events for a specific calendar
    */
   getEventsByCalendar(calendarId: number): Observable<CalendarEvent[]> {
+    this.initializeIfNeeded();
     return this.events$.pipe(
       map(events => events.filter(event => event.calendarId === calendarId))
     );
@@ -140,6 +155,7 @@ export class CalendarService {
    * Get upcoming events (next N days)
    */
   getUpcomingEvents(days: number = 180): Observable<CalendarEvent[]> {
+    this.initializeIfNeeded();
     // Start from beginning of today and look ahead specified days (default 6 months)
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of day

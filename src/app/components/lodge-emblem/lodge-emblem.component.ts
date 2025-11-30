@@ -11,7 +11,8 @@ import { Component, Input } from '@angular/core';
         [class]="imageClass"
         [style.width]="width"
         [style.height]="height"
-        loading="lazy">
+        [attr.loading]="loading"
+        [attr.fetchpriority]="fetchpriority">
     </div>
   `,
   styles: [`
@@ -46,4 +47,6 @@ export class LodgeEmblemComponent {
   @Input() imageSrc: string = '/assets/coa.png';
   @Input() altText: string = 'St. Petersburg Lodge No. 139 F&AM Coat of Arms';
   @Input() imageClass: string = 'emblem-shadow emblem-hover';
+  @Input() loading: 'lazy' | 'eager' = 'lazy';
+  @Input() fetchpriority: 'high' | 'low' | 'auto' = 'auto';
 }
