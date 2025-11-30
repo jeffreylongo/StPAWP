@@ -9,6 +9,7 @@ import {
   formatMeetingDate, 
   formatNextMeeting 
 } from '../utils/meeting-dates.util';
+import { environment } from '../../environments/environment';
 
 export interface SecretaryUpdate {
   id: number;
@@ -39,7 +40,7 @@ export interface SecretaryOfficeData {
   providedIn: 'root'
 })
 export class SecretaryOfficeService {
-  private readonly baseUrl = 'https://stpetelodge139.org/wp-json/wp/v2';
+  private readonly baseUrl = environment.wordpress.apiUrl;
   
   // Fallback data if WordPress is unavailable
   private get fallbackData(): SecretaryOfficeData {
