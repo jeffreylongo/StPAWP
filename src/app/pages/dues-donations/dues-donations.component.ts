@@ -37,7 +37,7 @@ import { RouterModule } from '@angular/router';
           </p>
           <!-- TEMPORARILY COMMENTED OUT
           <div class="text-center">
-            <a href="https://stpetelodge139.org/cart/" 
+            <a href="https://y91.b3b.myftpupload.com/cart/" 
                target="_blank"
                class="bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold px-8 py-3 rounded-lg transition inline-flex items-center text-lg">
               <i class="fas fa-shopping-cart mr-3"></i>
@@ -76,7 +76,7 @@ import { RouterModule } from '@angular/router';
           <-- 2025 Dues with Contribution --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
-              <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png" 
+              <img src="https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/2025-Dues-300x300.png" 
                    alt="2025 Dues with Contribution" 
                    class="w-full h-48 object-cover">
               <div class="absolute top-2 right-2">
@@ -92,7 +92,7 @@ import { RouterModule } from '@angular/router';
                 Pay your 2025 Dues...This selection includes the voluntary "Let your pennies make good sense" 
                 contribution to the Masonic Home.
               </p>
-              <a href="https://stpetelodge139.org/product/2025-dues-let-your-pennies-make-good-sense/" 
+              <a href="https://y91.b3b.myftpupload.com/product/2025-dues-let-your-pennies-make-good-sense/" 
                  target="_blank"
                  class="block w-full bg-primary-blue hover:bg-primary-blue-dark text-white text-center py-2 rounded transition">
                 View Details
@@ -103,7 +103,7 @@ import { RouterModule } from '@angular/router';
           <-- 2025 Dues Only --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
-              <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-1-300x300.png" 
+              <img src="https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/2025-Dues-1-300x300.png" 
                    alt="2025 Dues Only" 
                    class="w-full h-48 object-cover">
             </div>
@@ -114,7 +114,7 @@ import { RouterModule } from '@angular/router';
                 Pay your 2025 Dues...This selection does NOT include the voluntary "Let your pennies make good sense" 
                 contribution to the Masonic Home.
               </p>
-              <a href="https://stpetelodge139.org/product/2025-dues-only-no-contribution/" 
+              <a href="https://y91.b3b.myftpupload.com/product/2025-dues-only-no-contribution/" 
                  target="_blank"
                  class="block w-full bg-primary-blue hover:bg-primary-blue-dark text-white text-center py-2 rounded transition">
                 View Details
@@ -125,7 +125,7 @@ import { RouterModule } from '@angular/router';
           <-- Voluntary Contribution --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
-              <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/Pennies-300x300.png" 
+              <img src="https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/Pennies-300x300.png" 
                    alt="Voluntary Contribution" 
                    class="w-full h-48 object-cover">
             </div>
@@ -135,7 +135,7 @@ import { RouterModule } from '@angular/router';
               <p class="text-gray-600 text-sm mb-4">
                 Voluntary "Let your pennies make good sense" contribution to the Masonic Home.
               </p>
-              <a href="https://stpetelodge139.org/product/let-your-pennies-make-good-sense-voluntary-contribution/" 
+              <a href="https://y91.b3b.myftpupload.com/product/let-your-pennies-make-good-sense-voluntary-contribution/" 
                  target="_blank"
                  class="block w-full bg-primary-blue hover:bg-primary-blue-dark text-white text-center py-2 rounded transition">
                 View Details
@@ -146,7 +146,7 @@ import { RouterModule } from '@angular/router';
           <-- Prepay Meal Plan --
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div class="relative">
-              <img src="https://stpetelodge139.org/wp-content/uploads/2025/04/meals-300x300.png" 
+              <img src="https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/meals-300x300.png" 
                    alt="Prepay Meal Plan" 
                    class="w-full h-48 object-cover">
               <div class="absolute top-2 right-2">
@@ -162,7 +162,7 @@ import { RouterModule } from '@angular/router';
                 No cash? No problem. Prepay your meals for the full year. Includes ALL dinners. 
                 (Stated, Called, Degrees, etc)
               </p>
-              <a href="https://stpetelodge139.org/product/prepay-meal-plan/" 
+              <a href="https://y91.b3b.myftpupload.com/product/prepay-meal-plan/" 
                  target="_blank"
                  class="block w-full bg-primary-blue hover:bg-primary-blue-dark text-white text-center py-2 rounded transition">
                 View Details

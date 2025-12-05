@@ -51,7 +51,7 @@ export class WooCommerceService {
       purchasable: true,
       images: [{
         id: 1,
-        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        src: 'https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: '2025 Dues with Contribution',
         alt: '2025 Dues with Contribution',
         date_created: new Date().toISOString(),
@@ -78,7 +78,7 @@ export class WooCommerceService {
       purchasable: true,
       images: [{
         id: 2,
-        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        src: 'https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: '2025 Dues Only',
         alt: '2025 Dues Only',
         date_created: new Date().toISOString(),
@@ -105,7 +105,7 @@ export class WooCommerceService {
       purchasable: true,
       images: [{
         id: 3,
-        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        src: 'https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: 'Voluntary Contribution',
         alt: 'Voluntary Contribution',
         date_created: new Date().toISOString(),
@@ -132,7 +132,7 @@ export class WooCommerceService {
       purchasable: true,
       images: [{
         id: 4,
-        src: 'https://stpetelodge139.org/wp-content/uploads/2025/04/2025-Dues-300x300.png',
+        src: 'https://y91.b3b.myftpupload.com/wp-content/uploads/2025/04/2025-Dues-300x300.png',
         name: 'Prepay Meal Plan',
         alt: 'Prepay Meal Plan',
         date_created: new Date().toISOString(),
@@ -273,7 +273,7 @@ export class WooCommerceService {
 
   // Add to cart (redirects to WooCommerce cart)
   addToCart(productId: number, quantity: number = 1): void {
-    const cartUrl = `https://stpetelodge139.org/cart/?add-to-cart=${productId}&quantity=${quantity}`;
+    const cartUrl = `https://y91.b3b.myftpupload.com/cart/?add-to-cart=${productId}&quantity=${quantity}`;
     window.open(cartUrl, '_blank');
   }
 
@@ -290,7 +290,7 @@ export class WooCommerceService {
 
   // Checkout (redirects to WooCommerce checkout)
   goToCheckout(): void {
-    window.open('https://stpetelodge139.org/checkout/', '_blank');
+    window.open('https://y91.b3b.myftpupload.com/checkout/', '_blank');
   }
 
   // Get featured products

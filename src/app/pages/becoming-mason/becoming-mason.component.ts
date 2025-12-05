@@ -158,7 +158,7 @@ import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/mas
               <p class="text-gray-600 mb-4">
                 Complete and submit your petition for membership to begin the process.
               </p>
-              <a href="http://stpetelodge139.org/wp-content/uploads/2023/11/On-Line-Petition-For-Membership.pdf" 
+              <a href="https://y91.b3b.myftpupload.com/wp-content/uploads/2023/11/On-Line-Petition-For-Membership.pdf" 
                  target="_blank"
                  rel="noopener noreferrer"
                  class="bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold px-6 py-3 rounded-lg transition inline-flex items-center">

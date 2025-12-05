@@ -1,8 +1,8 @@
 # WordPress API proxying
-/wp-json/*  https://stpetelodge139.org/wp-json/:splat  200!
-/wp-content/*  https://stpetelodge139.org/wp-content/:splat  200!
-/wp-includes/*  https://stpetelodge139.org/wp-includes/:splat  200!
-/wp-admin/*  https://stpetelodge139.org/wp-admin/:splat  200!
+/wp-json/*  https://y91.b3b.myftpupload.com/wp-json/:splat  200!
+/wp-content/*  https://y91.b3b.myftpupload.com/wp-content/:splat  200!
+/wp-includes/*  https://y91.b3b.myftpupload.com/wp-includes/:splat  200!
+/wp-admin/*  https://y91.b3b.myftpupload.com/wp-admin/:splat  200!
 
 # SPA fallback for Angular routing
 /*  /index.html  200
