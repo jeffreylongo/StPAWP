@@ -164,26 +164,13 @@ export class WordPressService {
     return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params: httpParams });
   }
 
-  // Get all posts from current month
+  // Get the most recent Trestle Board posts (featured/current)
   getCurrentMonthTrestleBoards(): Observable<WordPressPost[]> {
     const params = new HttpParams()
-      .set('per_page', '50')
+      .set('per_page', '5')  // Get the 5 most recent posts for featured section
       .set('orderby', 'date')
       .set('order', 'desc');
     
-    return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params }).pipe(
-      map(posts => {
-        // Filter posts to only include those from current month/year
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-        
-        return posts.filter(post => {
-          const postDate = new Date(post.date);
-          return postDate.getMonth() === currentMonth && 
-                 postDate.getFullYear() === currentYear;
-        });
-      })
-    );
+    return this.http.get<WordPressPost[]>(`${this.baseUrl}/posts`, { params });
   }
 }

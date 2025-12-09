@@ -639,6 +639,30 @@ export class CalendarService {
       return throwError(() => new Error('All CORS proxies failed'));
     }
 
+    // Use allorigins.win /get endpoint which returns JSON with base64 content
+    if (proxies[proxyIndex].includes('allorigins.win')) {
+      const proxiedUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+      console.log(`📡 Trying allorigins.win /get endpoint for ${source.name}...`);
+      
+      return this.http.get<{contents: string}>(proxiedUrl).pipe(
+        map(response => {
+          // The content may be base64 encoded data URI or plain text
+          if (response.contents.startsWith('data:')) {
+            // Extract base64 content and decode
+            const base64Match = response.contents.match(/base64,(.+)/);
+            if (base64Match) {
+              return atob(base64Match[1]);
+            }
+          }
+          return response.contents;
+        }),
+        catchError(error => {
+          console.warn(`⚠️ allorigins.win /get failed for ${source.name}, trying next proxy...`);
+          return this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1);
+        })
+      );
+    }
+
     const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
     console.log(`📡 Trying proxy ${proxyIndex + 1}/${proxies.length}: ${proxies[proxyIndex]}`);
 

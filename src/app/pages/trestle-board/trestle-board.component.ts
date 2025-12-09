@@ -31,35 +31,24 @@ export class TrestleBoardComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    // Load all posts from current month
-    this.wordpressService.getCurrentMonthTrestleBoards().subscribe({
+    // Load the most recent posts - first one is featured, rest go to archive
+    this.wordpressService.getTrestleBoardPosts({ per_page: 20 }).subscribe({
       next: (posts) => {
-        this.currentMonthNewsletters = posts;
+        if (posts.length > 0) {
+          // Most recent post goes to featured section
+          this.currentMonthNewsletters = [posts[0]];
+          // Rest go to archive
+          this.archivedNewsletters = posts.slice(1, 13); // Up to 12 archived posts
+        } else {
+          this.currentMonthNewsletters = [];
+          this.archivedNewsletters = [];
+        }
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading current month Trestle Boards:', err);
+        console.error('Error loading Trestle Boards:', err);
         this.error = 'Unable to load newsletter content. Please try again later.';
         this.loading = false;
-      }
-    });
-
-    // Load all posts for archive (will filter out current month posts in the archive section)
-    this.wordpressService.getTrestleBoardPosts({ per_page: 50 }).subscribe({
-      next: (posts) => {
-        // Filter out posts from current month - only show older posts in archive
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-        
-        this.archivedNewsletters = posts.filter(post => {
-          const postDate = new Date(post.date);
-          return !(postDate.getMonth() === currentMonth && 
-                   postDate.getFullYear() === currentYear);
-        }).slice(0, 12); // Show up to 12 archived posts
-      },
-      error: (err) => {
-        console.error('Error loading Trestle Board archive:', err);
       }
     });
   }
