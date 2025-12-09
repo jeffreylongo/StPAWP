@@ -594,16 +594,22 @@ export class CalendarService {
       return this.fetchMultipleMonthsFromSource(source);
     }
 
-    // Try multiple CORS proxies for better reliability
-    const proxies = [
-      'https://api.allorigins.win/raw?url=',
-      'https://corsproxy.io/?',
-      'https://api.codetabs.com/v1/proxy?quest='
-    ];
-    
     console.log(`🌐 Fetching ICS data from ${source.name}...`);
 
-    return this.fetchWithProxyFallback(source.url, proxies, source).pipe(
+    // Try direct fetch first (Google Calendar supports CORS for public calendars)
+    return this.http.get(source.url, { responseType: 'text' }).pipe(
+      catchError(directError => {
+        console.log(`⚠️ Direct fetch failed for ${source.name}, trying proxies...`);
+        
+        // Fall back to CORS proxies
+        const proxies = [
+          'https://api.allorigins.win/get?url=',  // Returns JSON with base64
+          'https://corsproxy.io/?',
+          'https://api.codetabs.com/v1/proxy?quest='
+        ];
+        
+        return this.fetchWithProxyFallback(source.url, proxies, source);
+      }),
       tap(icsData => {
         console.log(`📄 Received ICS data from ${source.name} (${icsData?.length || 0} characters)`);
         
@@ -640,21 +646,21 @@ export class CalendarService {
     }
 
     // Use allorigins.win /get endpoint which returns JSON with base64 content
-    if (proxies[proxyIndex].includes('allorigins.win')) {
-      const proxiedUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    if (proxies[proxyIndex].includes('allorigins.win/get')) {
+      const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
       console.log(`📡 Trying allorigins.win /get endpoint for ${source.name}...`);
       
       return this.http.get<{contents: string}>(proxiedUrl).pipe(
         map(response => {
           // The content may be base64 encoded data URI or plain text
-          if (response.contents.startsWith('data:')) {
+          if (response.contents && response.contents.startsWith('data:')) {
             // Extract base64 content and decode
             const base64Match = response.contents.match(/base64,(.+)/);
             if (base64Match) {
               return atob(base64Match[1]);
             }
           }
-          return response.contents;
+          return response.contents || '';
         }),
         catchError(error => {
           console.warn(`⚠️ allorigins.win /get failed for ${source.name}, trying next proxy...`);
