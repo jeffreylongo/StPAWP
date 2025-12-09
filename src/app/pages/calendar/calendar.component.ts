@@ -93,11 +93,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.calendarService.events$
       .pipe(takeUntil(this.destroy$))
       .subscribe(events => {
-        console.log('Calendar component received events:', events.length);
-        console.log('Lodge events (calendarId=1):', events.filter(e => e.calendarId === 1).length);
-        console.log('SMMA events (calendarId=2):', events.filter(e => e.calendarId === 2).length);
-        console.log('AASR events (calendarId=3):', events.filter(e => e.calendarId === 3).length);
-        console.log('York Rite events (calendarId=4):', events.filter(e => e.calendarId === 4).length);
+        console.log('📅 Calendar component received events:', events.length);
+        console.log('  🏛️ Lodge (id=1):', events.filter(e => e.calendarId === 1).length);
+        console.log('  🤝 SMMA (id=2):', events.filter(e => e.calendarId === 2).length);
+        console.log('  🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR (id=3):', events.filter(e => e.calendarId === 3).length);
+        console.log('  ⚜️ York Rite (id=4):', events.filter(e => e.calendarId === 4).length);
+        
+        // Debug: Show AASR events dates
+        const aasrEvents = events.filter(e => e.calendarId === 3);
+        if (aasrEvents.length > 0) {
+          console.log('  🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR event dates:', aasrEvents.slice(0, 5).map(e => `${e.title} - ${new Date(e.date).toLocaleDateString()}`));
+        }
+        
         this.events = events;
         this.generateCalendarDays();
       });
@@ -314,29 +321,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       
       const eventDate = new Date(event.date);
       return eventDate >= monthStart && eventDate <= monthEnd;
-    });
-  }
-
-  /**
-   * Force York Rite calendar sync
-   * This is called on component initialization to ensure York Rite events are loaded
-   */
-  forceYorkRiteSync(): void {
-    this.calendarService.forceYorkRiteSync();
-  }
-
-  /**
-   * Clear cache and resync all calendars
-   */
-  clearCacheAndResync(): void {
-    this.calendarService.clearCacheAndResync().subscribe({
-      next: (result) => {
-        console.log('✅ Cache cleared and resynced:', result);
-        this.loadUpcomingEvents();
-      },
-      error: (error) => {
-        console.error('❌ Cache clear failed:', error);
-      }
     });
   }
 

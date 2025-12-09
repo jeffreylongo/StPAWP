@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of, from, combineLatest, throwError } from 'rxjs';
-import { map, catchError, switchMap, tap, retry, retryWhen, delay, take, concat } from 'rxjs/operators';
-import { format, parseISO, isAfter, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
-import { CalendarEvent, CalendarSource, CalendarSyncResult, ICalendarEvent } from '../interfaces';
+import { Observable, BehaviorSubject, of, combineLatest, throwError } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
+import { format, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../interfaces';
 
 export interface EventStorage {
   events: CalendarEvent[];
@@ -24,13 +24,10 @@ export class CalendarService {
   public loading$ = this.loadingSubject.asObservable();
   public lastSync$ = this.lastSyncSubject.asObservable();
 
-  // Event storage for caching - optimized for monthly loading
   private readonly STORAGE_KEY = 'stpete_lodge_calendar_events';
-  private readonly CACHE_DURATION_HOURS = 12; // Cache for 12 hours
-  private readonly INITIAL_LOAD_MONTHS = 2; // Load only 2 months initially (current + next)
-  private loadedMonths = new Set<string>(); // Track which months have been loaded
+  private readonly CACHE_DURATION_HOURS = 12;
 
-  // Calendar sources for St. Petersburg Lodge
+  // Calendar sources
   private calendarSources: CalendarSource[] = [
     {
       id: 1,
@@ -55,7 +52,7 @@ export class CalendarService {
       isActive: true,
       color: '#8B4513',
       description: 'Ancient Accepted Scottish Rite - Valley of Tampa events',
-      requiresMultipleMonths: true // Flag to indicate this source needs multiple month fetches
+      requiresMultipleMonths: true
     },
     {
       id: 4,
@@ -67,221 +64,79 @@ export class CalendarService {
     }
   ];
 
-  constructor(private http: HttpClient) {
-    // Don't initialize calendar on service creation - wait until first request
-    // This prevents blocking the initial app load
-  }
+  constructor(private http: HttpClient) {}
 
   /**
-   * Initialize calendar data - called on first access
-   * Now only loads 2 months of events (current + next month)
+   * Initialize calendar - called on first access
    */
   private initializeIfNeeded(): void {
     if (this.initialized) return;
     
     this.initialized = true;
+    this.loadingSubject.next(true);
     
-    // Show cached data IMMEDIATELY for instant UI, then sync in background
-    const cachedData = this.loadCachedEvents();
-    if (cachedData && cachedData.events.length > 0) {
-      console.log(`⚡ Instantly showing ${cachedData.events.length} cached events from ${cachedData.lastSync}`);
-      
-      // IMMEDIATELY show cached data - don't wait for validation
-      this.eventsSubject.next(cachedData.events);
-      this.lastSyncSubject.next(cachedData.lastSync);
-      
-      // Mark cached months as loaded to avoid re-fetching
-      cachedData.events.forEach(event => {
-        const eventDate = new Date(event.date);
-        const monthKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}`;
-        this.loadedMonths.add(monthKey);
-      });
-      
-      console.log('✅ Using cached data, will load fresh data on-demand');
-    } else {
-      // No cache - load only 2 months initially for fast startup
-      console.log(`🔄 No cache found, loading ${this.INITIAL_LOAD_MONTHS} months of events...`);
-      this.loadingSubject.next(true);
-      
-      const today = new Date();
-      this.loadMonthsRange(today, this.INITIAL_LOAD_MONTHS).subscribe({
-        next: (events) => {
-          console.log(`✅ Initial load complete: ${events.length} events for ${this.INITIAL_LOAD_MONTHS} months`);
-          this.eventsSubject.next(events);
-          this.lastSyncSubject.next(new Date());
-          this.saveEventsToCache(events);
-          this.loadingSubject.next(false);
-        },
-        error: (error) => {
-          console.error('❌ Initial load failed:', error);
-          this.loadEnhancedMockEvents();
-          this.loadingSubject.next(false);
-        }
-      });
-    }
+    console.log('📅 Initializing calendar - loading real events from all sources...');
+    
+    // Load all calendars from real sources
+    this.loadAllCalendars();
   }
 
   /**
-   * Load events for a range of months starting from a given date
+   * Load all calendars progressively - real events only
    */
-  private loadMonthsRange(startDate: Date, monthCount: number): Observable<CalendarEvent[]> {
-    const rangeStart = startOfMonth(startDate);
-    const rangeEnd = endOfMonth(addMonths(startDate, monthCount - 1));
-    
-    console.log(`📅 Loading ${monthCount} months: ${format(rangeStart, 'MMM yyyy')} to ${format(rangeEnd, 'MMM yyyy')}`);
-    
-    // Mark these months as loaded
-    for (let i = 0; i < monthCount; i++) {
-      const monthDate = addMonths(startDate, i);
-      const monthKey = `${monthDate.getFullYear()}-${monthDate.getMonth()}`;
-      this.loadedMonths.add(monthKey);
-    }
-    
-    return this.loadEventsForDateRange(rangeStart, rangeEnd);
-  }
-
-  /**
-   * Load events for a specific date range from all active sources
-   */
-  private loadEventsForDateRange(startDate: Date, endDate: Date): Observable<CalendarEvent[]> {
-    const activeSources = this.calendarSources.filter(source => source.isActive);
-    
-    console.log(`⚡ Loading events from ${activeSources.length} calendars for date range...`);
-    
-    if (activeSources.length === 0) {
-      return of([]);
-    }
-
-    const dateRange = { start: startDate, end: endDate };
-    let allEvents: CalendarEvent[] = [];
+  private loadAllCalendars(): void {
+    const allEvents: CalendarEvent[] = [];
     let loadedCount = 0;
+    const activeSources = this.calendarSources.filter(s => s.isActive);
+    const totalSources = activeSources.length;
+    
+    if (totalSources === 0) {
+      this.loadingSubject.next(false);
+      this.lastSyncSubject.next(new Date());
+      return;
+    }
 
-    // Fetch each calendar source with date filtering
-    activeSources.forEach((source) => {
-      this.fetchIcsFromSourceWithDateRange(source, dateRange).subscribe({
+    // Load Lodge calendar first (id=1), then others
+    const sortedSources = [...activeSources].sort((a, b) => a.id === 1 ? -1 : b.id === 1 ? 1 : 0);
+
+    sortedSources.forEach(source => {
+      this.fetchIcsFromSource(source).subscribe({
         next: (events) => {
           loadedCount++;
           
-          if (events && events.length > 0) {
-            console.log(`⚡ ${loadedCount}/${activeSources.length} - Loaded ${events.length} events from ${source.name}`);
-            allEvents = [...allEvents, ...events];
-            
+          if (events?.length > 0) {
+            console.log(`✅ ${loadedCount}/${totalSources} - Loaded ${events.length} events from ${source.name}`);
+            allEvents.push(...events);
             // Update UI progressively as each calendar loads
-            this.eventsSubject.next([...this.eventsSubject.value, ...events]);
+            this.eventsSubject.next([...allEvents]);
           } else {
-            console.log(`⚠️ ${loadedCount}/${activeSources.length} - No events in range from ${source.name}`);
+            console.log(`⚠️ ${loadedCount}/${totalSources} - No events from ${source.name}`);
+          }
+          
+          if (loadedCount >= totalSources) {
+            this.finishLoading(allEvents);
           }
         },
-        error: (error) => {
+        error: (err) => {
           loadedCount++;
-          console.error(`❌ ${loadedCount}/${activeSources.length} - Failed: ${source.name}`, error);
+          console.warn(`❌ ${loadedCount}/${totalSources} - Failed to load ${source.name}:`, err);
+          
+          if (loadedCount >= totalSources) {
+            this.finishLoading(allEvents);
+          }
         }
       });
     });
-
-    return of(allEvents);
   }
 
   /**
-   * Fetch ICS data from a source with date range filtering
+   * Finish loading and save cache
    */
-  private fetchIcsFromSourceWithDateRange(source: CalendarSource, dateRange: { start: Date, end: Date }): Observable<CalendarEvent[]> {
-    // Handle multi-month sources like AASR
-    if (source.requiresMultipleMonths) {
-      return this.fetchMultipleMonthsFromSourceFiltered(source, dateRange);
-    }
-
-    // Standard single-URL sources
-    const corsProxies = [
-      'https://api.allorigins.win/raw?url=',
-      'https://corsproxy.io/?',
-      'https://api.codetabs.com/v1/proxy?quest='
-    ];
-
-    return this.fetchWithProxyFallback(source.url, corsProxies, source, 0).pipe(
-      map(icsData => this.parseIcsData(icsData, source, dateRange)),
-      catchError(error => {
-        console.error(`Error fetching ${source.name}:`, error);
-        return of([]);
-      })
-    );
-  }
-
-  /**
-   * Fetch multiple months from a source (AASR) with date filtering
-   */
-  private fetchMultipleMonthsFromSourceFiltered(source: CalendarSource, dateRange: { start: Date, end: Date }): Observable<CalendarEvent[]> {
-    const months: Observable<CalendarEvent[]>[] = [];
-    
-    // Calculate which months we need to fetch
-    let currentDate = startOfMonth(dateRange.start);
-    const endDate = startOfMonth(dateRange.end);
-    
-    while (currentDate <= endDate) {
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-      
-      const monthUrl = source.url
-        .replace('{YEAR}', year.toString())
-        .replace('{MONTH}', month);
-      
-      const proxyUrl = 'https://api.allorigins.win/raw?url=';
-      const proxiedUrl = proxyUrl + encodeURIComponent(monthUrl);
-      
-      console.log(`🗓️ Fetching ${source.name} for ${year}-${month}...`);
-      
-      const monthObservable = this.http.get(proxiedUrl, { 
-        responseType: 'text',
-        headers: {
-          'Accept': 'text/calendar, text/plain, */*'
-        }
-      }).pipe(
-        map(icsData => {
-          const events = this.parseIcsData(icsData, source, dateRange);
-          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events in range`);
-          return events;
-        }),
-        catchError(error => {
-          console.error(`❌ Error fetching ${source.name} for ${year}-${month}:`, error);
-          return of([]);
-        })
-      );
-      
-      months.push(monthObservable);
-      currentDate = addMonths(currentDate, 1);
-    }
-
-    // Combine all months and flatten the results
-    return combineLatest(months).pipe(
-      map(monthResults => {
-        const allEvents = monthResults.flat();
-        // Remove duplicates based on UID
-        const uniqueEvents = allEvents.filter((event, index, self) => 
-          event.uid ? 
-            index === self.findIndex(e => e.uid === event.uid) :
-            index === self.findIndex(e => e.title === event.title && e.date === event.date)
-        );
-        console.log(`🎯 ${source.name}: ${uniqueEvents.length} unique events in date range`);
-        return uniqueEvents;
-      })
-    );
-  }
-
-  /**
-   * Validate that cached events contain data from active calendar sources
-   */
-  private validateCachedEvents(events: CalendarEvent[]): boolean {
-    const activeSourceIds = this.calendarSources
-      .filter(source => source.isActive)
-      .map(source => source.id);
-    
-    // Check if we have events from at least some of the active sources
-    const eventCalendarIds = new Set(events.map(e => e.calendarId));
-    const hasEventsFromSources = activeSourceIds.some(id => eventCalendarIds.has(id));
-    
-    console.log(`📊 Cache validation: Active sources [${activeSourceIds.join(', ')}], Found events from [${Array.from(eventCalendarIds).join(', ')}]`);
-    
-    return hasEventsFromSources;
+  private finishLoading(events: CalendarEvent[]): void {
+    console.log(`✅ All calendars loaded. Total: ${events.length} events`);
+    this.loadingSubject.next(false);
+    this.lastSyncSubject.next(new Date());
+    this.saveEventsToCache(events);
   }
 
   /**
@@ -307,33 +162,19 @@ export class CalendarService {
    */
   getUpcomingEvents(days: number = 180): Observable<CalendarEvent[]> {
     this.initializeIfNeeded();
-    // Start from beginning of today and look ahead specified days (default 6 months)
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of day
+    today.setHours(0, 0, 0, 0);
     const futureDate = addDays(today, days);
-    
-    console.log(`🗓️ Looking for upcoming events from ${today.toDateString()} to ${futureDate.toDateString()} (${days} days)`);
     
     return this.events$.pipe(
       map(events => {
-        console.log(`📊 Total events available: ${events.length}`);
-        
         const upcomingEvents = events
           .filter(event => {
             const eventDate = new Date(event.date);
-            eventDate.setHours(0, 0, 0, 0); // Normalize to start of day for comparison
+            eventDate.setHours(0, 0, 0, 0);
             return eventDate >= today && eventDate <= futureDate;
           })
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-          
-        console.log(`📅 Upcoming events (${days} days): ${upcomingEvents.length} total`);
-        console.log(`  🏛️ Lodge: ${upcomingEvents.filter(e => e.calendarId === 1).length}`);
-        console.log(`  🤝 SMMA: ${upcomingEvents.filter(e => e.calendarId === 2).length}`);
-        console.log(`  🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR: ${upcomingEvents.filter(e => e.calendarId === 3).length}`);
-        console.log(`  ⚜️ York Rite: ${upcomingEvents.filter(e => e.calendarId === 4).length}`);
-        
-
-        
         return upcomingEvents;
       })
     );
@@ -341,40 +182,11 @@ export class CalendarService {
 
   /**
    * Get events for a specific month
-   * Automatically loads the month if not already loaded
    */
   getEventsForMonth(year: number, month: number): Observable<CalendarEvent[]> {
     this.initializeIfNeeded();
     
     const monthDate = new Date(year, month, 1);
-    const monthKey = `${year}-${month}`;
-    
-    // Check if this month has been loaded
-    if (!this.loadedMonths.has(monthKey)) {
-      console.log(`📅 Month ${format(monthDate, 'MMM yyyy')} not loaded yet, loading now...`);
-      
-      // Load this specific month
-      this.loadMonthsRange(monthDate, 1).subscribe({
-        next: (events) => {
-          console.log(`✅ Loaded ${events.length} events for ${format(monthDate, 'MMM yyyy')}`);
-          // Update cache with new data
-          const currentEvents = this.eventsSubject.value;
-          const combinedEvents = [...currentEvents, ...events];
-          // Remove duplicates
-          const uniqueEvents = combinedEvents.filter((event, index, self) =>
-            event.uid ?
-              index === self.findIndex(e => e.uid === event.uid) :
-              index === self.findIndex(e => e.title === event.title && e.date === event.date)
-          );
-          this.eventsSubject.next(uniqueEvents);
-          this.saveEventsToCache(uniqueEvents);
-        },
-        error: (error) => {
-          console.error(`❌ Failed to load ${format(monthDate, 'MMM yyyy')}:`, error);
-        }
-      });
-    }
-    
     const startOfMonthDate = startOfMonth(monthDate);
     const endOfMonthDate = endOfMonth(monthDate);
     
@@ -382,10 +194,7 @@ export class CalendarService {
       map(events => events
         .filter(event => {
           const eventDate = new Date(event.date);
-          return isWithinInterval(eventDate, {
-            start: startOfMonthDate,
-            end: endOfMonthDate
-          });
+          return isWithinInterval(eventDate, { start: startOfMonthDate, end: endOfMonthDate });
         })
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       )
@@ -400,10 +209,7 @@ export class CalendarService {
       map(events => events
         .filter(event => {
           const eventDate = new Date(event.date);
-          return isWithinInterval(eventDate, {
-            start: startDate,
-            end: endDate
-          });
+          return isWithinInterval(eventDate, { start: startDate, end: endDate });
         })
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       )
@@ -411,308 +217,71 @@ export class CalendarService {
   }
 
   /**
-   * Get next 6 months of events (optimized for pagination)
+   * Get next 6 months of events
    */
   getNext6MonthsEvents(): Observable<CalendarEvent[]> {
-    return this.getUpcomingEvents(180); // 6 months ≈ 180 days
+    return this.getUpcomingEvents(180);
   }
 
   /**
-   * Sync calendar events from ICS sources
+   * Get calendar sources
    */
-  syncCalendarEvents(): Observable<CalendarSyncResult> {
-    this.loadingSubject.next(true);
-    
-    // Try to fetch from ICS sources using CORS proxy
-    return this.fetchFromIcsSources().pipe(
-      catchError(error => {
-        console.error('Calendar sync failed:', error);
-        // Fallback to enhanced mock data that simulates real events
-        this.loadEnhancedMockEvents();
-        return of({
-          success: false,
-          eventsCount: this.eventsSubject.value.length,
-          message: 'Using sample calendar data (ICS sync requires backend proxy)',
-          errors: [error.message]
-        });
-      })
-    );
+  getCalendarSources(): CalendarSource[] {
+    return this.calendarSources;
   }
 
   /**
-   * Sync calendar events progressively - updates UI as each calendar loads
-   * Much faster perceived performance!
+   * Update calendar source status
    */
-  syncCalendarEventsProgressively(): Observable<CalendarSyncResult> {
-    const activeSources = this.calendarSources.filter(source => source.isActive);
-    
-    console.log(`⚡ Progressive sync: Loading ${activeSources.length} calendars individually...`);
-    
-    if (activeSources.length === 0) {
-      return of({
-        success: false,
-        eventsCount: 0,
-        message: 'No active calendar sources configured',
-        errors: ['No active calendar sources']
-      });
+  updateCalendarSource(calendarId: number, isActive: boolean): void {
+    const source = this.calendarSources.find(s => s.id === calendarId);
+    if (source) {
+      source.isActive = isActive;
     }
-
-    let allEvents: CalendarEvent[] = [];
-    let loadedCount = 0;
-    const errors: string[] = [];
-
-    // Fetch each calendar source individually and update UI immediately as each completes
-    activeSources.forEach((source, index) => {
-      this.fetchIcsFromSource(source).subscribe({
-        next: (events) => {
-          loadedCount++;
-          
-          if (events && events.length > 0) {
-            console.log(`⚡ ${loadedCount}/${activeSources.length} - Loaded ${events.length} events from ${source.name}`);
-            
-            // IMMEDIATELY add these events and update UI
-            allEvents = [...allEvents, ...events];
-            this.eventsSubject.next(allEvents);
-            
-          } else {
-            console.warn(`⚠️ ${loadedCount}/${activeSources.length} - No events from ${source.name}`);
-            errors.push(`No events from ${source.name}`);
-          }
-
-          // If this is the last calendar, save to cache and update sync time
-          if (loadedCount === activeSources.length) {
-            this.lastSyncSubject.next(new Date());
-            if (allEvents.length > 0) {
-              this.saveEventsToCache(allEvents);
-            }
-            console.log(`✅ All ${activeSources.length} calendars loaded! Total: ${allEvents.length} events`);
-          }
-        },
-        error: (error) => {
-          loadedCount++;
-          console.error(`❌ ${loadedCount}/${activeSources.length} - Failed: ${source.name}`, error);
-          errors.push(`Failed: ${source.name}`);
-        }
-      });
-    });
-
-    // Return immediately - updates happen via subscriptions above
-    return of({
-      success: true,
-      eventsCount: 0,
-      message: `Progressive loading started for ${activeSources.length} calendars`,
-      errors: errors.length > 0 ? errors : undefined
-    });
   }
 
   /**
-   * Fetch calendar data from ICS sources
-   */
-  private fetchFromIcsSources(): Observable<CalendarSyncResult> {
-    const activeSources = this.calendarSources.filter(source => source.isActive);
-    
-    console.log(`🔄 Starting sync from ${activeSources.length} active calendar sources...`);
-    
-    if (activeSources.length === 0) {
-      this.loadingSubject.next(false);
-      return of({
-        success: false,
-        eventsCount: 0,
-        message: 'No active calendar sources configured',
-        errors: ['No active calendar sources']
-      });
-    }
-
-    // Create observables for each source with error handling
-    const sourceObservables = activeSources.map(source => 
-      this.fetchIcsFromSource(source).pipe(
-        tap(events => {
-          console.log(`📥 Fetched ${events.length} events from ${source.name}`);
-        }),
-        catchError(error => {
-          console.error(`❌ Error fetching from ${source.name}:`, error);
-          return of([]); // Return empty array on error, don't break the entire sync
-        })
-      )
-    );
-
-    // Use combineLatest to wait for all sources to complete
-    return combineLatest(sourceObservables).pipe(
-      map(results => {
-        const allEvents: CalendarEvent[] = [];
-        let totalEvents = 0;
-        const errors: string[] = [];
-
-        results.forEach((events, index) => {
-          if (events && events.length > 0) {
-            allEvents.push(...events);
-            totalEvents += events.length;
-            console.log(`✅ Loaded ${events.length} events from ${activeSources[index].name}`);
-          } else {
-            const errorMsg = `❌ Failed to load events from ${activeSources[index].name}`;
-            console.error(errorMsg);
-            errors.push(errorMsg);
-          }
-        });
-
-        // Update the events subject with real data
-        this.eventsSubject.next(allEvents);
-        this.lastSyncSubject.next(new Date());
-        this.loadingSubject.next(false);
-        
-        // Save to cache for future use
-        if (allEvents.length > 0) {
-          this.saveEventsToCache(allEvents);
-        }
-
-        const message = totalEvents > 0 ? 
-          `Successfully synced ${totalEvents} events from ${activeSources.length} calendar(s)` :
-          'No events found in calendar sources';
-          
-        console.log(`📅 Calendar sync result: ${message}`);
-
-        return {
-          success: totalEvents > 0,
-          eventsCount: totalEvents,
-          message,
-          errors: errors.length > 0 ? errors : undefined
-        };
-      }),
-      catchError(error => {
-        this.loadingSubject.next(false);
-        throw error;
-      })
-    );
-  }
-
-  /**
-   * Fetch ICS data from a single source using CORS proxy with fallbacks
+   * Fetch ICS data from a single source
    */
   private fetchIcsFromSource(source: CalendarSource): Observable<CalendarEvent[]> {
-    // Handle AASR calendar which requires multiple month URLs
+    // Handle AASR calendar (requires multiple month URLs)
     if (source.requiresMultipleMonths) {
       return this.fetchMultipleMonthsFromSource(source);
     }
 
     console.log(`🌐 Fetching ICS data from ${source.name}...`);
 
-    // Try direct fetch first (Google Calendar supports CORS for public calendars)
+    // Try direct fetch first
     return this.http.get(source.url, { responseType: 'text' }).pipe(
-      catchError(directError => {
+      catchError(() => {
         console.log(`⚠️ Direct fetch failed for ${source.name}, trying proxies...`);
-        
-        // Fall back to CORS proxies
         const proxies = [
-          'https://api.allorigins.win/get?url=',  // Returns JSON with base64
+          'https://api.allorigins.win/get?url=',
           'https://corsproxy.io/?',
           'https://api.codetabs.com/v1/proxy?quest='
         ];
-        
         return this.fetchWithProxyFallback(source.url, proxies, source);
-      }),
-      tap(icsData => {
-        console.log(`📄 Received ICS data from ${source.name} (${icsData?.length || 0} characters)`);
-        
-        // Debug York Rite ICS data specifically
-        if (source.id === 4) {
-          console.log(`⚜️ York Rite ICS data preview:`, icsData.substring(0, 200));
-        }
       }),
       map(icsData => {
         const events = this.parseIcsData(icsData, source);
         console.log(`🎯 Parsed ${events.length} events from ${source.name}`);
-        
-        // Debug York Rite events specifically
-        if (source.id === 4) {
-          console.log(`⚜️ York Rite events details:`, events.map(e => `${e.title} on ${e.date}`));
-        }
-        
         return events;
       }),
       catchError(error => {
-        console.error(`❌ All proxies failed for ${source.name}:`, error);
-        // Return empty array on error, don't fail the entire sync
+        console.error(`❌ All methods failed for ${source.name}:`, error);
         return of([]);
       })
     );
   }
 
   /**
-   * Try multiple CORS proxies with fallback
-   */
-  private fetchWithProxyFallback(url: string, proxies: string[], source: CalendarSource, proxyIndex: number = 0): Observable<string> {
-    if (proxyIndex >= proxies.length) {
-      return throwError(() => new Error('All CORS proxies failed'));
-    }
-
-    // Use allorigins.win /get endpoint which returns JSON with base64 content
-    if (proxies[proxyIndex].includes('allorigins.win/get')) {
-      const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
-      console.log(`📡 Trying allorigins.win /get endpoint for ${source.name}...`);
-      
-      return this.http.get<{contents: string}>(proxiedUrl).pipe(
-        map(response => {
-          // The content may be base64 encoded data URI or plain text
-          if (response.contents && response.contents.startsWith('data:')) {
-            // Extract base64 content and decode
-            const base64Match = response.contents.match(/base64,(.+)/);
-            if (base64Match) {
-              return atob(base64Match[1]);
-            }
-          }
-          return response.contents || '';
-        }),
-        catchError(error => {
-          console.warn(`⚠️ allorigins.win /get failed for ${source.name}, trying next proxy...`);
-          return this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1);
-        })
-      );
-    }
-
-    const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
-    console.log(`📡 Trying proxy ${proxyIndex + 1}/${proxies.length}: ${proxies[proxyIndex]}`);
-
-    return this.http.get(proxiedUrl, { 
-      responseType: 'text',
-      headers: {
-        'Accept': 'text/calendar, text/plain, */*'
-      }
-    }).pipe(
-      catchError(error => {
-        console.warn(`⚠️ Proxy ${proxyIndex + 1} failed for ${source.name}, trying next...`);
-        // Try next proxy
-        return this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1);
-      })
-    );
-  }
-
-  /**
-   * Load events from API (after sync)
-   */
-  private loadEventsFromApi(): Observable<CalendarEvent[]> {
-    return this.http.get<CalendarEvent[]>('/api/calendar/events').pipe(
-      map(events => {
-        this.eventsSubject.next(events);
-        this.lastSyncSubject.next(new Date());
-        this.loadingSubject.next(false);
-        return events;
-      }),
-      catchError(error => {
-        console.error('Failed to load events from API:', error);
-        this.loadingSubject.next(false);
-        return of([]);
-      })
-    );
-  }
-
-  /**
-   * Fetch multiple months from a source (used for AASR calendar)
+   * Fetch multiple months from a source (AASR calendar)
    */
   private fetchMultipleMonthsFromSource(source: CalendarSource): Observable<CalendarEvent[]> {
     const today = new Date();
     const months: Observable<CalendarEvent[]>[] = [];
     
-    // Fetch 6 months of data starting from current month
+    // Fetch 6 months of data
     for (let i = 0; i < 6; i++) {
       const targetDate = addMonths(today, i);
       const year = targetDate.getFullYear();
@@ -725,58 +294,78 @@ export class CalendarService {
       const proxyUrl = 'https://api.allorigins.win/raw?url=';
       const proxiedUrl = proxyUrl + encodeURIComponent(monthUrl);
       
-      console.log(`🗓️ Fetching ${source.name} for ${year}-${month}...`);
-      
       const monthObservable = this.http.get(proxiedUrl, { 
         responseType: 'text',
-        headers: {
-          'Accept': 'text/calendar, text/plain, */*'
-        }
+        headers: { 'Accept': 'text/calendar, text/plain, */*' }
       }).pipe(
         map(icsData => {
           const events = this.parseIcsData(icsData, source);
           console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events`);
           return events;
         }),
-        catchError(error => {
-          console.error(`❌ Error fetching ${source.name} for ${year}-${month}:`, error);
-          return of([]);
-        })
+        catchError(() => of([]))
       );
       
       months.push(monthObservable);
     }
 
-    // Combine all months and flatten the results
     return combineLatest(months).pipe(
       map(monthResults => {
         const allEvents = monthResults.flat();
-        // Remove duplicates based on UID if present
+        // Remove duplicates
         const uniqueEvents = allEvents.filter((event, index, self) => 
           event.uid ? 
             index === self.findIndex(e => e.uid === event.uid) :
             index === self.findIndex(e => e.title === event.title && e.date === event.date)
         );
-        console.log(`🎯 ${source.name}: Combined ${uniqueEvents.length} unique events from 6 months (${allEvents.length} total before dedup)`);
+        console.log(`🎯 ${source.name}: ${uniqueEvents.length} unique events from 6 months`);
         return uniqueEvents;
       })
     );
   }
 
   /**
-   * Parse ICS data into CalendarEvent objects with optional date range filtering
+   * Try multiple CORS proxies with fallback
    */
-  private parseIcsData(icsContent: string, source: CalendarSource, dateRange?: { start: Date, end: Date }): CalendarEvent[] {
+  private fetchWithProxyFallback(url: string, proxies: string[], source: CalendarSource, proxyIndex: number = 0): Observable<string> {
+    if (proxyIndex >= proxies.length) {
+      return throwError(() => new Error('All CORS proxies failed'));
+    }
+
+    // Handle allorigins.win /get endpoint (returns JSON with content)
+    if (proxies[proxyIndex].includes('allorigins.win/get')) {
+      const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
+      
+      return this.http.get<{contents: string}>(proxiedUrl).pipe(
+        map(response => {
+          if (response.contents?.startsWith('data:')) {
+            const base64Match = response.contents.match(/base64,(.+)/);
+            if (base64Match) {
+              return atob(base64Match[1]);
+            }
+          }
+          return response.contents || '';
+        }),
+        catchError(() => this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1))
+      );
+    }
+
+    const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
+
+    return this.http.get(proxiedUrl, { 
+      responseType: 'text',
+      headers: { 'Accept': 'text/calendar, text/plain, */*' }
+    }).pipe(
+      catchError(() => this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1))
+    );
+  }
+
+  /**
+   * Parse ICS data into CalendarEvent objects
+   */
+  private parseIcsData(icsContent: string, source: CalendarSource): CalendarEvent[] {
     try {
-      console.log(`🔍 Parsing ICS data from ${source.name}...`);
-      console.log(`📄 ICS content length: ${icsContent?.length || 0} characters`);
-      
-      if (dateRange) {
-        console.log(`📅 Filtering events between ${format(dateRange.start, 'yyyy-MM-dd')} and ${format(dateRange.end, 'yyyy-MM-dd')}`);
-      }
-      
       if (!icsContent || typeof icsContent !== 'string') {
-        console.error('❌ Invalid ICS content received');
         return [];
       }
 
@@ -784,8 +373,6 @@ export class CalendarService {
       const lines = icsContent.split(/\r?\n/);
       let currentEvent: any = null;
       let isInEvent = false;
-      let totalEventsInFile = 0;
-      let filteredOutCount = 0;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
@@ -793,26 +380,14 @@ export class CalendarService {
         if (line === 'BEGIN:VEVENT') {
           isInEvent = true;
           currentEvent = {};
-          totalEventsInFile++;
           continue;
         }
         
         if (line === 'END:VEVENT' && isInEvent) {
-          if (currentEvent && currentEvent.DTSTART && currentEvent.SUMMARY) {
+          if (currentEvent?.DTSTART && currentEvent?.SUMMARY) {
             const calendarEvent = this.convertIcsEventToCalendarEvent(currentEvent, source);
             if (calendarEvent) {
-              // Filter by date range if provided
-              if (dateRange) {
-                const eventDate = new Date(calendarEvent.date);
-                if (isWithinInterval(eventDate, { start: dateRange.start, end: dateRange.end })) {
-                  events.push(calendarEvent);
-                } else {
-                  filteredOutCount++;
-                }
-              } else {
-                // No filter, add all events
-                events.push(calendarEvent);
-              }
+              events.push(calendarEvent);
             }
           }
           isInEvent = false;
@@ -825,7 +400,6 @@ export class CalendarService {
           const property = line.substring(0, colonIndex);
           const value = line.substring(colonIndex + 1);
           
-          // Handle multi-line properties
           if (property.includes(';')) {
             const mainProperty = property.split(';')[0];
             currentEvent[mainProperty] = value;
@@ -835,12 +409,6 @@ export class CalendarService {
         }
       }
 
-      if (dateRange) {
-        console.log(`✅ Parsed ${events.length} events in range from ${source.name} (${filteredOutCount} filtered out, ${totalEventsInFile} total in file)`);
-      } else {
-        console.log(`✅ Parsed ${events.length} valid events from ${source.name} (total events in file: ${totalEventsInFile})`);
-      }
-      
       return events;
     } catch (error) {
       console.error(`Error parsing ICS content from ${source.name}:`, error);
@@ -849,26 +417,18 @@ export class CalendarService {
   }
 
   /**
-   * Convert ICS event object to CalendarEvent
+   * Convert ICS event to CalendarEvent
    */
   private convertIcsEventToCalendarEvent(icsEvent: any, source: CalendarSource): CalendarEvent | null {
     try {
-      // Parse the date/time
       const startDate = this.parseIcsDateTime(icsEvent.DTSTART);
-      if (!startDate) {
-        console.warn('Could not parse start date for event:', icsEvent.SUMMARY);
-        return null;
-      }
+      if (!startDate) return null;
 
       const endDate = icsEvent.DTEND ? this.parseIcsDateTime(icsEvent.DTEND) : startDate;
-      
-      // Generate a numeric ID from the UID
       const id = icsEvent.UID ? this.hashStringToNumber(icsEvent.UID) : Math.random() * 1000000;
-      
-      // Determine event type based on summary
       const type = this.determineEventType(icsEvent.SUMMARY);
       
-      const calendarEvent = {
+      return {
         id: Math.floor(id),
         title: icsEvent.SUMMARY || 'Untitled Event',
         date: startDate,
@@ -882,15 +442,7 @@ export class CalendarService {
         uid: icsEvent.UID || `generated-${id}`,
         isRecurring: !!icsEvent.RRULE
       };
-
-      // Debug York Rite events specifically
-      if (source.id === 4) {
-        console.log(`⚜️ York Rite event converted:`, calendarEvent.title, `on`, calendarEvent.date, `(calendarId: ${calendarEvent.calendarId})`);
-      }
-
-      return calendarEvent;
     } catch (error) {
-      console.error('Error converting ICS event:', error, icsEvent);
       return null;
     }
   }
@@ -906,27 +458,22 @@ export class CalendarService {
       if (dateTimeString.includes(';TZID=')) {
         const parts = dateTimeString.split(':');
         if (parts.length >= 2) {
-          const dateTimePart = parts[parts.length - 1]; // Get the actual datetime part
-          return this.parseBasicDateTime(dateTimePart);
+          return this.parseBasicDateTime(parts[parts.length - 1]);
         }
       }
       
       // Handle UTC format: 20250305T003000Z
       if (dateTimeString.endsWith('Z')) {
-        const cleanDateTime = dateTimeString.slice(0, -1); // Remove Z
+        const cleanDateTime = dateTimeString.slice(0, -1);
         const utcDate = this.parseBasicDateTime(cleanDateTime);
         if (utcDate) {
-          // Convert from UTC to local time
           return new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
         }
         return utcDate;
       }
       
-      // Handle basic format: 20250305T003000
       return this.parseBasicDateTime(dateTimeString);
-      
-    } catch (error) {
-      console.error('Error parsing ICS date/time:', dateTimeString, error);
+    } catch {
       return null;
     }
   }
@@ -938,15 +485,14 @@ export class CalendarService {
     try {
       const cleanDateTime = dateTimeString.replace(/[^0-9T]/g, '');
       
-      // Handle different ICS date formats
       if (cleanDateTime.length === 8) {
-        // Date only format: YYYYMMDD
+        // Date only: YYYYMMDD
         const year = parseInt(cleanDateTime.substring(0, 4));
-        const month = parseInt(cleanDateTime.substring(4, 6)) - 1; // Month is 0-based
+        const month = parseInt(cleanDateTime.substring(4, 6)) - 1;
         const day = parseInt(cleanDateTime.substring(6, 8));
         return new Date(year, month, day);
       } else if (cleanDateTime.length >= 15 && cleanDateTime.includes('T')) {
-        // DateTime format: YYYYMMDDTHHMMSS
+        // DateTime: YYYYMMDDTHHMMSS
         const datePart = cleanDateTime.substring(0, 8);
         const timePart = cleanDateTime.substring(9, 15);
         
@@ -960,41 +506,10 @@ export class CalendarService {
         return new Date(year, month, day, hour, minute, second);
       }
       
-      // Fallback: try to parse as ISO string
       return new Date(dateTimeString);
-    } catch (error) {
-      console.error('Error parsing basic date/time:', dateTimeString, error);
+    } catch {
       return null;
     }
-  }
-
-  /**
-   * Convert ICS event to CalendarEvent
-   */
-  private convertIcsToCalendarEvent(icsEvent: any, calendarId: number, calendarName: string): CalendarEvent {
-    const startDate = new Date(icsEvent.startDate);
-    const endDate = icsEvent.endDate ? new Date(icsEvent.endDate) : startDate;
-    
-    // Generate a numeric ID from the UID
-    const id = this.hashStringToNumber(icsEvent.uid);
-    
-    // Determine event type based on summary
-    const type = this.determineEventType(icsEvent.summary);
-    
-    return {
-      id,
-      title: icsEvent.summary,
-      date: startDate,
-      startTime: format(startDate, 'HH:mm'),
-      endTime: format(endDate, 'HH:mm'),
-      location: icsEvent.location || 'St. Petersburg Lodge No. 139',
-      description: icsEvent.description || '',
-      type,
-      calendarId,
-      calendarName,
-      uid: icsEvent.uid,
-      isRecurring: !!icsEvent.rrule
-    };
   }
 
   /**
@@ -1025,265 +540,13 @@ export class CalendarService {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash = hash & hash;
     }
     return Math.abs(hash);
   }
 
   /**
-   * Load enhanced mock events (fallback with realistic data)
-   */
-  private loadEnhancedMockEvents(): void {
-    const mockEvents = this.generateEnhancedMockEvents();
-    this.eventsSubject.next(mockEvents);
-    this.lastSyncSubject.next(new Date());
-    this.loadingSubject.next(false);
-  }
-
-  /**
-   * Load mock events (fallback)
-   */
-  private loadMockEvents(): void {
-    const mockEvents = this.generateMockEvents();
-    this.eventsSubject.next(mockEvents);
-    this.loadingSubject.next(false);
-  }
-
-  /**
-   * Generate enhanced mock events with realistic lodge activities
-   */
-  private generateEnhancedMockEvents(): CalendarEvent[] {
-    const events: CalendarEvent[] = [];
-    const today = new Date();
-
-    // Generate realistic lodge events for the next 90 days
-    const lodgeEvents = [
-      { title: 'Stated Communication', type: 'meeting' as const, day: 21, time: '19:30', endTime: '21:30' },
-      { title: 'Fellowship Dinner', type: 'dinner' as const, day: 21, time: '18:30', endTime: '19:15' },
-      { title: 'EA Degree', type: 'degree' as const, day: 7, time: '19:00', endTime: '21:00' },
-      { title: 'FC Degree', type: 'degree' as const, day: 14, time: '19:00', endTime: '21:00' },
-      { title: 'MM Degree', type: 'degree' as const, day: 28, time: '19:00', endTime: '21:30' },
-      { title: 'Masonic Education', type: 'education' as const, day: 10, time: '19:30', endTime: '21:00' },
-      { title: 'Officer Practice', type: 'meeting' as const, day: 5, time: '19:00', endTime: '20:30' },
-      { title: 'Lodge Cleanup Day', type: 'other' as const, day: 15, time: '09:00', endTime: '12:00' }
-    ];
-
-    const smmaEvents = [
-      { title: 'SMMA Meeting', type: 'meeting' as const, day: 12, time: '19:00', endTime: '21:00' },
-      { title: 'Masters & Wardens Workshop', type: 'education' as const, day: 26, time: '18:30', endTime: '21:00' },
-      { title: 'SMMA Social Event', type: 'other' as const, day: 19, time: '18:00', endTime: '22:00' }
-    ];
-
-    const yorkRiteEvents = [
-      { title: 'Tampa Cushing Chapter #3 Stated Meetings', type: 'meeting' as const, day: 4, time: '19:30', endTime: '20:30' },
-      { title: 'Tampa Council #3 Stated Meetings', type: 'meeting' as const, day: 4, time: '19:30', endTime: '20:30' },
-      { title: 'York Rite Degree Work', type: 'degree' as const, day: 15, time: '19:00', endTime: '22:00' },
-      { title: 'Commandery Meeting', type: 'meeting' as const, day: 18, time: '19:30', endTime: '21:30' },
-      { title: 'York Rite Practice', type: 'education' as const, day: 25, time: '19:00', endTime: '21:00' },
-      { title: 'York Rite Test Event', type: 'other' as const, day: 1, time: '19:00', endTime: '20:00' }
-    ];
-
-    // Generate events for the next 90 days
-    for (let dayOffset = 0; dayOffset < 90; dayOffset++) {
-      const currentDate = addDays(today, dayOffset);
-      const dayOfMonth = currentDate.getDate();
-      
-      // Ensure York Rite events are generated for current month
-      if (dayOffset === 0) {
-        console.log(`🗓️ Generating events for ${currentDate.toDateString()}, day of month: ${dayOfMonth}`);
-      }
-
-      // Add lodge events
-      lodgeEvents.forEach(eventTemplate => {
-        if (dayOfMonth === eventTemplate.day) {
-          events.push({
-            id: this.hashStringToNumber(`lodge-${eventTemplate.title}-${currentDate.toISOString()}`),
-            title: eventTemplate.title,
-            date: currentDate,
-            startTime: eventTemplate.time,
-            endTime: eventTemplate.endTime,
-            location: 'St. Petersburg Lodge No. 139',
-            description: `${eventTemplate.title} - All Master Masons in good standing are welcome.`,
-            type: eventTemplate.type,
-            calendarId: 1,
-            calendarName: 'St. Petersburg Lodge #139',
-            uid: `lodge-${eventTemplate.title}-${currentDate.toISOString()}@stpetelodge139.org`
-          });
-        }
-      });
-
-      // Add SMMA events (less frequent)
-      smmaEvents.forEach(eventTemplate => {
-        if (dayOfMonth === eventTemplate.day && dayOffset % 30 === 0) { // Monthly events
-          events.push({
-            id: this.hashStringToNumber(`smma-${eventTemplate.title}-${currentDate.toISOString()}`),
-            title: eventTemplate.title,
-            date: currentDate,
-            startTime: eventTemplate.time,
-            endTime: eventTemplate.endTime,
-            location: 'Various Locations',
-            description: `${eventTemplate.title} - Suncoast Masters and Wardens Association event.`,
-            type: eventTemplate.type,
-            calendarId: 2,
-            calendarName: 'Suncoast Masters & Wardens',
-            uid: `smma-${eventTemplate.title}-${currentDate.toISOString()}@suncoastmw.org`
-          });
-        }
-      });
-
-      // Add York Rite events
-      yorkRiteEvents.forEach(eventTemplate => {
-        if (dayOfMonth === eventTemplate.day) {
-          events.push({
-            id: this.hashStringToNumber(`yorkrite-${eventTemplate.title}-${currentDate.toISOString()}`),
-            title: eventTemplate.title,
-            date: currentDate,
-            startTime: eventTemplate.time,
-            endTime: eventTemplate.endTime,
-            location: 'Tampa York Rite Bodies',
-            description: `${eventTemplate.title} - Tampa York Rite Bodies event.`,
-            type: eventTemplate.type,
-            calendarId: 4,
-            calendarName: 'Tampa York Rite Bodies',
-            uid: `yorkrite-${eventTemplate.title}-${currentDate.toISOString()}@tampayorkrite.org`
-          });
-        }
-      });
-    }
-
-    return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }
-
-  /**
-   * Generate mock events for testing
-   */
-  private generateMockEvents(): CalendarEvent[] {
-    const events: CalendarEvent[] = [];
-    const today = new Date();
-
-    // St. Petersburg Lodge events
-    const lodgeEvents = this.generateMockEventsForCalendar(1);
-    events.push(...lodgeEvents);
-
-    // Masters & Wardens events
-    const mwEvents = this.generateMockEventsForCalendar(2);
-    events.push(...mwEvents);
-
-    // York Rite events
-    const yorkRiteEvents = this.generateMockEventsForCalendar(4);
-    events.push(...yorkRiteEvents);
-
-    return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }
-
-  /**
-   * Generate mock events for a specific calendar
-   */
-  private generateMockEventsForCalendar(calendarId: number): CalendarEvent[] {
-    const today = new Date();
-    const events: CalendarEvent[] = [];
-    const calendarSource = this.calendarSources.find(source => source.id === calendarId);
-    
-    if (!calendarSource) return events;
-
-    // Generate events for the next 60 days
-    for (let i = 1; i <= 60; i += 7) {
-      const eventDate = addDays(today, i);
-      
-      if (calendarId === 1) {
-        // St. Petersburg Lodge events
-        if (i % 21 === 0) { // Every 3 weeks
-          events.push({
-            id: this.hashStringToNumber(`lodge-meeting-${i}`),
-            title: 'Stated Communication',
-            date: eventDate,
-            startTime: '19:30',
-            endTime: '21:30',
-            location: 'St. Petersburg Lodge No. 139',
-            description: 'Monthly stated communication for all Master Masons in good standing.',
-            type: 'meeting',
-            calendarId,
-            calendarName: calendarSource.name,
-            uid: `lodge-meeting-${i}@stpetelodge139.org`
-          });
-        }
-        
-        if (i % 14 === 0) { // Every 2 weeks
-          events.push({
-            id: this.hashStringToNumber(`lodge-dinner-${i}`),
-            title: 'Fellowship Dinner',
-            date: eventDate,
-            startTime: '18:30',
-            endTime: '20:30',
-            location: 'Lodge Dining Hall',
-            description: 'Monthly fellowship dinner before the stated communication.',
-            type: 'dinner',
-            calendarId,
-            calendarName: calendarSource.name,
-            uid: `lodge-dinner-${i}@stpetelodge139.org`
-          });
-        }
-      } else if (calendarId === 2) {
-        // Masters & Wardens events
-        if (i % 28 === 0) { // Every 4 weeks
-          events.push({
-            id: this.hashStringToNumber(`mw-meeting-${i}`),
-            title: 'Masters & Wardens Meeting',
-            date: eventDate,
-            startTime: '19:00',
-            endTime: '21:00',
-            location: 'Various Lodges',
-            description: 'Monthly meeting of the Suncoast Masters and Wardens Association.',
-            type: 'meeting',
-            calendarId,
-            calendarName: calendarSource.name,
-            uid: `mw-meeting-${i}@suncoastmw.org`
-          });
-        }
-      } else if (calendarId === 4) {
-        // York Rite events
-        if (i % 7 === 0) { // Every week for testing
-          events.push({
-            id: this.hashStringToNumber(`yorkrite-meeting-${i}`),
-            title: 'York Rite Meeting',
-            date: eventDate,
-            startTime: '19:30',
-            endTime: '21:30',
-            location: 'Tampa York Rite Bodies',
-            description: 'York Rite meeting and degree work.',
-            type: 'meeting',
-            calendarId,
-            calendarName: calendarSource.name,
-            uid: `yorkrite-meeting-${i}@tampayorkrite.org`
-          });
-        }
-      }
-    }
-
-    return events;
-  }
-
-  /**
-   * Get calendar sources
-   */
-  getCalendarSources(): CalendarSource[] {
-    return this.calendarSources;
-  }
-
-  /**
-   * Update calendar source status
-   */
-  updateCalendarSource(calendarId: number, isActive: boolean): void {
-    const source = this.calendarSources.find(source => source.id === calendarId);
-    if (source) {
-      source.isActive = isActive;
-      // Re-sync if needed
-      this.syncCalendarEvents().subscribe();
-    }
-  }
-
-  /**
-   * Save events to localStorage for caching
+   * Save events to localStorage cache
    */
   private saveEventsToCache(events: CalendarEvent[]): void {
     try {
@@ -1297,136 +560,14 @@ export class CalendarService {
       };
       
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(storage));
-      console.log(`Cached ${events.length} events, expires at ${expiresAt}`);
+      console.log(`💾 Cached ${events.length} events`);
     } catch (error) {
       console.error('Failed to save events to cache:', error);
     }
   }
 
   /**
-   * Load events from localStorage cache
-   */
-  private loadCachedEvents(): EventStorage | null {
-    try {
-      const cached = localStorage.getItem(this.STORAGE_KEY);
-      if (!cached) return null;
-      
-      const storage: EventStorage = JSON.parse(cached);
-      
-      // Convert date strings back to Date objects
-      storage.lastSync = new Date(storage.lastSync);
-      storage.expiresAt = new Date(storage.expiresAt);
-      storage.events = storage.events.map(event => ({
-        ...event,
-        date: new Date(event.date)
-      }));
-      
-      return storage;
-    } catch (error) {
-      console.error('Failed to load cached events:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Clear cached events
-   */
-  private clearCache(): void {
-    try {
-      localStorage.removeItem(this.STORAGE_KEY);
-      console.log('Calendar cache cleared');
-    } catch (error) {
-      console.error('Failed to clear cache:', error);
-    }
-  }
-
-  /**
-   * Clear cache and re-sync (public method for testing)
-   */
-  clearCacheAndResync(): Observable<CalendarSyncResult> {
-    this.clearCache();
-    console.log('🔄 Cache cleared, re-syncing calendar events...');
-    return this.syncCalendarEvents();
-  }
-
-  /**
-   * Force immediate sync for York Rite events
-   */
-  forceYorkRiteSync(): void {
-    console.log('⚜️ Forcing York Rite sync...');
-    
-    const yorkRiteSource = this.calendarSources.find(s => s.id === 4);
-    if (!yorkRiteSource) {
-      console.error('❌ York Rite source not found');
-      return;
-    }
-
-    // Check if York Rite events already exist
-    const currentEvents = this.eventsSubject.value;
-    const existingYorkRiteEvents = currentEvents.filter(e => e.calendarId === 4);
-    
-    if (existingYorkRiteEvents.length === 0) {
-      console.log('⚜️ No York Rite events found, clearing cache and forcing fresh sync...');
-      this.clearCache();
-    }
-
-    this.fetchIcsFromSource(yorkRiteSource).subscribe({
-      next: (events) => {
-        console.log(`⚜️ York Rite events fetched: ${events.length}`);
-        events.forEach(event => {
-          console.log(`  - ${event.title} on ${event.date}`);
-        });
-        
-        // Remove any existing York Rite events and add fresh ones
-        const eventsWithoutYorkRite = currentEvents.filter(e => e.calendarId !== 4);
-        const updatedEvents = [...eventsWithoutYorkRite, ...events];
-        this.eventsSubject.next(updatedEvents);
-        
-        console.log(`⚜️ Total events after York Rite sync: ${updatedEvents.length}`);
-        
-        // Save to cache
-        if (events.length > 0) {
-          this.saveEventsToCache(updatedEvents);
-        }
-      },
-      error: (error) => {
-        console.error('❌ York Rite sync failed:', error);
-      }
-    });
-  }
-
-  /**
-   * Get events for current month (optimized for display)
-   */
-  getCurrentMonthEvents(): Observable<CalendarEvent[]> {
-    const now = new Date();
-    const monthStart = startOfMonth(now);
-    const monthEnd = endOfMonth(now);
-    
-    return this.events$.pipe(
-      map(events => events.filter(event => 
-        isWithinInterval(new Date(event.date), { start: monthStart, end: monthEnd })
-      ))
-    );
-  }
-
-  /**
-   * Get events for next N months
-   */
-  getNextMonthsEvents(months: number = 2): Observable<CalendarEvent[]> {
-    const now = new Date();
-    const futureDate = addDays(now, months * 30);
-    
-    return this.events$.pipe(
-      map(events => events.filter(event => {
-        const eventDate = new Date(event.date);
-        return isAfter(eventDate, now) && isBefore(eventDate, futureDate);
-      }))
-    );
-  }
-
-  /**
-   * Download calendar ICS file for a specific calendar source
+   * Download calendar ICS file
    */
   downloadCalendarICS(calendarId: number): Observable<CalendarSyncResult> {
     const source = this.calendarSources.find(s => s.id === calendarId);
@@ -1439,24 +580,21 @@ export class CalendarService {
     }
 
     try {
-      // Create a download link for the ICS file
       const link = document.createElement('a');
       link.href = source.url;
       link.download = `${source.name.replace(/[^a-zA-Z0-9]/g, '_')}_calendar.ics`;
       link.target = '_blank';
       
-      // Trigger download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
       return of({
         success: true,
-        eventsCount: 0, // Download doesn't return event count
+        eventsCount: 0,
         message: `Downloading ${source.name} calendar...`
       });
     } catch (error) {
-      console.error('Failed to download calendar:', error);
       return of({
         success: false,
         eventsCount: 0,

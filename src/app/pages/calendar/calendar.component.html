@@ -95,7 +95,20 @@
   </div>
 
   <!-- Calendar Grid -->
-  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden relative">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="absolute inset-0 bg-white/80 z-10 flex items-center justify-center">
+      <div class="text-center">
+        <div class="relative inline-block">
+          <div class="w-12 h-12 border-4 border-primary-gold border-t-transparent rounded-full animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <i class="fas fa-compass text-primary-blue text-sm"></i>
+          </div>
+        </div>
+        <p class="mt-2 text-primary-blue font-cinzel text-sm">Loading Events...</p>
+      </div>
+    </div>
+
     <!-- Calendar Header -->
     <div class="grid grid-cols-7 bg-primary-blue text-white">
       <div *ngFor="let day of weekDays" class="p-4 text-center font-semibold">
@@ -115,7 +128,7 @@
         <!-- Events for this day -->
         <div class="space-y-1">
           <div *ngFor="let event of getEventsForDay(day)" 
-               class="text-xs p-1 rounded cursor-pointer transition-colors"
+               class="text-xs p-1 rounded cursor-pointer transition-colors text-white"
                [style.background-color]="getEventColor(event)"
                [title]="getEventTooltip(event)"
                (click)="selectEvent(event)">
