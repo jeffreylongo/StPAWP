@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, combineLatest, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-import { format, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { format, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval, isSameDay } from 'date-fns';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../interfaces';
 
 export interface EventStorage {
@@ -362,6 +363,7 @@ export class CalendarService {
 
   /**
    * Parse ICS data into CalendarEvent objects
+   * Handles recurring events (RRULE) and exception instances (RECURRENCE-ID)
    */
   private parseIcsData(icsContent: string, source: CalendarSource): CalendarEvent[] {
     try {
@@ -370,24 +372,44 @@ export class CalendarService {
       }
 
       const events: CalendarEvent[] = [];
+      const rawEvents: any[] = [];
+      const exceptionInstances: Map<string, any[]> = new Map(); // UID -> exception instances
       const lines = icsContent.split(/\r?\n/);
       let currentEvent: any = null;
       let isInEvent = false;
+      let fullDtstart = ''; // Store full DTSTART line with timezone info
 
       for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
+        let line = lines[i];
+        
+        // Handle line continuations (lines starting with space or tab)
+        while (i + 1 < lines.length && (lines[i + 1].startsWith(' ') || lines[i + 1].startsWith('\t'))) {
+          i++;
+          line += lines[i].substring(1);
+        }
+        
+        line = line.trim();
         
         if (line === 'BEGIN:VEVENT') {
           isInEvent = true;
           currentEvent = {};
+          fullDtstart = '';
           continue;
         }
         
         if (line === 'END:VEVENT' && isInEvent) {
           if (currentEvent?.DTSTART && currentEvent?.SUMMARY) {
-            const calendarEvent = this.convertIcsEventToCalendarEvent(currentEvent, source);
-            if (calendarEvent) {
-              events.push(calendarEvent);
+            currentEvent._fullDtstart = fullDtstart;
+            
+            // Check if this is an exception instance (modified occurrence)
+            if (currentEvent['RECURRENCE-ID']) {
+              const uid = currentEvent.UID;
+              if (!exceptionInstances.has(uid)) {
+                exceptionInstances.set(uid, []);
+              }
+              exceptionInstances.get(uid)!.push(currentEvent);
+            } else {
+              rawEvents.push(currentEvent);
             }
           }
           isInEvent = false;
@@ -400,11 +422,33 @@ export class CalendarService {
           const property = line.substring(0, colonIndex);
           const value = line.substring(colonIndex + 1);
           
+          // Store full DTSTART line for RRULE parsing
+          if (property.startsWith('DTSTART')) {
+            fullDtstart = line;
+          }
+          
           if (property.includes(';')) {
             const mainProperty = property.split(';')[0];
             currentEvent[mainProperty] = value;
+            // Also store the full property for timezone info
+            currentEvent[`_full_${mainProperty}`] = line;
           } else {
             currentEvent[property] = value;
+          }
+        }
+      }
+
+      // Process all raw events
+      for (const rawEvent of rawEvents) {
+        if (rawEvent.RRULE) {
+          // This is a recurring event - expand it
+          const expandedEvents = this.expandRecurringEvent(rawEvent, source, exceptionInstances.get(rawEvent.UID) || []);
+          events.push(...expandedEvents);
+        } else {
+          // Single event
+          const calendarEvent = this.convertIcsEventToCalendarEvent(rawEvent, source);
+          if (calendarEvent) {
+            events.push(calendarEvent);
           }
         }
       }
@@ -414,6 +458,105 @@ export class CalendarService {
       console.error(`Error parsing ICS content from ${source.name}:`, error);
       return [];
     }
+  }
+
+  /**
+   * Expand a recurring event into individual occurrences
+   */
+  private expandRecurringEvent(icsEvent: any, source: CalendarSource, exceptions: any[]): CalendarEvent[] {
+    const events: CalendarEvent[] = [];
+    
+    try {
+      const startDate = this.parseIcsDateTime(icsEvent.DTSTART);
+      if (!startDate) return [];
+
+      // Calculate event duration
+      const endDate = icsEvent.DTEND ? this.parseIcsDateTime(icsEvent.DTEND) : startDate;
+      const duration = endDate ? endDate.getTime() - startDate.getTime() : 60 * 60 * 1000; // Default 1 hour
+
+      // Build RRULE string for parsing
+      let rruleString = `DTSTART:${this.formatDateForRRule(startDate)}\nRRULE:${icsEvent.RRULE}`;
+      
+      // Parse the RRULE
+      const rule = rrulestr(rruleString);
+      
+      // Get occurrences for the next 6 months
+      const now = new Date();
+      const rangeStart = new Date(now.getFullYear(), now.getMonth() - 1, 1); // Start from last month
+      const rangeEnd = addMonths(now, 7); // 7 months ahead to be safe
+      
+      const occurrences = rule.between(rangeStart, rangeEnd, true);
+      
+      console.log(`📅 Expanding recurring event "${icsEvent.SUMMARY}": ${occurrences.length} occurrences found`);
+
+      // Create exception date map for quick lookup
+      const exceptionDates = new Map<string, any>();
+      for (const exception of exceptions) {
+        const exDate = this.parseIcsDateTime(exception['RECURRENCE-ID']);
+        if (exDate) {
+          const dateKey = format(exDate, 'yyyy-MM-dd');
+          exceptionDates.set(dateKey, exception);
+        }
+      }
+
+      for (const occurrence of occurrences) {
+        const occurrenceDate = new Date(occurrence);
+        const dateKey = format(occurrenceDate, 'yyyy-MM-dd');
+        
+        // Check if this occurrence has been modified (exception instance)
+        const exceptionEvent = exceptionDates.get(dateKey);
+        
+        if (exceptionEvent) {
+          // Use the modified version of this occurrence
+          const modifiedEvent = this.convertIcsEventToCalendarEvent(exceptionEvent, source);
+          if (modifiedEvent) {
+            events.push(modifiedEvent);
+          }
+        } else {
+          // Create a regular occurrence
+          const occurrenceEnd = new Date(occurrenceDate.getTime() + duration);
+          
+          const event: CalendarEvent = {
+            id: this.hashStringToNumber(`${icsEvent.UID}-${dateKey}`),
+            title: icsEvent.SUMMARY || 'Untitled Event',
+            date: occurrenceDate,
+            startTime: format(occurrenceDate, 'HH:mm'),
+            endTime: format(occurrenceEnd, 'HH:mm'),
+            location: icsEvent.LOCATION || source.name,
+            description: icsEvent.DESCRIPTION || '',
+            type: this.determineEventType(icsEvent.SUMMARY),
+            calendarId: source.id,
+            calendarName: source.name,
+            uid: `${icsEvent.UID}-${dateKey}`,
+            isRecurring: true
+          };
+          
+          events.push(event);
+        }
+      }
+    } catch (error) {
+      console.error(`Error expanding recurring event "${icsEvent.SUMMARY}":`, error);
+      // Fall back to single instance
+      const singleEvent = this.convertIcsEventToCalendarEvent(icsEvent, source);
+      if (singleEvent) {
+        events.push(singleEvent);
+      }
+    }
+    
+    return events;
+  }
+
+  /**
+   * Format a Date for RRULE parsing (YYYYMMDDTHHMMSS format)
+   */
+  private formatDateForRRule(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}T${hours}${minutes}${seconds}`;
   }
 
   /**
