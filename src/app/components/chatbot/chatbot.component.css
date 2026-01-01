@@ -310,17 +310,23 @@
     top: 115px; /* Account for mobile navbar height */
     right: 0;
     left: 0;
-    bottom: auto; /* Don't anchor to bottom - prevents keyboard resize issues */
+    bottom: 0;
     width: 100%;
     max-width: 100%;
-    /* Use dvh (dynamic viewport height) to handle mobile keyboard appearance */
-    height: calc(100dvh - 115px);
+    /* Height will be controlled by JavaScript visualViewport API */
+    /* This is a fallback for when JS hasn't kicked in yet */
+    height: auto;
     max-height: none;
     border-radius: 16px 16px 0 0;
+    /* Prevent any overflow issues */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .chat-header {
     border-radius: 16px 16px 0 0;
+    flex-shrink: 0;
   }
 
   .chat-bubble {
@@ -332,8 +338,10 @@
 
   .chat-messages {
     padding: 12px;
-    /* Ensure messages area shrinks properly when keyboard opens */
+    /* Critical: allow messages area to shrink when keyboard opens */
     min-height: 0;
+    flex: 1;
+    overflow-y: auto;
   }
 
   .message-bubble-user,
@@ -343,6 +351,7 @@
 
   /* Ensure input stays visible above keyboard */
   .chat-input-area {
+    flex-shrink: 0;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 }
@@ -351,7 +360,6 @@
 @media (max-width: 380px) {
   .chat-window {
     top: 100px;
-    height: calc(100dvh - 100px);
   }
 }
 

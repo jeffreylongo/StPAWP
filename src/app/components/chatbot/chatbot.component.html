@@ -28,7 +28,7 @@
 ></div>
 
 <!-- Chat Window -->
-<div *ngIf="isOpen" class="chat-window" (click)="$event.stopPropagation()">
+<div #chatWindow *ngIf="isOpen" class="chat-window" (click)="$event.stopPropagation()">
   <!-- Header -->
   <div class="chat-header">
     <div class="flex items-center gap-3">
