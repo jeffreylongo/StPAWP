@@ -724,18 +724,20 @@ Visit the **Trestle Board** page to read the latest edition.`,
     id: 'masonry-general',
     description: 'General questions about Freemasonry',
     matchType: 'contains',
-    patterns: ['what is masonry', 'what is freemasonry', 'freemason', 'fraternity'],
-    response: `**About Freemasonry:**
+    patterns: ['what is a mason', 'what is masonry', 'what is freemasonry', 'what are masons', 'what are freemasons', 'who are masons', 'who are freemasons', 'freemason', 'fraternity'],
+    response: `**What is a Mason?**
 
-Freemasonry is the world's oldest and largest fraternal organization. Our core values are:
+A **Mason** (or **Freemason**) is a member of the world's oldest and largest fraternal organization.
+
+Masons are men of good character who strive to improve themselves and make the world a better place. Our core values are:
 
 • **Brotherly Love** - Tolerance, respect, and kindness to our fellow creatures
 • **Relief** - Charity and compassion to those in need
 • **Truth** - Honesty and seeking knowledge through self-improvement
 
-Masons are men of good character who strive to improve themselves and make the world a better place.
+Freemasonry is not a religion, but requires a belief in a Supreme Being. Men of all faiths are welcome.
 
-Visit our **About** or **Becoming a Mason** pages to learn more.`,
+Visit our **About** or **Becoming a Mason** pages to learn more!`,
     priority: 30,
   },
 
