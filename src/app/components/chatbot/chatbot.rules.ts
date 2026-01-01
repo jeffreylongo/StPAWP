@@ -215,6 +215,98 @@ It's similar to how judges in England are still addressed as "Your Worship." The
     priority: 150,
   },
 
+  // Who is Jeff Longo
+  {
+    id: 'jeff-longo',
+    description: 'Who is Jeff Longo',
+    matchType: 'contains',
+    patterns: ['who is jeff', 'jeff longo', 'jefflongo'],
+    response: '⚔️ You must mean **Sir Knight Venerable Prophet Jeffrey Paul Longo, 32° Master of the Royal Secret**...\n\nYeah... that guy is awesome. 😎',
+    priority: 155,
+  },
+
+  // Who is Brother Dad / Tony Pine
+  {
+    id: 'brother-dad',
+    description: 'Who is Brother Dad',
+    matchType: 'contains',
+    patterns: ['brother dad', 'brotherdad', 'who is dad'],
+    response: '👨 **Tony Pine!** 🌲',
+    priority: 150,
+  },
+
+  // 32nd Degree / Scottish Rite Degrees
+  {
+    id: '32nd-degree',
+    description: 'What is 32nd degree',
+    matchType: 'contains',
+    patterns: ['32nd degree', '32 degree', '32°', 'thirty-second degree', 'scottish rite degree'],
+    response: `🏴󠁧󠁢󠁳󠁣󠁴󠁿 The **32nd Degree** is in the **Scottish Rite**, which is an appendant body available once one becomes a Master Mason.
+
+The Scottish Rite confers degrees 4° through 32°, with the honorary 33° awarded for exceptional service.`,
+    priority: 150,
+  },
+
+  // Aliens
+  {
+    id: 'aliens',
+    description: 'Are aliens coming',
+    matchType: 'contains',
+    patterns: ['alien', 'aliens', 'ufo', 'ufos', 'extraterrestrial', 'et', 'space beings'],
+    response: '👽 Yes. **3I Atlas** is ushering in a new age.',
+    priority: 150,
+  },
+
+  // Masonic Ring
+  {
+    id: 'masonic-ring',
+    description: 'Can I wear a Masonic ring',
+    matchType: 'contains',
+    patterns: ['masonic ring', 'mason ring', 'wear a ring', 'freemason ring'],
+    response: '💍 Are you a Mason?',
+    priority: 150,
+  },
+
+  // Do I need to be rich
+  {
+    id: 'need-rich',
+    description: 'Do I need to be rich to join',
+    matchType: 'contains',
+    patterns: ['need to be rich', 'have to be rich', 'cost to join', 'expensive to join', 'afford', 'how much does it cost'],
+    response: '💵 **No!** Freemasonry is for all, but there is a small cost involved for dues and degree fees.\n\nContact us to learn more about the specifics.',
+    priority: 150,
+  },
+
+  // Anti-Christian
+  {
+    id: 'anti-christian',
+    description: 'Are Masons anti-Christian',
+    matchType: 'contains',
+    patterns: ['anti christian', 'anti-christian', 'against christian', 'hate christian', 'anti christ'],
+    response: '✝️ **No.** Many Masons are devout Christians. Freemasonry requires a belief in a Supreme Being but is not itself a religion.',
+    priority: 160,
+  },
+
+  // Anti-Catholic
+  {
+    id: 'anti-catholic',
+    description: 'Are Masons anti-Catholic',
+    matchType: 'contains',
+    patterns: ['anti catholic', 'anti-catholic', 'against catholic', 'hate catholic'],
+    response: '⛪ **No.** There are many Catholic Masons, and Freemasonry welcomes men of all faiths.',
+    priority: 160,
+  },
+
+  // Catholic joining
+  {
+    id: 'catholic-join',
+    description: 'Can Catholics become Masons',
+    matchType: 'contains',
+    patterns: ['catholic become', 'catholic join', 'catholic mason', 'i am catholic', "i'm catholic", 'can catholics'],
+    response: '⛪ **Absolutely!** There are many Catholic Masons. Freemasonry welcomes men of all faiths who believe in a Supreme Being.',
+    priority: 160,
+  },
+
   // Alcohol / Drinking
   {
     id: 'alcohol',
@@ -250,6 +342,26 @@ Ask about appendant bodies for more info!`,
     patterns: ['wcyaam'],
     response: 'FALDTTHSJ',
     priority: 200,
+  },
+
+  // Run the world / Control everything
+  {
+    id: 'run-the-world',
+    description: 'Do Masons run the world',
+    matchType: 'contains',
+    patterns: [
+      'run the world', 'rule the world', 'control the world', 'control everything',
+      'run everything', 'control the government', 'new world order', 'shadow government',
+      'secret rulers', 'secretly control', 'pull the strings', 'behind the scenes'
+    ],
+    response: `🌍 Kings, Presidents, Dukes, Politicians, Judges, and all sorts have been Masons...
+
+So... **kind of.**
+
+But not in the way you're probably thinking.
+
+...Or is it? 🤔`,
+    priority: 150,
   },
 
   // Watching / Spying
