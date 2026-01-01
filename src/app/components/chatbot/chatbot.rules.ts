@@ -706,6 +706,29 @@ Visit us any 3rd Tuesday for dinner and see for yourself!`,
     ],
     priority: 20,
   },
+  {
+    id: 'compliment',
+    description: 'Responds kindly to compliments and praise',
+    matchType: 'contains',
+    patterns: [
+      'thank you', 'thanks', 'thank', 'appreciate',
+      'helpful', 'great job', 'good job', 'nice job', 'well done',
+      'awesome', 'amazing', 'wonderful', 'fantastic', 'excellent',
+      'you\'re the best', 'youre the best', 'you rock', 'love this',
+      'so helpful', 'very helpful', 'really helpful',
+      'good bot', 'great bot', 'nice bot', 'smart bot',
+      'impressed', 'cool', 'neat', 'brilliant'
+    ],
+    response: [
+      'Thank you so much! I\'m glad I could help. Is there anything else you\'d like to know about the lodge?',
+      'You\'re very welcome! It\'s my pleasure to assist. Feel free to ask me anything else!',
+      'That\'s very kind of you to say! Let me know if there\'s anything else I can help with.',
+      'I appreciate the kind words! I\'m here whenever you need assistance.',
+      'Thank you! Helping Brothers and visitors learn about our lodge is what I\'m here for. 😊',
+      'You\'re too kind! Don\'t hesitate to reach out if you have more questions.',
+    ],
+    priority: 25,
+  },
 ];
 
 // ============================================================================

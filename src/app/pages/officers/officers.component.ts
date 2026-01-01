@@ -210,7 +210,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Worshipful Chris Webb</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Worshipful Chris Webb, P∴M∴</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Assisting with lodge order and ceremonial activities.
               </p>
