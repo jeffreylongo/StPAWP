@@ -252,6 +252,40 @@ Ask about appendant bodies for more info!`,
     priority: 200,
   },
 
+  // Famous Masons
+  {
+    id: 'famous-masons',
+    description: 'List of famous Freemasons',
+    matchType: 'contains',
+    patterns: ['famous mason', 'famous freemason', 'celebrity mason', 'well known mason', 'notable mason', 'who was a mason', 'who were mason'],
+    response: `⭐ **Famous Freemasons Throughout History:**
+
+**U.S. Presidents:**
+🇺🇸 George Washington, Benjamin Franklin, Theodore Roosevelt, Franklin D. Roosevelt, Harry S. Truman, Gerald Ford, and 9 others!
+
+**Founding Fathers:**
+📜 Paul Revere, John Hancock, John Paul Jones
+
+**Entertainment:**
+🎬 John Wayne, Clark Gable, Will Rogers
+🎵 Nat King Cole, Duke Ellington, Louis Armstrong
+😂 Will Ferrell (yes, really!)
+
+**Historical Figures:**
+🗽 Davy Crockett, Buffalo Bill Cody
+✍️ Mark Twain, Oscar Wilde, Voltaire
+🔬 Buzz Aldrin (walked on the moon as a Mason!)
+
+**Sports:**
+⚾ Ty Cobb, Cy Young
+🏀 Shaquille O'Neal
+🥊 Sugar Ray Robinson, Jack Dempsey
+🏈 John Elway
+
+And many more! Freemasonry has attracted men of character from all walks of life for over 300 years.`,
+    priority: 140,
+  },
+
   // ============================================================================
   // STANDARD RULES
   // ============================================================================
