@@ -59,6 +59,100 @@ export const CHATBOT_RULES: ChatbotRule[] = [
     priority: 300,
   },
 
+  // ============================================================================
+  // FUN EASTER EGGS & INSIDE JOKES
+  // ============================================================================
+
+  // Dobby / House Elf
+  {
+    id: 'dobby',
+    description: 'Harry Potter reference - Dobby the house elf',
+    matchType: 'contains',
+    patterns: ['dobby', 'house elf', 'house-elf', 'houseelf'],
+    response: `🧦 Dobby is currently out running errands in Diagon Alley...
+
+But you can try the **Secretary's Office** - they might be able to help!
+
+📞 (727) 418-3356
+📧 secretary@stpete139.org`,
+    priority: 150,
+  },
+
+  // Goat reference
+  {
+    id: 'goat',
+    description: 'Masonic goat joke',
+    matchType: 'contains',
+    patterns: ['goat', 'goats'],
+    response: '🐐 So Mote It Baaaaaah! 🐐',
+    priority: 150,
+  },
+
+  // Knock knock
+  {
+    id: 'knock-knock',
+    description: 'Masonic knock knock response',
+    matchType: 'contains',
+    patterns: ['knock knock', 'knock-knock', 'knockknock'],
+    response: '🚪 Who comes here?',
+    priority: 150,
+  },
+
+  // Amen
+  {
+    id: 'amen',
+    description: 'Masonic response to Amen',
+    matchType: 'keyword',
+    patterns: ['amen'],
+    response: '🙏 So Mote It Be.',
+    priority: 150,
+  },
+
+  // Death / Dying / Passed away
+  {
+    id: 'death',
+    description: 'Respectful response to mentions of death',
+    matchType: 'contains',
+    patterns: ['died', 'dying', 'passed away', 'passed on', 'death', 'funeral', 'memorial'],
+    response: '🕯️ Alas, my Brother...\n\nIf you need assistance with Masonic funeral services or memorial arrangements, please contact our Secretary at (727) 418-3356.',
+    priority: 150,
+  },
+
+  // Best lodge
+  {
+    id: 'best-lodge',
+    description: 'Best lodge around',
+    matchType: 'contains',
+    patterns: ['best lodge', 'best masonic lodge', 'greatest lodge', 'favorite lodge', 'top lodge'],
+    response: `🏆 **St. Petersburg Lodge No. 139**, obviously!
+
+Founded in 1894, we're one of the oldest and finest lodges in Pinellas County. Come visit us any 3rd Tuesday and see for yourself!`,
+    priority: 150,
+  },
+
+  // Other Masonic organizations
+  {
+    id: 'appendant-bodies',
+    description: 'Information about other Masonic organizations',
+    matchType: 'contains',
+    patterns: ['scottish rite', 'york rite', 'shrine', 'shriners', 'grotto', 'other masonic', 'appendant', 'concordant'],
+    response: `**Other Masonic Organizations:**
+
+After becoming a Master Mason, you may explore:
+
+⚔️ **Scottish Rite** - Continuing Masonic education through additional degrees
+🏰 **York Rite** - Chapter, Council, and Commandery degrees
+🎪 **Shrine** - Known for children's hospitals and fun fellowship
+🎭 **Grotto** - Social organization for Master Masons
+
+Check the links at the bottom of our website for more information on these organizations!`,
+    priority: 140,
+  },
+
+  // ============================================================================
+  // STANDARD RULES
+  // ============================================================================
+
   // Greeting rules
   {
     id: 'greeting',
