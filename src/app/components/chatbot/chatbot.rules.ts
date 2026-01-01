@@ -199,7 +199,7 @@ It's similar to how judges in England are still addressed as "Your Worship." The
     description: 'Coolest person in the lodge',
     matchType: 'contains',
     patterns: ['coolest person', 'coolest guy', 'coolest member', 'coolest mason', 'most handsome', 'best looking'],
-    response: '😎 Probably **Jeff Longo**. He\'s got a great beard and is very handsome.',
+    response: '😎 Probably **Brother Jeff Longo**. He\'s got a great beard and is very handsome.',
     priority: 150,
   },
 
@@ -209,7 +209,7 @@ It's similar to how judges in England are still addressed as "Your Worship." The
     description: 'Who made this website',
     matchType: 'contains',
     patterns: ['who made', 'who built', 'who created', 'who designed', 'website by', 'made this site', 'made this website'],
-    response: `💻 This website was built by **Jeff Longo** of **Speedmaster Consulting**.
+    response: `💻 This website was built by **Brother Jeff Longo** of **Speedmaster Consulting**.
 
 🌐 SpeedmasterConsulting.com`,
     priority: 150,
