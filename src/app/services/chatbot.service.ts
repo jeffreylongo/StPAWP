@@ -25,11 +25,39 @@ export class ChatbotService {
 
   // Patterns that should trigger dynamic calendar lookup
   private readonly calendarPatterns = [
+    // Specific phrases
     'next meeting', 'next event', 'upcoming event', 'upcoming meeting',
     'what\'s coming up', 'what is coming up', 'whats coming up',
     'when is the next', 'what events', 'any events',
-    'this week', 'this month', 'schedule'
+    'this week', 'this month', 'schedule',
+    // Common single-word/short triggers
+    'meeting', 'meetings', 'calendar', 'event', 'events',
+    'when is the meeting', 'when do you meet', 'when do we meet',
+    'what time', 'dinner', 'stated communication', 'degree work',
+    'happening', 'coming up', 'lodge night',
+    // Event-specific keywords users might search for
+    'installation', 'degree', 'practice', 'breakfast', 'lunch',
+    'picnic', 'cookout', 'fellowship', 'education', 'open house'
   ];
+
+  // Words to ignore when extracting search keywords from user input
+  private readonly stopWords = new Set([
+    'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
+    'should', 'may', 'might', 'must', 'shall', 'can', 'need', 'dare',
+    'ought', 'used', 'to', 'of', 'in', 'for', 'on', 'with', 'at', 'by',
+    'from', 'as', 'into', 'through', 'during', 'before', 'after', 'above',
+    'below', 'between', 'under', 'again', 'further', 'then', 'once',
+    'here', 'there', 'when', 'where', 'why', 'how', 'all', 'each', 'few',
+    'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only',
+    'own', 'same', 'so', 'than', 'too', 'very', 'just', 'and', 'but',
+    'if', 'or', 'because', 'until', 'while', 'about', 'against', 'what',
+    'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'i',
+    'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your',
+    'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself',
+    'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them',
+    'their', 'theirs', 'themselves', 'any', 'tell', 'know', 'next', 'upcoming'
+  ]);
 
   constructor(private calendarService: CalendarService) {}
 
@@ -123,6 +151,26 @@ export class ChatbotService {
   }
 
   /**
+   * Extract meaningful search keywords from user input
+   */
+  private extractSearchKeywords(input: string): string[] {
+    const words = input.toLowerCase()
+      .replace(/[^\w\s]/g, '') // Remove punctuation
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !this.stopWords.has(word));
+    return words;
+  }
+
+  /**
+   * Check if an event title matches any of the search keywords
+   */
+  private eventMatchesKeywords(event: CalendarEvent, keywords: string[]): boolean {
+    if (keywords.length === 0) return true; // No specific keywords, show all
+    const titleLower = event.title.toLowerCase();
+    return keywords.some(keyword => titleLower.includes(keyword));
+  }
+
+  /**
    * Format calendar events into a chat response
    */
   private formatCalendarResponse(events: CalendarEvent[], input: string): string {
@@ -130,18 +178,35 @@ export class ChatbotService {
       return this.getStaticCalendarResponse();
     }
 
-    // Filter to Lodge events only (calendarId 1) for "next meeting" type queries
-    const isAskingAboutMeeting = input.includes('meeting') || input.includes('stated');
+    // Extract search keywords from user input
+    const searchKeywords = this.extractSearchKeywords(input);
+    
+    // Separate Lodge events (calendarId 1) from other events
+    const lodgeEvents = events.filter(e => e.calendarId === 1);
+    const otherEvents = events.filter(e => e.calendarId !== 1);
+    
+    // Check if user is searching for something specific
+    const hasSpecificSearch = searchKeywords.length > 0 && 
+      !searchKeywords.every(k => ['meeting', 'event', 'events', 'calendar', 'schedule'].includes(k));
     
     let relevantEvents: CalendarEvent[];
-    if (isAskingAboutMeeting) {
-      // For meeting queries, prioritize Lodge events
-      relevantEvents = events.filter(e => e.calendarId === 1);
+    let searchTerm = '';
+    
+    if (hasSpecificSearch) {
+      // User is searching for something specific - search by title
+      // Prioritize Lodge events that match, then other events that match
+      const matchingLodgeEvents = lodgeEvents.filter(e => this.eventMatchesKeywords(e, searchKeywords));
+      const matchingOtherEvents = otherEvents.filter(e => this.eventMatchesKeywords(e, searchKeywords));
+      relevantEvents = [...matchingLodgeEvents, ...matchingOtherEvents];
+      searchTerm = searchKeywords.join(' ');
+      
+      // If no matches found, fall back to all Lodge events
       if (relevantEvents.length === 0) {
-        relevantEvents = events;
+        relevantEvents = [...lodgeEvents, ...otherEvents];
       }
     } else {
-      relevantEvents = events;
+      // General calendar query - prioritize Lodge events
+      relevantEvents = [...lodgeEvents, ...otherEvents];
     }
 
     // Take next 5 events
@@ -152,7 +217,9 @@ export class ChatbotService {
     }
 
     // Format the response
-    let response = '**Upcoming Events:**\n\n';
+    let response = hasSpecificSearch && searchTerm
+      ? `**Events matching "${searchTerm}":**\n\n`
+      : '**Upcoming Events:**\n\n';
 
     for (const event of upcomingEvents) {
       const eventDate = new Date(event.date);
