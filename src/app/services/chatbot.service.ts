@@ -153,7 +153,7 @@ export class ChatbotService {
 
     return `${timeGreeting}
 
-Welcome to St. Petersburg Lodge No. 139. I am the digital guardian of this portal.
+Welcome to St. Petersburg Lodge No. 139. I am the Digital Tyler, guardian of this portal.
 
 **How may I assist you?**
 • Ask about **meetings** or **events**
@@ -163,6 +163,10 @@ Welcome to St. Petersburg Lodge No. 139. I am the digital guardian of this porta
 
 Type **"help"** to reveal all the mysteries I can illuminate...${specialMessage}`;
   }
+
+  // Minimum priority for a rule to take precedence over calendar queries
+  // Rules with priority >= this value will be checked BEFORE calendar lookup
+  private readonly CALENDAR_PRIORITY_THRESHOLD = 100;
 
   /**
    * Process a user message and generate a bot response
@@ -186,24 +190,51 @@ Type **"help"** to reveal all the mysteries I can illuminate...${specialMessage}
     const variableDelay = Math.random() * 800; // 0-800ms additional
     const totalDelay = baseDelay + variableDelay;
 
-    // Check if this is a calendar-related query
     const normalizedInput = text.toLowerCase().trim();
     
-    if (this.isCalendarQuery(normalizedInput)) {
+    // STEP 1: Check for high-priority rules FIRST (easter eggs, specific answers)
+    // This ensures "can I wear crocs to meeting" hits crocs, not calendar
+    const highPriorityMatch = this.findHighPriorityMatch(normalizedInput);
+    
+    if (highPriorityMatch) {
+      // High-priority rule matched - use it instead of calendar
+      setTimeout(() => {
+        let response = this.getResponse(highPriorityMatch);
+        response = this.addPersonality(response, normalizedInput);
+        this.sendBotMessage(response);
+        this.lastTopic = highPriorityMatch.id;
+      }, totalDelay);
+    } else if (this.isCalendarQuery(normalizedInput)) {
+      // STEP 2: Check for calendar-related queries
       setTimeout(() => {
         this.handleCalendarQuery(normalizedInput);
       }, totalDelay);
     } else {
-      // Process with static rules
+      // STEP 3: Process with remaining static rules
       setTimeout(() => {
         let response = this.processMessage(text);
-        
-        // Add personality enhancements
         response = this.addPersonality(response, normalizedInput);
-        
         this.sendBotMessage(response);
       }, totalDelay);
     }
+  }
+
+  /**
+   * Find a high-priority rule match (priority >= threshold)
+   * These rules take precedence over calendar queries
+   */
+  private findHighPriorityMatch(input: string): ChatbotRule | null {
+    // Get rules with priority >= threshold, sorted by priority (highest first)
+    const highPriorityRules = CHATBOT_RULES
+      .filter(rule => (rule.priority ?? 0) >= this.CALENDAR_PRIORITY_THRESHOLD)
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+    
+    for (const rule of highPriorityRules) {
+      if (this.matchesRule(input, rule)) {
+        return rule;
+      }
+    }
+    return null;
   }
 
   /**

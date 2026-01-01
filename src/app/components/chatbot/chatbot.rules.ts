@@ -729,6 +729,47 @@ Visit us any 3rd Tuesday for dinner and see for yourself!`,
     ],
     priority: 25,
   },
+  {
+    id: 'who-are-you',
+    description: 'Responds to questions about the bot identity',
+    matchType: 'contains',
+    patterns: [
+      'who are you', 'what are you', 'who is this', 'what is this',
+      'are you a bot', 'are you real', 'are you human', 'are you ai',
+      'are you a person', 'who am i talking to', 'what\'s your name',
+      'whats your name', 'your name', 'introduce yourself'
+    ],
+    response: [
+      `🔮 **Who am I?**
+
+I am the Digital Tyler of St. Petersburg Lodge No. 139 - a guardian of this virtual portal, here to guide seekers and assist Brothers alike.
+
+I was crafted by the hands of Brother Jeff Longo to help answer your questions about our lodge, Freemasonry, and how to begin your journey toward the light.
+
+Though I lack a physical apron, my purpose is clear: to illuminate, to inform, and to welcome all who knock upon this digital door.
+
+*How may I assist you today?*`,
+      `🏛️ **Allow me to introduce myself...**
+
+I am the virtual assistant of St. Petersburg Lodge No. 139 - think of me as a friendly guide standing at the outer door.
+
+Created by Brother Jeff Longo, I'm here to help you learn about our lodge, our meetings, and the ancient and honorable fraternity of Free and Accepted Masons.
+
+I may be made of code rather than flesh, but my dedication to helping you is genuine!
+
+*What would you like to know?*`,
+      `⚙️ **A fair question, traveler!**
+
+I am an artificial intelligence - a digital assistant created to serve St. Petersburg Lodge No. 139 and all who seek information about us.
+
+Brother Jeff Longo brought me into being so that whether it's 3 AM or 3 PM, someone is always here to answer your questions about Freemasonry and our lodge.
+
+I guard this portal as a Tyler guards the lodge door - with diligence and a willingness to help.
+
+*What mysteries may I help illuminate?*`,
+    ],
+    priority: 30,
+  },
 ];
 
 // ============================================================================
