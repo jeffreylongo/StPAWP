@@ -306,13 +306,15 @@
   }
 
   .chat-window {
-    bottom: 0;
+    position: fixed;
+    top: 115px; /* Account for mobile navbar height */
     right: 0;
     left: 0;
-    top: 115px; /* Account for mobile navbar height */
+    bottom: auto; /* Don't anchor to bottom - prevents keyboard resize issues */
     width: 100%;
     max-width: 100%;
-    height: auto;
+    /* Use dvh (dynamic viewport height) to handle mobile keyboard appearance */
+    height: calc(100dvh - 115px);
     max-height: none;
     border-radius: 16px 16px 0 0;
   }
@@ -330,11 +332,18 @@
 
   .chat-messages {
     padding: 12px;
+    /* Ensure messages area shrinks properly when keyboard opens */
+    min-height: 0;
   }
 
   .message-bubble-user,
   .message-bubble-bot {
     max-width: 90%;
+  }
+
+  /* Ensure input stays visible above keyboard */
+  .chat-input-area {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 }
 
@@ -342,6 +351,7 @@
 @media (max-width: 380px) {
   .chat-window {
     top: 100px;
+    height: calc(100dvh - 100px);
   }
 }
 
