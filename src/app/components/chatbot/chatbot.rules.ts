@@ -93,7 +93,7 @@ But you can try the **Secretary's Office** - they might be able to help!
     id: 'knock-knock',
     description: 'Masonic knock knock response',
     matchType: 'contains',
-    patterns: ['knock knock', 'knock-knock', 'knockknock'],
+    patterns: ['knock knock knock', 'knock-knock-knock', 'knockknockknock'],
     response: '🚪 Who comes here?',
     priority: 150,
   },
@@ -147,6 +147,109 @@ After becoming a Master Mason, you may explore:
 
 Check the links at the bottom of our website for more information on these organizations!`,
     priority: 140,
+  },
+
+  // I love you - Star Wars reference
+  {
+    id: 'love',
+    description: 'Star Wars Han Solo reference',
+    matchType: 'contains',
+    patterns: ['i love you', 'love you'],
+    response: '😎 I know.',
+    priority: 150,
+  },
+
+  // Crocs
+  {
+    id: 'crocs',
+    description: 'No crocs allowed',
+    matchType: 'contains',
+    patterns: ['crocs', 'croc'],
+    response: '🚫👟 **No.** Crocs are NOT allowed. You will be jailed by order of the Worshipful Master.',
+    priority: 150,
+  },
+
+  // Dinner
+  {
+    id: 'dinner',
+    description: 'Whats for dinner',
+    matchType: 'contains',
+    patterns: ['whats for dinner', 'what\'s for dinner', 'what is for dinner', 'dinner menu', 'what are we eating'],
+    response: '🥗 Green beans... JK... who knows! But I\'m sure it\'s something delicious and catered. 🍽️\n\nDinner is served at **6:30 PM** before our 7:30 PM meeting on the 3rd Tuesday.',
+    priority: 150,
+  },
+
+  // Worshipful Master title explanation
+  {
+    id: 'worshipful-meaning',
+    description: 'Why is the president called Worshipful Master',
+    matchType: 'contains',
+    patterns: ['why worshipful', 'worshipful mean', 'worshipful master mean', 'why is he called', 'president called'],
+    response: `📚 **Great question!**
+
+"Worshipful" comes from Old English usage where it meant **"worthy of respect"** or **"honorable"** - not religious worship.
+
+It's similar to how judges in England are still addressed as "Your Worship." The Worshipful Master is simply the respected leader of the lodge.`,
+    priority: 150,
+  },
+
+  // Coolest person
+  {
+    id: 'coolest',
+    description: 'Coolest person in the lodge',
+    matchType: 'contains',
+    patterns: ['coolest person', 'coolest guy', 'coolest member', 'coolest mason', 'most handsome', 'best looking'],
+    response: '😎 Probably **Jeff Longo**. He\'s got a great beard and is very handsome.',
+    priority: 150,
+  },
+
+  // Who made the website
+  {
+    id: 'website-creator',
+    description: 'Who made this website',
+    matchType: 'contains',
+    patterns: ['who made', 'who built', 'who created', 'who designed', 'website by', 'made this site', 'made this website'],
+    response: `💻 This website was built by **Jeff Longo** of **Speedmaster Consulting**.
+
+🌐 SpeedmasterConsulting.com`,
+    priority: 150,
+  },
+
+  // Alcohol / Drinking
+  {
+    id: 'alcohol',
+    description: 'Questions about drinking at lodge',
+    matchType: 'contains',
+    patterns: ['drink', 'alcohol', 'beer', 'wine', 'liquor', 'booze', 'bar', 'drinking'],
+    response: `🚫🍺 No alcohol at Lodge meetings.
+
+**However**, once you become a Master Mason, there are social organizations where libations flow freely:
+
+🎪 **Shrine** - Famous for their festive gatherings
+🎭 **Grotto** - Known for good times and fellowship
+
+Ask about appendant bodies for more info!`,
+    priority: 145,
+  },
+
+  // Secrets
+  {
+    id: 'secrets',
+    description: 'Can you tell me secrets',
+    matchType: 'contains',
+    patterns: ['tell me secret', 'masonic secret', 'the secret', 'your secrets', 'any secrets'],
+    response: '🤐 No.',
+    priority: 150,
+  },
+
+  // WCYAAM
+  {
+    id: 'wcyaam',
+    description: 'Masonic cipher response',
+    matchType: 'keyword',
+    patterns: ['wcyaam'],
+    response: 'FALDTTHSJ',
+    priority: 200,
   },
 
   // ============================================================================
