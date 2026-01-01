@@ -235,6 +235,16 @@ It's similar to how judges in England are still addressed as "Your Worship." The
     priority: 150,
   },
 
+  // Green beans
+  {
+    id: 'green-beans',
+    description: 'Do you eat green beans',
+    matchType: 'contains',
+    patterns: ['green bean', 'greenbeans', 'green beans'],
+    response: '🥗 Doesn\'t everyone?',
+    priority: 150,
+  },
+
   // 32nd Degree / Scottish Rite Degrees
   {
     id: '32nd-degree',
