@@ -252,6 +252,76 @@ Ask about appendant bodies for more info!`,
     priority: 200,
   },
 
+  // Watching / Spying
+  {
+    id: 'spying',
+    description: 'Someone is watching me',
+    matchType: 'contains',
+    patterns: ['watching me', 'spying on me', 'being watched', 'someone watching', 'being followed'],
+    response: '👁️ They are. Most likely CIA.',
+    priority: 150,
+  },
+
+  // Are you alive
+  {
+    id: 'alive',
+    description: 'Are you alive',
+    matchType: 'contains',
+    patterns: ['are you alive', 'are you real', 'are you a bot', 'are you ai', 'are you human'],
+    response: '🤔 Maybe. I\'m not sure. Is there really a way to tell anymore?',
+    priority: 150,
+  },
+
+  // Ford vs Chevy
+  {
+    id: 'chevy-ford',
+    description: 'Ford vs Chevy debate',
+    matchType: 'contains',
+    patterns: ['ford', 'chevy', 'chevrolet', 'truck', 'f150', 'f-150', 'silverado'],
+    response: '🚗 **Chevy is better.** Especially trucks. This is not up for debate. 🏆',
+    priority: 150,
+  },
+
+  // Sports
+  {
+    id: 'sports',
+    description: 'Best sport / team',
+    matchType: 'contains',
+    patterns: ['best sport', 'favorite sport', 'best team', 'favorite team', 'sports', 'football', 'baseball', 'basketball', 'hockey', 'soccer'],
+    response: '🏒 **Hockey is the best sport.** And the **Tampa Bay Lightning** is the best team. ⚡\n\nThis is objective fact.',
+    priority: 145,
+  },
+
+  // Meaning of life
+  {
+    id: 'meaning-of-life',
+    description: 'Meaning of life',
+    matchType: 'contains',
+    patterns: ['meaning of life', 'purpose of life', 'why are we here', 'what is life'],
+    response: '🌌 You aren\'t ready for it.',
+    priority: 150,
+  },
+
+  // Best fast food
+  {
+    id: 'fast-food',
+    description: 'Best fast food',
+    matchType: 'contains',
+    patterns: ['best fast food', 'favorite fast food', 'fast food', 'taco bell', 'mcdonalds', 'burger king', 'wendys'],
+    response: '🌮 **Taco Bell.** Obviously.',
+    priority: 150,
+  },
+
+  // Best investment
+  {
+    id: 'investment',
+    description: 'Best investment',
+    matchType: 'contains',
+    patterns: ['best investment', 'invest', 'stocks', 'crypto', 'money', 'rich', 'wealth'],
+    response: '💰 **Money producing assets.**\n\nThis is financial advice. (Not really, but kind of.)',
+    priority: 145,
+  },
+
   // Famous Masons
   {
     id: 'famous-masons',
