@@ -93,18 +93,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.calendarService.events$
       .pipe(takeUntil(this.destroy$))
       .subscribe(events => {
-        console.log('📅 Calendar component received events:', events.length);
-        console.log('  🏛️ Lodge (id=1):', events.filter(e => e.calendarId === 1).length);
-        console.log('  🤝 SMMA (id=2):', events.filter(e => e.calendarId === 2).length);
-        console.log('  🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR (id=3):', events.filter(e => e.calendarId === 3).length);
-        console.log('  ⚜️ York Rite (id=4):', events.filter(e => e.calendarId === 4).length);
-        
-        // Debug: Show AASR events dates
-        const aasrEvents = events.filter(e => e.calendarId === 3);
-        if (aasrEvents.length > 0) {
-          console.log('  🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR event dates:', aasrEvents.slice(0, 5).map(e => `${e.title} - ${new Date(e.date).toLocaleDateString()}`));
-        }
-        
         this.events = events;
         this.generateCalendarDays();
       });
@@ -129,15 +117,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.calendarService.getNext6MonthsEvents()
       .pipe(takeUntil(this.destroy$))
       .subscribe(events => {
-        console.log('📅 Calendar component - 6 months of upcoming events received:', events.length);
-        console.log('🏛️ Lodge upcoming events:', events.filter(e => e.calendarId === 1).length);
-        console.log('🤝 SMMA upcoming events:', events.filter(e => e.calendarId === 2).length);
-        console.log('🏴󠁧󠁢󠁳󠁣󠁴󠁿 AASR upcoming events:', events.filter(e => e.calendarId === 3).length);
-        console.log('⚜️ York Rite upcoming events:', events.filter(e => e.calendarId === 4).length);
-        
-        // Show all events in upcoming events section regardless of active view
         this.upcomingEvents = events;
-        console.log('✅ Updated upcomingEvents array with', events.length, 'events for next 6 months');
       });
   }
 
@@ -318,7 +298,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
     
     return this.events.filter(event => {
       if (event.calendarId !== sourceId) return false;
-      
       const eventDate = new Date(event.date);
       return eventDate >= monthStart && eventDate <= monthEnd;
     });

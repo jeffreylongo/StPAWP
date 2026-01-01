@@ -282,6 +282,13 @@ export class CalendarService {
     const today = new Date();
     const months: Observable<CalendarEvent[]>[] = [];
     
+    // List of CORS proxies to try for multi-month calendars
+    const proxies = [
+      'https://api.allorigins.win/raw?url=',
+      'https://thingproxy.freeboard.io/fetch/',
+      'https://cors-anywhere.herokuapp.com/'
+    ];
+    
     // Fetch 6 months of data
     for (let i = 0; i < 6; i++) {
       const targetDate = addMonths(today, i);
@@ -292,21 +299,7 @@ export class CalendarService {
         .replace('{YEAR}', year.toString())
         .replace('{MONTH}', month);
       
-      const proxyUrl = 'https://api.allorigins.win/raw?url=';
-      const proxiedUrl = proxyUrl + encodeURIComponent(monthUrl);
-      
-      const monthObservable = this.http.get(proxiedUrl, { 
-        responseType: 'text',
-        headers: { 'Accept': 'text/calendar, text/plain, */*' }
-      }).pipe(
-        map(icsData => {
-          const events = this.parseIcsData(icsData, source);
-          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events`);
-          return events;
-        }),
-        catchError(() => of([]))
-      );
-      
+      const monthObservable = this.fetchWithMultipleProxies(monthUrl, proxies, source, year, month);
       months.push(monthObservable);
     }
 
@@ -321,6 +314,50 @@ export class CalendarService {
         );
         console.log(`🎯 ${source.name}: ${uniqueEvents.length} unique events from 6 months`);
         return uniqueEvents;
+      })
+    );
+  }
+
+  /**
+   * Try multiple proxies for a single URL
+   */
+  private fetchWithMultipleProxies(url: string, proxies: string[], source: CalendarSource, year: number, month: string, proxyIndex: number = 0): Observable<CalendarEvent[]> {
+    if (proxyIndex >= proxies.length) {
+      // All proxies failed, try direct fetch as last resort
+      return this.http.get(url, { 
+        responseType: 'text',
+        headers: { 'Accept': 'text/calendar, text/plain, */*' }
+      }).pipe(
+        map(icsData => {
+          const events = this.parseIcsData(icsData, source);
+          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events`);
+          return events;
+        }),
+        catchError(() => {
+          console.warn(`❌ Failed to load ${source.name} ${year}-${month}`);
+          return of([]);
+        })
+      );
+    }
+
+    const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
+    
+    return this.http.get(proxiedUrl, { 
+      responseType: 'text',
+      headers: { 'Accept': 'text/calendar, text/plain, */*' }
+    }).pipe(
+      map(icsData => {
+        // Check if response looks like valid ICS data
+        if (!icsData || !icsData.includes('BEGIN:VCALENDAR')) {
+          throw new Error('Invalid ICS response');
+        }
+        const events = this.parseIcsData(icsData, source);
+        console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events`);
+        return events;
+      }),
+      catchError(() => {
+        // Try next proxy
+        return this.fetchWithMultipleProxies(url, proxies, source, year, month, proxyIndex + 1);
       })
     );
   }

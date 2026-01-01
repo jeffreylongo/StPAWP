@@ -37,8 +37,14 @@ export class ChatbotService {
     'happening', 'coming up', 'lodge night',
     // Event-specific keywords users might search for
     'installation', 'degree', 'practice', 'breakfast', 'lunch',
-    'picnic', 'cookout', 'fellowship', 'education', 'open house'
+    'picnic', 'cookout', 'fellowship', 'education', 'open house',
+    // Masonic-specific terms
+    'stated', 'ea degree', 'fc degree', 'mm degree', 'entered apprentice',
+    'fellowcraft', 'master mason', 'initiation', 'passing', 'raising'
   ];
+
+  // Short keywords that should still be searched (bypass length filter)
+  private readonly shortKeywordsAllowed = new Set(['ea', 'fc', 'mm', 'smma']);
 
   // Words to ignore when extracting search keywords from user input
   private readonly stopWords = new Set([
@@ -123,7 +129,13 @@ export class ChatbotService {
    * Check if the input is asking about calendar/events
    */
   private isCalendarQuery(input: string): boolean {
-    return this.calendarPatterns.some(pattern => input.includes(pattern));
+    // Check standard patterns
+    if (this.calendarPatterns.some(pattern => input.includes(pattern))) {
+      return true;
+    }
+    // Also check for short Masonic abbreviations as whole words
+    const words = input.split(/\s+/);
+    return words.some(word => this.shortKeywordsAllowed.has(word.toLowerCase()));
   }
 
   /**
@@ -157,7 +169,12 @@ export class ChatbotService {
     const words = input.toLowerCase()
       .replace(/[^\w\s]/g, '') // Remove punctuation
       .split(/\s+/)
-      .filter(word => word.length > 2 && !this.stopWords.has(word));
+      .filter(word => {
+        // Allow short Masonic abbreviations (ea, fc, mm)
+        if (this.shortKeywordsAllowed.has(word)) return true;
+        // Otherwise filter out short words and stop words
+        return word.length > 2 && !this.stopWords.has(word);
+      });
     return words;
   }
 
