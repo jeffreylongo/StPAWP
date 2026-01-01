@@ -38,13 +38,15 @@ export interface ChatMessage {
 
 export const CHATBOT_RULES: ChatbotRule[] = [
   // Profanity filter - HIGH PRIORITY, kind but cheeky response
+  // NOTE: Using 'keyword' match to avoid false positives (e.g., "hello" contains "hell")
   {
     id: 'profanity',
     description: 'Responds to profane language with a kind but cheeky reply',
-    matchType: 'contains',
+    matchType: 'keyword',
     patterns: [
-      'fuck', 'shit', 'damn', 'ass', 'bitch', 'bastard', 'crap',
-      'hell', 'piss', 'dick', 'cock', 'pussy', 'whore', 'slut',
+      'fuck', 'fucking', 'fucked', 'shit', 'shitty', 'damn', 'dammit',
+      'ass', 'asshole', 'bitch', 'bastard', 'crap', 'crappy',
+      'piss', 'pissed', 'dick', 'cock', 'pussy', 'whore', 'slut',
       'wtf', 'stfu', 'lmao', 'lmfao'
     ],
     response: [
