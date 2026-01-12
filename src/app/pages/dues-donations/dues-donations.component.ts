@@ -48,22 +48,59 @@ import { RouterModule } from '@angular/router';
         </div>
       </div>
 
-      <!-- PayPal Donation Button -->
-      <div class="max-w-2xl mx-auto mb-12">
-        <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 text-center">
-          <h3 class="font-cinzel text-2xl text-primary-blue font-bold mb-6">Quick Donation</h3>
-          <p class="text-gray-600 mb-6">Make a direct donation to support our lodge and charitable activities</p>
-          
-          <form action="https://www.paypal.com/ncp/payment/M5KLQ9WPJHPRE" method="post" target="_blank" 
-                class="inline-grid justify-items-center align-content-start gap-4">
-            <input type="submit" value="DONATE" 
-                   class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-8 py-3 rounded-lg transition-colors cursor-pointer text-lg min-w-[11.625rem]">
-            <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" class="mx-auto" />
-            <section class="text-xs text-gray-500">
-              Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" 
-                              alt="PayPal" class="h-3.5 inline align-middle ml-1" />
-            </section>
-          </form>
+      <!-- PayPal Buttons Section -->
+      <div class="max-w-4xl mx-auto mb-12">
+        <h2 class="font-cinzel text-3xl text-primary-blue font-bold text-center mb-8">Payment Options</h2>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Quick Donation -->
+          <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 text-center">
+            <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-4">Quick Donation</h3>
+            <p class="text-gray-600 mb-4 text-sm">Make a direct donation to support our lodge and charitable activities</p>
+            
+            <form action="https://www.paypal.com/ncp/payment/M5KLQ9WPJHPRE" method="post" target="_blank" 
+                  class="inline-grid justify-items-center align-content-start gap-3">
+              <input type="submit" value="DONATE" 
+                     class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg transition-colors cursor-pointer text-base">
+              <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" class="mx-auto h-6" />
+              <section class="text-xs text-gray-500">
+                Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" 
+                                alt="PayPal" class="h-3 inline align-middle ml-1" />
+              </section>
+            </form>
+          </div>
+
+          <!-- Annual Dues with LYPMGS -->
+          <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 text-center">
+            <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-2">Annual Dues</h3>
+            <p class="text-gray-600 mb-2 text-sm">With Voluntary LYPMGS Donation</p>
+            <div class="text-2xl font-bold text-primary-gold mb-4">$202.30 USD</div>
+            
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" class="inline-block">
+              <input type="hidden" name="cmd" value="_s-xclick" />
+              <input type="hidden" name="hosted_button_id" value="3R4THXTSLMN6A" />
+              <input type="hidden" name="currency_code" value="USD" />
+              <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynowCC_LG.gif" 
+                     name="submit" title="PayPal - The safer, easier way to pay online!" alt="Pay Now" 
+                     class="mx-auto" />
+            </form>
+          </div>
+
+          <!-- Annual Meal Plan -->
+          <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 text-center">
+            <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-2">Annual Meal Plan</h3>
+            <p class="text-gray-600 mb-2 text-sm">7% Tax Included</p>
+            <div class="text-2xl font-bold text-primary-gold mb-4">$120.00 USD</div>
+            
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" class="inline-block">
+              <input type="hidden" name="cmd" value="_s-xclick" />
+              <input type="hidden" name="hosted_button_id" value="MHDBGTW592E5N" />
+              <input type="hidden" name="currency_code" value="USD" />
+              <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" 
+                     name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" 
+                     class="mx-auto" />
+            </form>
+          </div>
         </div>
       </div>
 
