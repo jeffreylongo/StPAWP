@@ -63,8 +63,8 @@ import { RouterModule } from '@angular/router';
           <!-- Senior Warden -->
           <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <div class="relative">
-              <img src="assets/officers/Ricardo Senior Warden.jpg" 
-                   alt="Senior Warden Ricardo Colon-Marquez" 
+              <img src="assets/officers/Alan Rosenthal Junior Warden 1.jpg" 
+                   alt="Senior Warden Alan Rosenthal" 
                    class="w-full h-80 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-70"></div>
               <div class="absolute bottom-6 left-6 text-white">
@@ -74,10 +74,10 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-6">
-              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Worshipful Ricardo Colon-Marquez, P∴M∴</h4>
+              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Right Worshipful Alan Rosenthal, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-4">
                 <i class="fas fa-phone mr-2"></i>
-                <span class="text-sm">(315) 412-1672</span>
+                <span class="text-sm">(727) 504-7310</span>
               </div>
               <p class="text-gray-600 mb-4 leading-relaxed">
                 Supporting the Worshipful Master and assisting with lodge operations and activities.
@@ -88,8 +88,8 @@ import { RouterModule } from '@angular/router';
           <!-- Junior Warden -->
           <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <div class="relative">
-              <img src="assets/officers/Alan Rosenthal Junior Warden 1.jpg" 
-                   alt="Junior Warden Alan Rosenthal" 
+              <img src="assets/officers/Craig Hull Sr Deacon 1.jpg" 
+                   alt="Junior Warden Craig Hull" 
                    class="w-full h-80 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-70"></div>
               <div class="absolute bottom-6 left-6 text-white">
@@ -99,11 +99,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-6">
-              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Right Worshipful Alan Rosenthal, P∴M∴</h4>
-              <div class="flex items-center text-primary-gold mb-4">
-                <i class="fas fa-phone mr-2"></i>
-                <span class="text-sm">(727) 504-7310</span>
-              </div>
+              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Brother Craig Hull</h4>
               <p class="text-gray-600 mb-4 leading-relaxed">
                 Supporting the brethren and assisting with lodge harmony and fellowship activities.
               </p>
@@ -224,8 +220,8 @@ import { RouterModule } from '@angular/router';
           <!-- Senior Deacon -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <img src="assets/officers/Craig Hull Sr Deacon 1.jpg" 
-                   alt="Senior Deacon Craig Hull" 
+              <img src="assets/officers/Jeff Senior Steward.jpg" 
+                   alt="Senior Deacon Jeffrey Longo" 
                    class="w-full h-64 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
@@ -235,7 +231,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Craig Hull</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Jeffrey Longo</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Supporting the Worshipful Master and lodge activities.
               </p>
@@ -249,8 +245,8 @@ import { RouterModule } from '@angular/router';
           <!-- Junior Deacon -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <img src="assets/officers/Steven Stamberger Junior Deacon 1.jpg" 
-                   alt="Junior Deacon Steve Stamberger" 
+              <img src="assets/officers/Henry Junior Steward.jpg" 
+                   alt="Junior Deacon Henry Swett" 
                    class="w-full h-64 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
@@ -260,7 +256,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Steve Stamberger</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Henry Swett</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Assisting with lodge ceremonies and activities.
               </p>
@@ -271,61 +267,11 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
-          <!-- Senior Steward -->
-          <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="relative">
-              <img src="assets/officers/Jeff Senior Steward.jpg" 
-                   alt="Senior Steward Jeffrey Longo" 
-                   class="w-full h-64 object-cover object-top">
-              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
-              <div class="absolute bottom-3 left-3 text-white">
-                <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
-                  Senior Steward
-                </div>
-              </div>
-            </div>
-            <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Jeffrey Longo</h4>
-              <p class="text-gray-600 text-sm mb-3">
-                Supporting lodge functions and fellowship.
-              </p>
-              <div class="flex items-center text-primary-gold text-sm">
-                <i class="fas fa-utensils mr-2"></i>
-                <span>Hospitality & Service</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Junior Steward -->
-          <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="relative">
-              <img src="assets/officers/Henry Junior Steward.jpg" 
-                   alt="Junior Steward Henry Swett" 
-                   class="w-full h-64 object-cover object-top">
-              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
-              <div class="absolute bottom-3 left-3 text-white">
-                <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
-                  Junior Steward
-                </div>
-              </div>
-            </div>
-            <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Henry Swett</h4>
-              <p class="text-gray-600 text-sm mb-3">
-                Assisting with lodge activities and brotherhood.
-              </p>
-              <div class="flex items-center text-primary-gold text-sm">
-                <i class="fas fa-hands-helping mr-2"></i>
-                <span>Fellowship & Support</span>
-              </div>
-            </div>
-          </div>
-
           <!-- Tyler -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <img src="assets/officers/Justin King Tyler 2.jpg" 
-                   alt="Tyler Justin King" 
+              <img src="assets/officers/Ricardo Senior Warden.jpg" 
+                   alt="Tyler Ricardo Colon-Marquez" 
                    class="w-full h-64 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
@@ -335,9 +281,9 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Justin King</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Worshipful Ricardo Colon-Marquez, P∴M∴</h4>
               <p class="text-gray-600 text-sm mb-3">
-                Supporting lodge security and activities.
+                Guarding the lodge and ensuring its security.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-door-closed mr-2"></i>

@@ -589,8 +589,8 @@ Or contact our Secretary at secretary@stpete139.org`,
     response: `**2025 Lodge Officers:**
 
 • **Worshipful Master:** W∴ Valentino Pine, P∴M∴ - (727) 637-3106
-• **Senior Warden:** W∴ Ricardo Colon-Marquez, P∴M∴ - (315) 412-1672
-• **Junior Warden:** R∴W∴ Alan Rosenthal, P∴M∴ - (727) 504-7310
+• **Senior Warden:** R∴W∴ Alan Rosenthal, P∴M∴ - (727) 504-7310
+• **Junior Warden:** Brother Craig Hull
 • **Secretary:** W∴ John Livingston, P∴M∴ - (727) 418-3356
 • **Treasurer:** W∴ Michael Mignone, P∴M∴
 
