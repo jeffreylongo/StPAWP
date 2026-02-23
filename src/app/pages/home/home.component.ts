@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
         description: `Monthly ${eventType.title.toLowerCase()} for all members and candidates.`,
         type: eventType.type,
         calendarId: 1,
-        calendarName: 'St. Petersburg Lodge #139'
+        calendarName: 'St. Petersburg Lodge No. 139'
       });
     }
     

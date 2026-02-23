@@ -12,7 +12,7 @@ import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../../interfa
  * Calendar Component
  * 
  * Displays a comprehensive calendar view with multiple calendar sources:
- * - St. Petersburg Lodge #139
+ * - St. Petersburg Lodge No. 139
  * - Suncoast Master Mason Association
  * - Tampa Scottish Rite
  * - Tampa York Rite Bodies
@@ -48,7 +48,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   // Calendar views
   activeView = 'combined';
   calendarViews = [
-    { id: 'lodge', name: 'St. Petersburg Lodge #139' },
+    { id: 'lodge', name: 'St. Petersburg Lodge No. 139' },
     { id: 'smma', name: 'Suncoast Master Mason Association' },
     { id: 'aasr', name: 'Tampa Scottish Rite' },
     { id: 'yorkrite', name: 'Tampa York Rite Bodies' },

@@ -51,7 +51,7 @@ import { RouterModule } from '@angular/router';
           </p>
           
           <p class="mb-8">
-            Though starting with nine members, St. Petersburg Lodge #139 F. & A.M. experienced significant growth, reaching a peak membership of 1,256 in 1956. Over the years, members from the lodge played pivotal roles in establishing other local lodges. The past 130 years have marked a captivating and dynamic journey for the lodge and the community it has been a part of.
+            Though starting with nine members, St. Petersburg Lodge No. 139 F. & A.M. experienced significant growth, reaching a peak membership of 1,256 in 1956. Over the years, members from the lodge played pivotal roles in establishing other local lodges. The past 130 years have marked a captivating and dynamic journey for the lodge and the community it has been a part of.
           </p>
         </div>
       </div>
@@ -86,9 +86,9 @@ import { RouterModule } from '@angular/router';
               </div>
               
               <div>
-                <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-4">The Founding of St.Petersburg Lodge #139</h4>
+                <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-4">The Founding of St.Petersburg Lodge No. 139</h4>
                 <p class="text-gray-700 mb-4">
-                  St. Petersburg Lodge # 139 was organized and held its first meeting as an U.D. Lodge on December 1, 1893 with 9 charter members:
+                  St. Petersburg Lodge No. 139 was organized and held its first meeting as an U.D. Lodge on December 1, 1893 with 9 charter members:
                 </p>
                 <ul class="space-y-2 text-gray-700 mb-6">
                   <li><strong>Walter W. Coleman</strong> – 1st W.M.</li>
@@ -115,8 +115,7 @@ import { RouterModule } from '@angular/router';
             <div class="mt-8 bg-primary-gold-light p-6 rounded-lg">
               <h5 class="font-bold text-primary-blue mb-3">Committee Formed To Find Our Lodge A Permanent Home</h5>
               <p class="text-gray-700">
-                The quest for a permanent home gained traction around September 1901, and by October 7, 1902, a committee was appointed to explore and develop this idea. By 1906, the rent had escalated to $85.00 per year, yet the Lodge persevered for another three years. On November 16, 1909, the building committee reported finding a suitable property at the Northeast corner of 4th Street and 2nd Avenue South. On November 23, 1909, the committee was directed to negotiate the best terms for purchasing this property. By January 4, 1910, the Building Committee was instructed to acquire the property, known as the V. N. Ridgley property, which remains the current location of the Lodge.
-              </p>
+                The quest for a permanent home gained traction around September 1901, and by October 7, 1902, a committee was appointed to explore and develop this idea. By 1906, the rent had escalated to $85.00 per year, yet the Lodge persevered for another three years. On November 16, 1909, the building committee reported finding a suitable property at the Northeast corner of 4th Street and 2nd Avenue South. On November 23, 1909, the committee was directed to negotiate the best terms for purchasing this property. By January 4, 1910, the Building Committee was instructed to acquire the property, known as the V. N. Ridgley property,               </p>
             </div>
           </div>
         </div>
@@ -155,7 +154,7 @@ import { RouterModule } from '@angular/router';
             <div class="mb-8">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-4">Ground Breaks on the Lot For Our Own Masonic Temple</h4>
               <p class="text-gray-700 mb-4">
-                Groundbreaking for the new Masonic Temple took place on November 4, 1915. The Lodge voted on October 19, 1915, to sell Life Memberships for $100, which later posed challenges in 1930. The groundbreaking ceremony occurred on the Northeast Corner of 4th Street and 2nd Avenue South, with W. M. W. W. Birchfield, the Worshipful Master of St. Petersburg Lodge #139, turning the first shovel of sand. The inaugural meeting in the new Temple was held on March 28, 1916.
+                Groundbreaking for the new Masonic Temple took place on November 4, 1915. The Lodge voted on October 19, 1915, to sell Life Memberships for $100, which later posed challenges in 1930. The groundbreaking ceremony occurred on the Northeast Corner of 4th Street and 2nd Avenue South, with W. M. W. W. Birchfield, the Worshipful Master of St. Petersburg Lodge No. 139, turning the first shovel of sand. The inaugural meeting in the new Temple was held on March 28, 1916.
               </p>
             </div>
             
@@ -166,7 +165,7 @@ import { RouterModule } from '@angular/router';
               </p>
               
               <p class="text-gray-700">
-                On July 3, 1917, correspondence from the Grand Master confirmed that the Committee on Selection of a site for the Masonic Home & Orphanage had chosen St. Petersburg. This decision was largely influenced by the persistent efforts of Bro. Ed. T. Lewis, Mr. A.P. Avery, Mr. Lew B. Brown, Walter P. Fuller, and H. Walter Fuller, representing St. Petersburg through St. Petersburg Lodge #139. In response, a motion was passed that each member of the Lodge be assessed $500.00 to assist the Grand Lodge Committee with the Masonic Home site.
+                On July 3, 1917, correspondence from the Grand Master confirmed that the Committee on Selection of a site for the Masonic Home & Orphanage had chosen St. Petersburg. This decision was largely influenced by the persistent efforts of Bro. Ed. T. Lewis, Mr. A.P. Avery, Mr. Lew B. Brown, Walter P. Fuller, and H. Walter Fuller, representing St. Petersburg through St. Petersburg Lodge No. 139. In response, a motion was passed that each member of the Lodge be assessed $500.00 to assist the Grand Lodge Committee with the Masonic Home site.
               </p>
             </div>
           </div>
@@ -206,11 +205,11 @@ import { RouterModule } from '@angular/router';
             <div class="bg-primary-gold-light p-6 rounded-lg">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-4">Nitram Lodge Is Born</h4>
               <p class="text-gray-700 mb-4">
-                In the same year, a new Masonic Lodge U.D. (Under Dispensation) was established, initially named Sunshine Lodge U.D. Operating in our Masonic Temple, the lodge later adopted the name Nitram Lodge #188 in memory of one of its first deceased members, Martin. The name "Nitram" was formed by spelling Martin backward.
+                In the same year, a new Masonic Lodge U.D. (Under Dispensation) was established, initially named Sunshine Lodge U.D. Operating in our Masonic Temple, the lodge later adopted the name Nitram Lodge No. 188 in memory of one of its first deceased members, Martin. The name "Nitram" was formed by spelling Martin backward.
               </p>
               
               <p class="text-gray-700">
-                Nitram Lodge #188 was officially born, and its elected officers were jointly installed with St. Petersburg Lodge #139 officers on December 29, 1925. By the end of the year, St. Petersburg Lodge #139 had a membership of 491, raising 56 and affiliating 30, thus welcoming 86 new members in 1925.
+                Nitram Lodge No. 188 was officially born, and its elected officers were jointly installed with St. Petersburg Lodge No. 139 officers on December 29, 1925. By the end of the year, St. Petersburg Lodge No. 139 had a membership of 491, raising 56 and affiliating 30, thus welcoming 86 new members in 1925.
               </p>
             </div>
           </div>
@@ -243,7 +242,7 @@ import { RouterModule } from '@angular/router';
               <div class="border-l-4 border-red-500 pl-6">
                 <h5 class="font-bold text-red-600 mb-2">July 1930:</h5>
                 <p>
-                  The bank closure resulted in the freezing of $1,550 of Lodge funds, leading St. Petersburg Lodge #139 to default for the first and only time in its history on the initial note payment of $688 to the Acea Mutual Life Insurance Company. By October 7th, financial troubles escalated rapidly. A proposal to increase dues to $10.00 and life memberships to $250.00 was defeated.
+                  The bank closure resulted in the freezing of $1,550 of Lodge funds, leading St. Petersburg Lodge No. 139 to default for the first and only time in its history on the initial note payment of $688 to the Acea Mutual Life Insurance Company. By October 7th, financial troubles escalated rapidly. A proposal to increase dues to $10.00 and life memberships to $250.00 was defeated.
                 </p>
               </div>
               
@@ -274,7 +273,7 @@ import { RouterModule } from '@angular/router';
             <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-4">World War 2 and Its Effect on St.Petersburg</h4>
             
             <p class="text-gray-700 mb-6">
-              St. Petersburg underwent significant transformations during World War II, profoundly influenced by global events. The war clouds that swept across Europe in 1939 echoed in the Sunshine City, leading to civic changes and a dynamic impact on the local Masonic Lodge #139.
+              St. Petersburg underwent significant transformations during World War II, profoundly influenced by global events. The war clouds that swept across Europe in 1939 echoed in the Sunshine City, leading to civic changes and a dynamic impact on the local Masonic Lodge No. 139.
             </p>
             
             <div class="bg-blue-50 p-6 rounded-lg mb-6">

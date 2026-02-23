@@ -16,7 +16,7 @@ describe('CalendarComponent', () => {
   const mockCalendarSources: CalendarSource[] = [
     {
       id: 1,
-      name: 'St. Petersburg Lodge #139',
+      name: 'St. Petersburg Lodge No. 139',
       url: 'https://calendar.google.com/calendar/ical/test/basic.ics',
       isActive: true,
       color: '#1a4b8f',
@@ -43,7 +43,7 @@ describe('CalendarComponent', () => {
       description: 'Monthly stated communication',
       type: 'meeting',
       calendarId: 1,
-      calendarName: 'St. Petersburg Lodge #139',
+      calendarName: 'St. Petersburg Lodge No. 139',
       uid: 'test-uid-1'
     },
     {
@@ -112,7 +112,7 @@ describe('CalendarComponent', () => {
   it('should initialize with calendar sources', () => {
     fixture.detectChanges();
     expect(component.calendarSources.length).toBe(2);
-    expect(component.calendarSources[0].name).toBe('St. Petersburg Lodge #139');
+    expect(component.calendarSources[0].name).toBe('St. Petersburg Lodge No. 139');
   });
 
   it('should load upcoming events on init', () => {

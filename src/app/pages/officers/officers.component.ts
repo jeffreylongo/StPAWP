@@ -43,13 +43,16 @@ import { RouterModule } from '@angular/router';
                    class="w-full h-80 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-70"></div>
               <div class="absolute bottom-6 left-6 text-white">
-                <div class="bg-primary-gold text-primary-blue-darker px-4 py-2 rounded-full font-bold mb-3">
+                <div class="bg-primary-gold text-primary-blue-darker px-4 py-2 rounded-full font-bold mb-2">
                   <i class="fas fa-gavel mr-2"></i>Worshipful Master
+                </div>
+                <div class="bg-primary-blue text-white px-4 py-2 rounded-full font-bold">
+                  President and Executive Officer
                 </div>
               </div>
             </div>
             <div class="p-6">
-              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Worshipful Valentino Pine, P∴M∴</h4>
+              <h4 class="font-cinzel text-2xl font-bold text-primary-blue mb-2">Worshipful Master Valentino Pine, P∴M∴</h4>
               <div class="flex items-center text-primary-gold mb-4">
                 <i class="fas fa-phone mr-2"></i>
                 <span class="text-sm">(727) 637-3106</span>
@@ -170,8 +173,8 @@ import { RouterModule } from '@angular/router';
           <!-- Chaplain -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
-              <img src="assets/officers/Leo Laskin Chaplain.jpg" 
-                   alt="Chaplain Leo Laskin" 
+              <img src="assets/officers/placeholder.svg" 
+                   alt="Chaplain Anthony Pine" 
                    class="w-full h-64 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
@@ -181,7 +184,7 @@ import { RouterModule } from '@angular/router';
               </div>
             </div>
             <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Worshipful Leo Laskin, P∴M∴</h4>
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Anthony Pine</h4>
               <p class="text-gray-600 text-sm mb-3">
                 Supporting lodge spiritual activities and ceremonies.
               </p>
@@ -192,27 +195,34 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
-          <!-- Marshall -->
+          <!-- Marshall / Petitions Chairman -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
               <img src="assets/officers/Chriss Webb Marshal 1.jpg" 
-                   alt="Marshal Chris Webb" 
+                   alt="Marshal & Petitions Chairman Chris Webb" 
                    class="w-full h-64 object-cover object-top">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3 text-white">
                 <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
                   Marshall
                 </div>
+                <div class="bg-primary-gold text-primary-blue-darker px-3 py-1 rounded text-sm font-bold mt-1">
+                  Petitions Chairman
+                </div>
               </div>
             </div>
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Worshipful Chris Webb, P∴M∴</h4>
+              <div class="flex items-center text-primary-gold mb-3 text-xs">
+                <i class="fas fa-phone mr-2"></i>
+                <span>(727) 393-6007</span>
+              </div>
               <p class="text-gray-600 text-sm mb-3">
-                Assisting with lodge order and ceremonial activities.
+                Assisting with lodge order, ceremonial activities, and membership applications.
               </p>
               <div class="flex items-center text-primary-gold text-sm">
                 <i class="fas fa-users-cog mr-2"></i>
-                <span>Order & Ceremony</span>
+                <span>Order, Ceremony & Membership</span>
               </div>
             </div>
           </div>
@@ -267,6 +277,56 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
+          <!-- Senior Steward -->
+          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="relative">
+              <img src="assets/officers/placeholder.svg" 
+                   alt="Senior Steward Malek Chevalier" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
+              <div class="absolute bottom-3 left-3 text-white">
+                <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
+                  Senior Steward
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Malek Chevalier</h4>
+              <p class="text-gray-600 text-sm mb-3">
+                Assisting with lodge hospitality and refreshments.
+              </p>
+              <div class="flex items-center text-primary-gold text-sm">
+                <i class="fas fa-utensils mr-2"></i>
+                <span>Hospitality & Service</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Junior Steward -->
+          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="relative">
+              <img src="assets/officers/placeholder.svg" 
+                   alt="Junior Steward Raymond Wilson" 
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
+              <div class="absolute bottom-3 left-3 text-white">
+                <div class="bg-primary-blue text-white px-3 py-1 rounded text-sm font-bold">
+                  Junior Steward
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Brother Raymond Wilson</h4>
+              <p class="text-gray-600 text-sm mb-3">
+                Assisting with lodge hospitality and refreshments.
+              </p>
+              <div class="flex items-center text-primary-gold text-sm">
+                <i class="fas fa-utensils mr-2"></i>
+                <span>Hospitality & Service</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Tyler -->
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="relative">
@@ -317,34 +377,6 @@ import { RouterModule } from '@angular/router';
             </div>
           </div>
 
-          <!-- Petitions Committee Chairman -->
-          <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="relative">
-              <img src="assets/officers/Chris Webb Past Master.jpg" 
-                   alt="Petitions Chairman Chris Webb" 
-                   class="w-full h-64 object-cover object-top">
-              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
-              <div class="absolute bottom-3 left-3 text-white">
-                <div class="bg-primary-gold text-primary-blue-darker px-3 py-1 rounded text-sm font-bold">
-                  Petitions Chairman
-                </div>
-              </div>
-            </div>
-            <div class="p-4">
-              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-2">Worshipful Chris Webb, P∴M∴</h4>
-              <div class="flex items-center text-primary-gold mb-3 text-xs">
-                <i class="fas fa-phone mr-2"></i>
-                <span>(727) 393-6007</span>
-              </div>
-              <p class="text-gray-600 text-sm mb-3">
-                Assisting with membership applications and new candidate processes.
-              </p>
-              <div class="flex items-center text-primary-gold text-sm">
-                <i class="fas fa-user-plus mr-2"></i>
-                <span>Membership & Applications</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

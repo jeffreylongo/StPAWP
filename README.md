@@ -175,7 +175,7 @@ Update calendar URLs in `src/app/services/calendar.service.ts`:
 private calendarSources: CalendarSource[] = [
   {
     id: 1,
-    name: 'St. Petersburg Lodge #139',
+    name: 'St. Petersburg Lodge No. 139',
     url: 'https://calendar.google.com/calendar/ical/youremail/public/basic.ics',
     isActive: true
   }

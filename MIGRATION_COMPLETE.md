@@ -1,4 +1,4 @@
-# 🎉 St. Petersburg Lodge #139 - Architecture & Content Migration Complete
+# St. Petersburg Lodge No. 139 - Architecture & Content Migration Complete
 
 ## ✅ Successfully Completed Migration
 

@@ -276,7 +276,7 @@ export class ShopComponent implements OnInit {
     const mockProducts = [
       {
         id: 1,
-        name: 'Lodge #139 Polo Shirt',
+        name: 'Lodge No. 139 Polo Shirt',
         slug: 'lodge-139-polo-shirt',
         price: '35.00',
         regular_price: '35.00',

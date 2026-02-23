@@ -1,6 +1,6 @@
 /**
  * Utility functions for calculating meeting dates
- * St. Pete Lodge #139 meets on the third Tuesday of each month
+ * St. Pete Lodge No. 139 meets on the third Tuesday of each month
  */
 
 /**

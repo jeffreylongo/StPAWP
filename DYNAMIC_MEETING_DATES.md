@@ -1,7 +1,7 @@
 # Dynamic Meeting Dates
 
 ## Overview
-St. Petersburg Lodge #139 meets on the **third Tuesday of every month** at 7:30 PM. The website now automatically calculates and displays the correct meeting dates without requiring manual updates.
+St. Petersburg Lodge No. 139 meets on the **third Tuesday of every month** at 7:30 PM. The website now automatically calculates and displays the correct meeting dates without requiring manual updates.
 
 ## How It Works
 

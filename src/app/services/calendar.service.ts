@@ -32,7 +32,7 @@ export class CalendarService {
   private calendarSources: CalendarSource[] = [
     {
       id: 1,
-      name: 'St. Petersburg Lodge #139',
+      name: 'St. Petersburg Lodge No. 139',
       url: 'https://calendar.google.com/calendar/ical/stpetersburglodge139%40gmail.com/public/basic.ics',
       isActive: true,
       color: '#1a4b8f',

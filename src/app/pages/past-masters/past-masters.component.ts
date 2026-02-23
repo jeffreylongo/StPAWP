@@ -38,6 +38,36 @@ import { PastMaster } from '../../interfaces';
         </div>
       </div>
 
+      <!-- Modern Era Section -->
+      <div class="mb-16">
+        <div class="text-center mb-12">
+          <h3 class="font-cinzel text-2xl font-bold text-primary-blue mb-4">The Modern Era (2012-Present)</h3>
+          <p class="text-gray-600 max-w-3xl mx-auto">
+            Our recent Worshipful Masters continue the proud tradition of leadership and service that has defined St. Petersburg Lodge No. 139 for over 130 years.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let master of modernMasters" class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
+            <div class="relative">
+              <img [src]="master.imageUrl" 
+                   [alt]="'Portrait of ' + master.title + ' ' + master.name"
+                   class="w-full h-64 object-cover object-top">
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
+              <div class="absolute bottom-3 left-3">
+                <div class="bg-primary-gold text-primary-blue-darker px-3 py-1 rounded text-sm font-bold">
+                  {{ master.year }}
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-1">{{ master.title }} {{ master.name }}</h4>
+              <p *ngIf="master.note" class="text-gray-600 text-sm">{{ master.note }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Early Masters Section -->
       <div class="mb-16">
         <div class="text-center mb-12">
@@ -176,6 +206,95 @@ import { PastMaster } from '../../interfaces';
   `
 })
 export class PastMastersComponent {
+  modernMasters = [
+    {
+      year: '2026',
+      title: 'W∴',
+      name: 'Valentino Francis Michael Pine, P∴M∴',
+      imageUrl: 'assets/officers/Val WM 4.jpg'
+    },
+    {
+      year: '2025',
+      title: 'W∴',
+      name: 'Valentino Francis Michael Pine, P∴M∴',
+      imageUrl: 'assets/officers/Val WM 4.jpg'
+    },
+    {
+      year: '2024',
+      title: 'W∴',
+      name: 'Leo Laskin',
+      imageUrl: 'assets/officers/Leo Laskin Chaplain.jpg'
+    },
+    {
+      year: '2023',
+      title: 'R∴W∴',
+      name: 'Alan Scott Rosenthal, P∴D∴D∴G∴M∴',
+      note: 'DDGM in 2010',
+      imageUrl: 'assets/officers/Alan Rosenthal Junior Warden 1.jpg'
+    },
+    {
+      year: '2021',
+      title: 'W∴',
+      name: 'Valentino Francis Michael Pine, P∴M∴',
+      imageUrl: 'assets/officers/Val WM 4.jpg'
+    },
+    {
+      year: '2020',
+      title: 'W∴',
+      name: 'Valentino Francis Michael Pine',
+      imageUrl: 'assets/officers/Val WM 4.jpg'
+    },
+    {
+      year: '2019',
+      title: 'W∴',
+      name: 'Darin Michael White',
+      imageUrl: 'assets/past-masters/Darin White.PNG'
+    },
+    {
+      year: '2018',
+      title: 'W∴',
+      name: 'Kevin David Hudson',
+      imageUrl: 'assets/past-masters/Kevin Hudson.JPG'
+    },
+    {
+      year: '2017',
+      title: 'W∴',
+      name: 'John David Sloat',
+      imageUrl: 'assets/past-masters/John Sloat.JPG'
+    },
+    {
+      year: '2016',
+      title: 'W∴',
+      name: 'Nicholas Lawrence Mamalis',
+      imageUrl: 'assets/past-masters/Nicholas Mamalis.PNG'
+    },
+    {
+      year: '2015',
+      title: 'W∴',
+      name: 'John Eric Ferguson',
+      imageUrl: 'assets/past-masters/John Ferguson.PNG'
+    },
+    {
+      year: '2014',
+      title: 'R∴W∴',
+      name: 'Thomas Ray Quay, P∴D∴D∴G∴M∴',
+      note: 'DDGM in 2020',
+      imageUrl: 'assets/officers/placeholder.svg'
+    },
+    {
+      year: '2013',
+      title: 'W∴',
+      name: 'Jeffrey Joseph Morris',
+      imageUrl: 'assets/officers/placeholder.svg'
+    },
+    {
+      year: '2012',
+      title: 'W∴',
+      name: 'David Michael Rosenthal',
+      imageUrl: 'assets/officers/placeholder.svg'
+    }
+  ];
+
   earlyMasters: PastMaster[] = [
     {
       name: 'W. W. Coleman',
