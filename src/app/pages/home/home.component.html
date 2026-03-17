@@ -75,26 +75,49 @@
 </section>
 
 <!-- Featured Event Flyers Section -->
-<section class="py-16 bg-white">
-  <div class="container mx-auto px-4">
+<section class="py-16 bg-gradient-to-b from-primary-blue-darker to-primary-blue relative overflow-hidden">
+  <!-- Decorative background elements -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-10 left-10 w-32 h-32 border border-primary-gold rounded-full"></div>
+    <div class="absolute bottom-10 right-10 w-48 h-48 border border-primary-gold rounded-full"></div>
+    <div class="absolute top-1/2 left-1/4 w-24 h-24 border border-primary-gold rotate-45"></div>
+  </div>
+  
+  <div class="container mx-auto px-4 relative z-10">
     <div class="text-center mb-12">
-      <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-4">Featured Upcoming Events</h2>
+      <span class="inline-block bg-primary-gold text-primary-blue-darker px-4 py-1 rounded-full text-sm font-bold mb-4 uppercase tracking-wider">
+        <i class="fas fa-star mr-2"></i>Don't Miss These Events<i class="fas fa-star ml-2"></i>
+      </span>
+      <h2 class="font-cinzel text-3xl md:text-4xl text-white font-bold mb-4">Featured Upcoming Events</h2>
       <div class="w-24 h-1 bg-primary-gold mx-auto mb-6"></div>
-      <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-        Don't miss these special educational lectures hosted by our lodge.
+      <p class="text-primary-gold-light text-lg max-w-2xl mx-auto">
+        Special educational lectures hosted by our lodge. Mark your calendars!
       </p>
     </div>
     
-    <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
       <!-- Nagy Lecture - May 5 -->
       <div class="flyer-card group">
-        <div class="relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl">
-          <img src="assets/flyers/NagyLectureMay5.jpg" 
-               alt="Nagy Lecture - May 5th" 
-               class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105">
+        <div class="relative">
+          <!-- Corner ribbon -->
+          <div class="absolute -top-2 -right-2 z-20">
+            <div class="bg-primary-gold text-primary-blue-darker font-bold text-xs px-4 py-1 rounded-full shadow-lg transform rotate-12">
+              UPCOMING
+            </div>
+          </div>
+          <!-- Gold border frame -->
+          <div class="absolute inset-0 border-4 border-primary-gold rounded-xl transform group-hover:scale-[1.02] transition-transform duration-500 z-10 pointer-events-none"></div>
+          <!-- Image container -->
+          <div class="relative overflow-hidden rounded-xl shadow-2xl transform transition-all duration-500 group-hover:scale-[1.02]">
+            <img src="assets/flyers/NagyLectureMay5.jpg" 
+                 alt="Nagy Lecture - May 5th" 
+                 class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105">
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-primary-gold opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+          </div>
         </div>
-        <div class="mt-4 text-center">
-          <span class="inline-flex items-center text-primary-blue font-semibold">
+        <div class="mt-5 text-center">
+          <span class="inline-flex items-center bg-white bg-opacity-10 backdrop-blur-sm text-white font-semibold px-4 py-2 rounded-full">
             <i class="fas fa-calendar-alt mr-2 text-primary-gold"></i>
             May 5th - Nagy Lecture
           </span>
@@ -103,13 +126,26 @@
 
       <!-- Wood Lecture - July 7 -->
       <div class="flyer-card group">
-        <div class="relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl">
-          <img src="assets/flyers/WoodLectureJuly7.jpg" 
-               alt="Wood Lecture - July 7th" 
-               class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105">
+        <div class="relative">
+          <!-- Corner ribbon -->
+          <div class="absolute -top-2 -right-2 z-20">
+            <div class="bg-primary-gold text-primary-blue-darker font-bold text-xs px-4 py-1 rounded-full shadow-lg transform rotate-12">
+              UPCOMING
+            </div>
+          </div>
+          <!-- Gold border frame -->
+          <div class="absolute inset-0 border-4 border-primary-gold rounded-xl transform group-hover:scale-[1.02] transition-transform duration-500 z-10 pointer-events-none"></div>
+          <!-- Image container -->
+          <div class="relative overflow-hidden rounded-xl shadow-2xl transform transition-all duration-500 group-hover:scale-[1.02]">
+            <img src="assets/flyers/WoodLectureJuly7.jpg" 
+                 alt="Wood Lecture - July 7th" 
+                 class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105">
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-primary-gold opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+          </div>
         </div>
-        <div class="mt-4 text-center">
-          <span class="inline-flex items-center text-primary-blue font-semibold">
+        <div class="mt-5 text-center">
+          <span class="inline-flex items-center bg-white bg-opacity-10 backdrop-blur-sm text-white font-semibold px-4 py-2 rounded-full">
             <i class="fas fa-calendar-alt mr-2 text-primary-gold"></i>
             July 7th - Wood Lecture
           </span>
