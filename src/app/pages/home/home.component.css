@@ -219,6 +219,24 @@
   overflow: hidden;
 }
 
+/* Flyer Card Styles */
+.flyer-card {
+  @apply block;
+}
+
+.flyer-card img {
+  @apply rounded-xl;
+}
+
+.flyer-card .relative {
+  @apply bg-white;
+}
+
+/* Flyer hover glow effect */
+.flyer-card:hover .relative {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 30px rgba(199, 164, 100, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero-title {
