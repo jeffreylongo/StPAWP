@@ -90,7 +90,7 @@ import { RouterModule } from '@angular/router';
           <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 text-center">
             <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-2">Annual Meal Plan</h3>
             <p class="text-gray-600 mb-2 text-sm">7% Tax Included</p>
-            <div class="text-2xl font-bold text-primary-gold mb-4">$120.00 USD</div>
+            <div class="text-2xl font-bold text-primary-gold mb-4">$150.00 USD</div>
             
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" class="inline-block">
               <input type="hidden" name="cmd" value="_s-xclick" />

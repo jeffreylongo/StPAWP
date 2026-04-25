@@ -52,7 +52,8 @@ import { PastMaster } from '../../interfaces';
             <div class="relative">
               <img [src]="master.imageUrl" 
                    [alt]="'Portrait of ' + master.title + ' ' + master.name"
-                   class="w-full h-64 object-cover object-top">
+                   class="w-full h-72 object-cover"
+                   [style.object-position]="master.imagePosition || 'center 20%'">
               <div class="absolute inset-0 bg-gradient-to-t from-primary-blue-dark via-transparent to-transparent opacity-60"></div>
               <div class="absolute bottom-3 left-3">
                 <div class="bg-primary-gold text-primary-blue-darker px-3 py-1 rounded text-sm font-bold">
@@ -62,6 +63,7 @@ import { PastMaster } from '../../interfaces';
             </div>
             <div class="p-4">
               <h4 class="font-cinzel text-lg font-bold text-primary-blue mb-1">{{ master.title }} {{ master.name }}</h4>
+              <p *ngIf="isPlaceholder(master.imageUrl)" class="text-xs text-red-600 font-semibold mb-1">Portrait update pending</p>
               <p *ngIf="master.note" class="text-gray-600 text-sm">{{ master.note }}</p>
             </div>
           </div>
@@ -103,7 +105,8 @@ import { PastMaster } from '../../interfaces';
                   <div class="bg-neutral-light rounded-lg p-4 text-center">
                     <img [src]="master.imageUrl" 
                          [alt]="'Portrait of Worshipful ' + master.name"
-                         class="w-full h-80 object-cover object-top rounded-lg shadow-md mb-4">
+                         class="w-full h-80 object-cover rounded-lg shadow-md mb-4"
+                         style="object-position: center 20%;">
                     <p class="text-sm text-gray-600 italic">Portrait of Worshipful {{ master.name }}</p>
                   </div>
                 </div>
@@ -211,68 +214,79 @@ export class PastMastersComponent {
       year: '2026',
       title: 'W∴',
       name: 'Valentino Francis Michael Pine, P∴M∴',
-      imageUrl: 'assets/officers/Val WM 4.jpg'
+      imageUrl: 'assets/officers/Val WM 4.jpg',
+      imagePosition: 'center 12%'
     },
     {
       year: '2025',
       title: 'W∴',
       name: 'Valentino Francis Michael Pine, P∴M∴',
-      imageUrl: 'assets/officers/Val WM 4.jpg'
+      imageUrl: 'assets/officers/Val WM 4.jpg',
+      imagePosition: 'center 12%'
     },
     {
       year: '2024',
       title: 'W∴',
       name: 'Leo Laskin',
-      imageUrl: 'assets/officers/Leo Laskin Chaplain.jpg'
+      imageUrl: 'assets/officers/Leo Laskin Chaplain.jpg',
+      imagePosition: 'center 18%'
     },
     {
       year: '2023',
       title: 'R∴W∴',
       name: 'Alan Scott Rosenthal, P∴D∴D∴G∴M∴',
       note: 'DDGM in 2010',
-      imageUrl: 'assets/officers/Alan Rosenthal Junior Warden 1.jpg'
+      imageUrl: 'assets/officers/Alan Rosenthal Junior Warden 1.jpg',
+      imagePosition: 'center 16%'
     },
     {
       year: '2021',
       title: 'W∴',
       name: 'Valentino Francis Michael Pine, P∴M∴',
-      imageUrl: 'assets/officers/Val WM 4.jpg'
+      imageUrl: 'assets/officers/Val WM 4.jpg',
+      imagePosition: 'center 12%'
     },
     {
       year: '2020',
       title: 'W∴',
       name: 'Valentino Francis Michael Pine',
-      imageUrl: 'assets/officers/Val WM 4.jpg'
+      imageUrl: 'assets/officers/Val WM 4.jpg',
+      imagePosition: 'center 12%'
     },
     {
       year: '2019',
       title: 'W∴',
       name: 'Darin Michael White',
-      imageUrl: 'assets/past-masters/Darin White.PNG'
+      imageUrl: 'assets/past-masters/Darin White.PNG',
+      imagePosition: 'center 16%'
     },
     {
       year: '2018',
       title: 'W∴',
       name: 'Kevin David Hudson',
-      imageUrl: 'assets/past-masters/Kevin Hudson.JPG'
+      imageUrl: 'assets/past-masters/Kevin Hudson.JPG',
+      imagePosition: 'center 16%'
     },
     {
       year: '2017',
       title: 'W∴',
       name: 'John David Sloat',
-      imageUrl: 'assets/past-masters/John Sloat.JPG'
+      imageUrl: 'assets/past-masters/John Sloat.JPG',
+      imagePosition: 'center 16%'
     },
     {
       year: '2016',
       title: 'W∴',
       name: 'Nicholas Lawrence Mamalis',
-      imageUrl: 'assets/past-masters/Nicholas Mamalis.PNG'
+      imageUrl: 'assets/past-masters/Nicholas Mamalis.PNG',
+      imagePosition: 'center 16%'
     },
     {
       year: '2015',
       title: 'W∴',
       name: 'John Eric Ferguson',
-      imageUrl: 'assets/past-masters/John Ferguson.PNG'
+      imageUrl: 'assets/past-masters/John Ferguson.PNG',
+      imagePosition: 'center 18%'
     },
     {
       year: '2014',
@@ -388,4 +402,8 @@ export class PastMastersComponent {
       imageUrl: 'assets/past-masters/willison-english.jpg'
     }
   ];
+
+  isPlaceholder(imageUrl: string): boolean {
+    return imageUrl.includes('placeholder.svg');
+  }
 }
