@@ -62,6 +62,14 @@ export class CalendarService {
       isActive: true,
       color: '#2E8B57',
       description: 'Tampa York Rite Bodies events including Chapter, Council, and Commandery'
+    },
+    {
+      id: 5,
+      name: 'Egypt Shriners Events',
+      url: 'https://calendar.google.com/calendar/ical/egyptshrinerseventscalendar%40gmail.com/public/basic.ics',
+      isActive: true,
+      color: '#B22222',
+      description: 'Public events from Egypt Shriners Google Calendar'
     }
   ];
 

@@ -255,7 +255,7 @@ export class OfficersComponent {
     {
       role: 'Senior Steward',
       name: 'Brother Malek Chevalier',
-      imageUrl: 'assets/officers/placeholder.svg',
+      imageUrl: 'assets/officers/Malek Chevalier Sr Steward.jpg',
       description: 'Assisting with lodge hospitality and refreshments.',
       icon: 'fas fa-utensils',
       tag: 'Hospitality and Service',

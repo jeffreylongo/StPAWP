@@ -258,7 +258,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   /**
    * Set active calendar view
-   * Options: 'lodge', 'smma', 'aasr', 'yorkrite', 'combined'
+   * Options: 'combined' or 'source-<id>'
    * This filters both the calendar grid and upcoming events list
    */
   setActiveView(viewId: string): void {
@@ -269,7 +269,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Get CSS class for source view button
    */
   getSourceViewButtonClass(sourceId: number): string {
-    const viewId = sourceId === 1 ? 'lodge' : sourceId === 2 ? 'smma' : sourceId === 3 ? 'aasr' : 'yorkrite';
+    const viewId = this.getSourceViewId(sourceId);
     const baseClass = 'text-xs px-2 py-1 rounded transition-colors';
     if (viewId === this.activeView) {
       return baseClass + ' bg-primary-blue text-white';
@@ -307,57 +307,61 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Get active calendar sources based on current view
    */
   getActiveCalendarSources(): CalendarSource[] {
-    switch (this.activeView) {
-      case 'lodge':
-        return this.calendarSources.filter(source => source.id === 1);
-      case 'smma':
-        return this.calendarSources.filter(source => source.id === 2);
-      case 'aasr':
-        return this.calendarSources.filter(source => source.id === 3);
-      case 'yorkrite':
-        return this.calendarSources.filter(source => source.id === 4);
-      case 'combined':
-      default:
-        return this.calendarSources.filter(source => source.isActive);
+    if (this.activeView === 'combined') {
+      return this.calendarSources.filter(source => source.isActive);
     }
+
+    const sourceId = this.getSourceIdFromView(this.activeView);
+    if (sourceId === null) {
+      return this.calendarSources.filter(source => source.isActive);
+    }
+
+    return this.calendarSources.filter(source => source.id === sourceId);
   }
 
   /**
    * Get events for display based on active view filter
    */
   getDisplayEvents(): CalendarEvent[] {
-    switch (this.activeView) {
-      case 'lodge':
-        return this.events.filter(event => event.calendarId === 1);
-      case 'smma':
-        return this.events.filter(event => event.calendarId === 2);
-      case 'aasr':
-        return this.events.filter(event => event.calendarId === 3);
-      case 'yorkrite':
-        return this.events.filter(event => event.calendarId === 4);
-      case 'combined':
-      default:
-        return this.events;
+    if (this.activeView === 'combined') {
+      return this.events;
     }
+
+    const sourceId = this.getSourceIdFromView(this.activeView);
+    if (sourceId === null) {
+      return this.events;
+    }
+
+    return this.events.filter(event => event.calendarId === sourceId);
   }
 
   /**
    * Get upcoming events filtered by active view
    */
   getFilteredUpcomingEvents(): CalendarEvent[] {
-    switch (this.activeView) {
-      case 'lodge':
-        return this.upcomingEvents.filter(event => event.calendarId === 1);
-      case 'smma':
-        return this.upcomingEvents.filter(event => event.calendarId === 2);
-      case 'aasr':
-        return this.upcomingEvents.filter(event => event.calendarId === 3);
-      case 'yorkrite':
-        return this.upcomingEvents.filter(event => event.calendarId === 4);
-      case 'combined':
-      default:
-        return this.upcomingEvents;
+    if (this.activeView === 'combined') {
+      return this.upcomingEvents;
     }
+
+    const sourceId = this.getSourceIdFromView(this.activeView);
+    if (sourceId === null) {
+      return this.upcomingEvents;
+    }
+
+    return this.upcomingEvents.filter(event => event.calendarId === sourceId);
+  }
+
+  getSourceViewId(sourceId: number): string {
+    return `source-${sourceId}`;
+  }
+
+  private getSourceIdFromView(viewId: string): number | null {
+    if (!viewId.startsWith('source-')) {
+      return null;
+    }
+
+    const sourceId = Number(viewId.replace('source-', ''));
+    return Number.isNaN(sourceId) ? null : sourceId;
   }
 
   /**
