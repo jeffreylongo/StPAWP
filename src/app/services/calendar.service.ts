@@ -282,13 +282,24 @@ export class CalendarService {
         return icsData;
       }),
       catchError(() => {
-        console.log(`⚠️ Direct fetch failed for ${source.name}, trying proxies...`);
-        const proxies = [
-          'https://api.allorigins.win/get?url=',
-          'https://corsproxy.io/?',
-          'https://api.codetabs.com/v1/proxy?quest='
-        ];
-        return this.fetchWithProxyFallback(source.url, proxies, source);
+        console.log(`⚠️ Direct fetch failed for ${source.name}, trying server proxy...`);
+        return this.fetchViaServerProxy(source.url).pipe(
+          map(icsData => {
+            if (!this.isValidIcsContent(icsData)) {
+              throw new Error(`Invalid ICS response from server proxy for ${source.name}`);
+            }
+            return icsData;
+          }),
+          catchError(() => {
+            console.log(`⚠️ Server proxy failed for ${source.name}, trying public proxies...`);
+            const proxies = [
+              'https://api.allorigins.win/get?url=',
+              'https://corsproxy.io/?',
+              'https://api.codetabs.com/v1/proxy?quest='
+            ];
+            return this.fetchWithProxyFallback(source.url, proxies, source);
+          })
+        );
       }),
       map(icsData => {
         const events = this.parseIcsData(icsData, source);
@@ -350,17 +361,24 @@ export class CalendarService {
    */
   private fetchWithMultipleProxies(url: string, proxies: string[], source: CalendarSource, year: number, month: string, proxyIndex: number = 0): Observable<CalendarEvent[]> {
     if (proxyIndex >= proxies.length) {
-      // All proxies failed, try direct fetch as last resort
-      return this.fetchTextWithResilience(url).pipe(
+      // All public proxies failed: try server proxy first, then direct fetch as final fallback.
+      return this.fetchViaServerProxy(url).pipe(
         map(icsData => {
           const events = this.parseIcsData(icsData, source);
-          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events`);
+          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events (server proxy)`);
           return events;
         }),
-        catchError(() => {
-          console.warn(`❌ Failed to load ${source.name} ${year}-${month}`);
-          return of([]);
-        })
+        catchError(() => this.fetchTextWithResilience(url).pipe(
+          map(icsData => {
+            const events = this.parseIcsData(icsData, source);
+            console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events (direct fallback)`);
+            return events;
+          }),
+          catchError(() => {
+            console.warn(`❌ Failed to load ${source.name} ${year}-${month}`);
+            return of([]);
+          })
+        ))
       );
     }
 
@@ -388,7 +406,9 @@ export class CalendarService {
    */
   private fetchWithProxyFallback(url: string, proxies: string[], source: CalendarSource, proxyIndex: number = 0): Observable<string> {
     if (proxyIndex >= proxies.length) {
-      return throwError(() => new Error('All CORS proxies failed'));
+      return this.fetchViaServerProxy(url).pipe(
+        catchError(() => throwError(() => new Error('All CORS proxies and server proxy failed')))
+      );
     }
 
     // Handle allorigins.win /get endpoint (returns JSON with content)
@@ -857,6 +877,11 @@ export class CalendarService {
       timeout(this.REQUEST_TIMEOUT_MS),
       retry(this.RETRY_COUNT)
     );
+  }
+
+  private fetchViaServerProxy(url: string): Observable<string> {
+    const proxyUrl = `/.netlify/functions/calendar-proxy?url=${encodeURIComponent(url)}`;
+    return this.fetchTextWithResilience(proxyUrl);
   }
 
   /**
