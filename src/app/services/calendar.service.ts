@@ -82,22 +82,30 @@ export class CalendarService {
     if (this.initialized) return;
     
     this.initialized = true;
-    this.loadingSubject.next(true);
+    const cachedEvents = this.loadEventsFromCache();
+    const hasCachedEvents = cachedEvents.length > 0;
+
+    if (hasCachedEvents) {
+      this.eventsSubject.next(cachedEvents);
+      console.log(`⚡ Loaded ${cachedEvents.length} cached calendar events instantly`);
+    }
+
+    this.loadingSubject.next(!hasCachedEvents);
     
     console.log('📅 Initializing calendar - loading real events from all sources...');
     
     // Load all calendars from real sources
-    this.loadAllCalendars();
+    this.loadAllCalendars(cachedEvents);
   }
 
   /**
    * Load all calendars progressively - real events only
    */
-  private loadAllCalendars(): void {
-    const allEvents: CalendarEvent[] = [];
+  private loadAllCalendars(cachedEvents: CalendarEvent[] = []): void {
     let loadedCount = 0;
     const activeSources = this.calendarSources.filter(s => s.isActive);
     const totalSources = activeSources.length;
+    const eventsBySource = this.buildEventsBySourceMap(cachedEvents);
     
     if (totalSources === 0) {
       this.loadingSubject.next(false);
@@ -113,17 +121,20 @@ export class CalendarService {
         next: (events) => {
           loadedCount++;
           
-          if (events?.length > 0) {
-            console.log(`✅ ${loadedCount}/${totalSources} - Loaded ${events.length} events from ${source.name}`);
-            allEvents.push(...events);
-            // Update UI progressively as each calendar loads
-            this.eventsSubject.next([...allEvents]);
+          const sourceEvents = events ?? [];
+          eventsBySource.set(source.id, sourceEvents);
+
+          if (sourceEvents.length > 0) {
+            console.log(`✅ ${loadedCount}/${totalSources} - Loaded ${sourceEvents.length} events from ${source.name}`);
           } else {
             console.log(`⚠️ ${loadedCount}/${totalSources} - No events from ${source.name}`);
           }
+
+          // Update UI progressively as each calendar loads
+          this.eventsSubject.next(this.flattenEventsBySource(eventsBySource));
           
           if (loadedCount >= totalSources) {
-            this.finishLoading(allEvents);
+            this.finishLoading(this.flattenEventsBySource(eventsBySource));
           }
         },
         error: (err) => {
@@ -131,7 +142,7 @@ export class CalendarService {
           console.warn(`❌ ${loadedCount}/${totalSources} - Failed to load ${source.name}:`, err);
           
           if (loadedCount >= totalSources) {
-            this.finishLoading(allEvents);
+            this.finishLoading(this.flattenEventsBySource(eventsBySource));
           }
         }
       });
@@ -752,6 +763,59 @@ export class CalendarService {
     } catch (error) {
       console.error('Failed to save events to cache:', error);
     }
+  }
+
+  /**
+   * Load events from localStorage cache.
+   * Returns cached events immediately (including stale data) to improve perceived performance.
+   */
+  private loadEventsFromCache(): CalendarEvent[] {
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (!raw) {
+        return [];
+      }
+
+      const parsed = JSON.parse(raw) as EventStorage;
+      if (!parsed?.events || !Array.isArray(parsed.events)) {
+        return [];
+      }
+
+      const normalizedEvents = parsed.events.map(event => ({
+        ...event,
+        date: new Date(event.date)
+      }));
+
+      const lastSync = parsed.lastSync ? new Date(parsed.lastSync) : null;
+      if (lastSync && !Number.isNaN(lastSync.getTime())) {
+        this.lastSyncSubject.next(lastSync);
+      }
+
+      return normalizedEvents;
+    } catch (error) {
+      console.warn('Failed to load events from cache:', error);
+      return [];
+    }
+  }
+
+  private buildEventsBySourceMap(events: CalendarEvent[]): Map<number, CalendarEvent[]> {
+    const bySource = new Map<number, CalendarEvent[]>();
+
+    for (const event of events) {
+      const sourceId = event.calendarId ?? 0;
+      if (!bySource.has(sourceId)) {
+        bySource.set(sourceId, []);
+      }
+      bySource.get(sourceId)!.push(event);
+    }
+
+    return bySource;
+  }
+
+  private flattenEventsBySource(bySource: Map<number, CalendarEvent[]>): CalendarEvent[] {
+    return Array.from(bySource.values())
+      .flat()
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
   /**

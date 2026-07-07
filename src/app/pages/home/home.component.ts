@@ -7,7 +7,7 @@ import { LodgeEmblemComponent } from '../../components/lodge-emblem/lodge-emblem
 import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/masonic-quote.component';
 import { CalendarEvent } from '../../interfaces';
 import { Observable, of, combineLatest } from 'rxjs';
-import { catchError, map, switchMap, take, filter } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { StripHtmlPipe } from '../../pipes/strip-html.pipe';
 
 @Component({
@@ -35,28 +35,30 @@ export class HomeComponent implements OnInit {
     loadEvents(): void {
     this.isLoadingEvents = true;
 
-    // Wait for calendar service to finish loading, then get events
-    // This prevents showing "no events" while data is still being fetched
+    // Show lodge events as soon as they're available, even while other calendars still load.
     combineLatest([
       this.calendarService.loading$,
       this.calendarService.getNext6MonthsEvents()
     ]).pipe(
-      filter(([loading, _]) => !loading), // Only proceed when loading is complete
-      take(1), // Take only the first emission after loading completes
-      map(([_, events]) => events
-        .filter(event => event.calendarId === 1) // Only St. Pete Lodge events
-        .slice(0, 10) // Limit to next 10 events for home page display
-      ),
+      map(([loading, events]) => ({
+        loading,
+        lodgeEvents: events
+          .filter(event => event.calendarId === 1) // Only St. Pete Lodge events
+          .slice(0, 10) // Limit to next 10 events for home page display
+      })),
       catchError(error => {
         console.error('Error loading calendar events:', error);
-        return of(this.generateMockEvents());
+        return of({
+          loading: false,
+          lodgeEvents: this.generateMockEvents()
+        });
       })
     )
       .subscribe({
-        next: (events) => {
-          this.upcomingEvents = events;
-          this.isLoadingEvents = false;
-          console.log(`🏠 Home page loaded ${events.length} upcoming Lodge events`);
+        next: ({ loading, lodgeEvents }) => {
+          this.upcomingEvents = lodgeEvents;
+          this.isLoadingEvents = loading && lodgeEvents.length === 0;
+          console.log(`🏠 Home page showing ${lodgeEvents.length} upcoming Lodge events`);
         },
         error: (error) => {
           console.error('Error loading events:', error);
