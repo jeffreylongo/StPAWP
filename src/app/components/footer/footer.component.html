@@ -112,9 +112,14 @@
       <div class="bottom-content">
         <p class="copyright">&copy; {{ currentYear }} St. Petersburg Lodge No. 139 F&AM. All rights reserved.</p>
         <div class="legal-links">
-          <a *ngFor="let link of legalLinks" [routerLink]="link.route" class="legal-link">
-            {{ link.label }}
-          </a>
+          <ng-container *ngFor="let link of legalLinks">
+            <a *ngIf="link.route" [routerLink]="link.route" class="legal-link">
+              {{ link.label }}
+            </a>
+            <a *ngIf="link.url" [href]="link.url" class="legal-link">
+              {{ link.label }}
+            </a>
+          </ng-container>
         </div>
       </div>
     </div>
