@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, combineLatest, throwError } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map, catchError, timeout, retry } from 'rxjs/operators';
 import { format, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval, isSameDay } from 'date-fns';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../interfaces';
@@ -27,6 +27,8 @@ export class CalendarService {
 
   private readonly STORAGE_KEY = 'stpete_lodge_calendar_events';
   private readonly CACHE_DURATION_HOURS = 12;
+  private readonly REQUEST_TIMEOUT_MS = 12000;
+  private readonly RETRY_COUNT = 1;
 
   // Calendar sources
   private calendarSources: CalendarSource[] = [
@@ -271,8 +273,14 @@ export class CalendarService {
 
     console.log(`🌐 Fetching ICS data from ${source.name}...`);
 
-    // Try direct fetch first
-    return this.http.get(source.url, { responseType: 'text' }).pipe(
+    // Try direct fetch first; if response is not valid ICS, fall back to proxies.
+    return this.fetchTextWithResilience(source.url).pipe(
+      map(icsData => {
+        if (!this.isValidIcsContent(icsData)) {
+          throw new Error(`Invalid ICS response from direct fetch for ${source.name}`);
+        }
+        return icsData;
+      }),
       catchError(() => {
         console.log(`⚠️ Direct fetch failed for ${source.name}, trying proxies...`);
         const proxies = [
@@ -343,10 +351,7 @@ export class CalendarService {
   private fetchWithMultipleProxies(url: string, proxies: string[], source: CalendarSource, year: number, month: string, proxyIndex: number = 0): Observable<CalendarEvent[]> {
     if (proxyIndex >= proxies.length) {
       // All proxies failed, try direct fetch as last resort
-      return this.http.get(url, { 
-        responseType: 'text',
-        headers: { 'Accept': 'text/calendar, text/plain, */*' }
-      }).pipe(
+      return this.fetchTextWithResilience(url).pipe(
         map(icsData => {
           const events = this.parseIcsData(icsData, source);
           console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events`);
@@ -361,13 +366,10 @@ export class CalendarService {
 
     const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
     
-    return this.http.get(proxiedUrl, { 
-      responseType: 'text',
-      headers: { 'Accept': 'text/calendar, text/plain, */*' }
-    }).pipe(
+    return this.fetchTextWithResilience(proxiedUrl).pipe(
       map(icsData => {
         // Check if response looks like valid ICS data
-        if (!icsData || !icsData.includes('BEGIN:VCALENDAR')) {
+        if (!this.isValidIcsContent(icsData)) {
           throw new Error('Invalid ICS response');
         }
         const events = this.parseIcsData(icsData, source);
@@ -394,6 +396,8 @@ export class CalendarService {
       const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
       
       return this.http.get<{contents: string}>(proxiedUrl).pipe(
+        timeout(this.REQUEST_TIMEOUT_MS),
+        retry(this.RETRY_COUNT),
         map(response => {
           if (response.contents?.startsWith('data:')) {
             const base64Match = response.contents.match(/base64,(.+)/);
@@ -401,7 +405,11 @@ export class CalendarService {
               return atob(base64Match[1]);
             }
           }
-          return response.contents || '';
+          const content = response.contents || '';
+          if (!this.isValidIcsContent(content)) {
+            throw new Error('Invalid ICS response from allorigins/get');
+          }
+          return content;
         }),
         catchError(() => this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1))
       );
@@ -409,12 +417,21 @@ export class CalendarService {
 
     const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
 
-    return this.http.get(proxiedUrl, { 
-      responseType: 'text',
-      headers: { 'Accept': 'text/calendar, text/plain, */*' }
-    }).pipe(
+    return this.fetchTextWithResilience(proxiedUrl).pipe(
+      map(icsData => {
+        if (!this.isValidIcsContent(icsData)) {
+          throw new Error('Invalid ICS response from proxy');
+        }
+        return icsData;
+      }),
       catchError(() => this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1))
     );
+  }
+
+  private isValidIcsContent(content: string): boolean {
+    return typeof content === 'string'
+      && content.includes('BEGIN:VCALENDAR')
+      && content.includes('END:VCALENDAR');
   }
 
   /**
@@ -813,9 +830,33 @@ export class CalendarService {
   }
 
   private flattenEventsBySource(bySource: Map<number, CalendarEvent[]>): CalendarEvent[] {
-    return Array.from(bySource.values())
-      .flat()
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const flattened = Array.from(bySource.values()).flat();
+    const seen = new Set<string>();
+
+    const uniqueEvents = flattened.filter(event => {
+      const key = event.uid
+        ? `${event.calendarId ?? 'na'}:${event.uid}`
+        : `${event.calendarId ?? 'na'}:${event.title}:${new Date(event.date).toISOString()}`;
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    });
+
+    return uniqueEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+
+  private fetchTextWithResilience(url: string): Observable<string> {
+    return this.http.get(url, {
+      responseType: 'text',
+      headers: { 'Accept': 'text/calendar, text/plain, */*' }
+    }).pipe(
+      timeout(this.REQUEST_TIMEOUT_MS),
+      retry(this.RETRY_COUNT)
+    );
   }
 
   /**
