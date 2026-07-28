@@ -1,220 +1,306 @@
 <div class="bg-neutral-light min-h-screen">
-  <!-- Hero Section -->
-  <section class="bg-primary-blue-dark text-white py-16">
+  <!-- Hero -->
+  <section class="bg-primary-blue-dark text-white py-14 md:py-16">
     <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4 font-cinzel">The Trestle Board</h1>
-        <p class="text-xl text-primary-gold-light font-garamond italic">
-          Monthly Newsletter of St. Petersburg Lodge No. 139 F&AM
+      <nav class="flex items-center gap-2 text-sm mb-4 text-primary-gold-light">
+        <a routerLink="/" class="hover:text-primary-gold transition-colors">Home</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <a routerLink="/secretary-office" class="hover:text-primary-gold transition-colors">Secretary's Office</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-primary-gold">Trestle Board</span>
+      </nav>
+      <div class="max-w-3xl">
+        <p class="text-primary-gold font-semibold tracking-wide uppercase text-sm mb-2">
+          {{ meta.editionLabel }} · Updated {{ meta.lastUpdated }}
         </p>
-        <p class="mt-4 text-lg">
-          Stay informed with our monthly updates, upcoming events, and important lodge announcements.
+        <h1 class="font-cinzel text-4xl md:text-5xl font-bold mb-4">The Trestle Board</h1>
+        <p class="text-lg text-primary-gold-light font-garamond italic mb-4">
+          Monthly newsletter of St. Petersburg Lodge No. 139 F&amp;AM
+        </p>
+        <p class="text-base md:text-lg leading-relaxed text-white/90 max-w-2xl">
+          {{ meta.intro }}
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Current Month Newsletters -->
-  <section class="py-12 bg-white">
+  <!-- Memorial notice -->
+  <section class="bg-primary-blue-darker border-b border-primary-gold/30">
+    <div class="container mx-auto px-4 py-4">
+      <p class="text-center text-primary-gold-light text-sm md:text-base leading-relaxed max-w-4xl mx-auto">
+        <i class="fas fa-ribbon mr-2 text-primary-gold"></i>
+        {{ memorialNotice }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Officer's Call -->
+  <section class="py-12 md:py-16 bg-white">
     <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
-        
-        <!-- Section Header -->
-        <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-primary-blue font-cinzel">Latest Edition</h2>
-          <p class="text-gray-600 mt-2">Most Recent Newsletter</p>
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-3">Officer's Call</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Messages from the East, West, South, and Secretary's desk.
+          </p>
         </div>
 
-        <!-- Loading State -->
-        <div *ngIf="loading" class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12 text-center">
-          <i class="fas fa-spinner fa-spin text-primary-gold text-4xl mb-4"></i>
-          <p class="text-lg">Loading newsletter content...</p>
-        </div>
-
-        <!-- Error State -->
-        <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 text-red-700 rounded-lg p-8 text-center">
-          <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-          <p class="text-lg mb-4">{{ error }}</p>
-          <button 
-            (click)="loadTrestleBoardContent()"
-            class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">
-            Try Again
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+          <button
+            type="button"
+            *ngFor="let msg of officerMessages"
+            (click)="selectOfficer(msg.id)"
+            class="officer-tab inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors border"
+            [class.active]="activeOfficerId === msg.id">
+            <img
+              [src]="msg.imageUrl"
+              [alt]="msg.author"
+              class="officer-tab-photo"
+              width="28"
+              height="28"
+              loading="lazy" />
+            <span>{{ msg.role }}</span>
           </button>
         </div>
 
-        <!-- Selected Archived Newsletter (shown when user clicks archive item) -->
-        <div *ngIf="selectedNewsletter && !loading" class="space-y-8 mb-8">
-          <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker rounded-lg shadow-xl p-8 md:p-12 relative">
-            <!-- Close Button -->
-            <button 
-              (click)="closeNewsletter()"
-              class="absolute top-4 right-4 text-primary-blue-darker hover:text-white bg-white hover:bg-primary-blue rounded-full w-10 h-10 flex items-center justify-center transition-all shadow-md">
-              <i class="fas fa-times text-xl"></i>
-            </button>
-            
-            <div class="flex items-center mb-6">
-              <i class="fas fa-newspaper text-primary-blue-darker text-4xl mr-4"></i>
-              <div>
-                <h3 class="text-3xl font-bold font-cinzel">{{ selectedNewsletter.title.rendered }}</h3>
-                <p class="text-primary-blue font-garamond italic">
-                  Published {{ selectedNewsletter.date | date: 'MMMM d, yyyy' }}
-                </p>
+        <article *ngIf="activeOfficer as officer" class="officer-panel bg-neutral-light border border-gray-200 p-6 md:p-10">
+          <header class="mb-6 pb-4 border-b border-primary-gold/40">
+            <div class="flex items-start gap-4 md:gap-5">
+              <div class="officer-portrait shrink-0">
+                <img
+                  [src]="officer.imageUrl"
+                  [alt]="officer.author"
+                  width="96"
+                  height="96"
+                  loading="lazy" />
+              </div>
+              <div class="min-w-0 pt-1">
+                <p class="text-primary-gold font-semibold text-sm uppercase tracking-wide mb-1">From the {{ officer.role }}</p>
+                <h3 *ngIf="officer.title" class="font-cinzel text-2xl md:text-3xl text-primary-blue font-bold mb-2">
+                  {{ officer.title }}
+                </h3>
+                <p class="font-garamond text-lg italic text-gray-700">{{ officer.author }}</p>
               </div>
             </div>
-            
-            <!-- WordPress Content -->
-            <div class="prose prose-lg max-w-none" [innerHTML]="selectedNewsletter.content.rendered"></div>
-          </div>
-        </div>
+          </header>
 
-        <!-- All Current Month Newsletter Posts (stacked vertically) -->
-        <div *ngIf="currentMonthNewsletters.length > 0 && !loading && !selectedNewsletter" class="space-y-8">
-          <div 
-            *ngFor="let newsletter of currentMonthNewsletters; let i = index"
-            class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12">
-            <div class="flex items-center mb-6">
-              <i class="fas fa-newspaper text-primary-gold text-4xl mr-4"></i>
-              <div>
-                <h3 class="text-3xl font-bold font-cinzel">{{ newsletter.title.rendered }}</h3>
-                <p class="text-primary-gold-light font-garamond italic">
-                  Published {{ newsletter.date | date: 'MMMM d, yyyy' }}
-                </p>
-              </div>
-            </div>
-            
-            <!-- WordPress Content -->
-            <div class="prose prose-invert max-w-none" [innerHTML]="newsletter.content.rendered"></div>
-            
-            <!-- Divider between posts (except for last post) -->
-            <div *ngIf="i < currentMonthNewsletters.length - 1" class="mt-8 pt-8 border-t border-primary-gold-light opacity-30"></div>
+          <div class="space-y-4 text-gray-700 leading-relaxed">
+            <p *ngFor="let paragraph of officer.paragraphs">{{ paragraph }}</p>
           </div>
-        </div>
 
-        <!-- No Content State (when no WordPress posts exist for current month) -->
-        <div *ngIf="currentMonthNewsletters.length === 0 && !loading && !error && !selectedNewsletter" class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white rounded-lg shadow-xl p-8 md:p-12">
-          <div class="flex items-center mb-6">
-            <i class="fas fa-newspaper text-primary-gold text-4xl mr-4"></i>
+          <footer *ngIf="officer.closing" class="mt-8 pt-4 border-t border-gray-200 flex items-center gap-3">
+            <img
+              [src]="officer.imageUrl"
+              [alt]=""
+              class="officer-signoff-photo"
+              width="40"
+              height="40"
+              loading="lazy"
+              aria-hidden="true" />
             <div>
-              <h2 class="text-3xl font-bold font-cinzel">{{ currentMonth }} {{ currentYear }}</h2>
-              <p class="text-primary-gold-light font-garamond italic">Latest Edition</p>
+              <p class="font-garamond italic text-primary-blue">{{ officer.closing }}</p>
+              <p class="font-semibold text-primary-blue mt-0.5">{{ officer.author }}</p>
             </div>
-          </div>
-          <p class="text-lg mb-6">
-            Read the latest news, upcoming events, degree work schedules, and messages from our Worshipful Master and Secretary.
-          </p>
-          <div class="text-center">
-            <button 
-              disabled
-              class="bg-primary-gold text-primary-blue-darker font-bold py-3 px-8 rounded-lg shadow-lg cursor-not-allowed opacity-90">
-              <i class="fas fa-clock mr-2"></i>
-              Coming Soon!
-            </button>
-          </div>
-        </div>
+          </footer>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- Newsletter Archive -->
-  <section class="py-12">
+  <!-- Meeting Synopses -->
+  <section class="py-12 md:py-16 bg-neutral-light">
     <div class="container mx-auto px-4">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="text-3xl font-bold text-primary-blue mb-8 font-cinzel text-center">Newsletter Archive</h2>
-        <p class="text-center text-gray-600 mb-8">Browse previous months' newsletters</p>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div 
-            *ngFor="let newsletter of archivedNewsletters"
-            class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200">
-            <div class="bg-primary-blue p-4">
-              <div class="flex items-center justify-between text-white">
-                <div>
-                  <h3 class="text-xl font-bold font-cinzel">{{ getPostMonth(newsletter) }} {{ getPostYear(newsletter) }}</h3>
-                  <p class="text-sm text-primary-gold-light">Published {{ newsletter.date | date: 'MMM d, yyyy' }}</p>
-                </div>
-                <i class="fas fa-newspaper text-primary-gold text-3xl"></i>
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-3">
+            Recent Stated Communications
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Synopses for Brethren who could not attend. For upcoming work and fellowship, see the
+            <a routerLink="/calendar" class="text-primary-blue font-semibold underline hover:text-primary-gold">Events Calendar</a>.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <div
+            *ngFor="let synopsis of meetingSynopses; let i = index"
+            class="bg-white border border-gray-200 overflow-hidden">
+            <button
+              type="button"
+              class="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-left hover:bg-gray-50 transition-colors"
+              (click)="toggleSynopsis(i)"
+              [attr.aria-expanded]="expandedSynopsisIndex === i">
+              <div class="flex items-start gap-3 min-w-0">
+                <i class="fas fa-gavel text-primary-gold mt-1 flex-shrink-0"></i>
+                <h3 class="font-cinzel text-lg md:text-xl text-primary-blue font-bold">
+                  {{ synopsis.dateLabel }}
+                </h3>
               </div>
-            </div>
-            
-            <div class="p-6">
-              <h4 class="text-lg font-semibold text-primary-blue mb-2">{{ newsletter.title.rendered }}</h4>
-              <p class="text-gray-700 mb-4 text-sm line-clamp-3">{{ getPostExcerpt(newsletter) }}</p>
-              
-              <button 
-                (click)="downloadNewsletter(newsletter, $event); $event.stopPropagation(); $event.preventDefault();"
-                type="button"
-                class="w-full bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-bold py-2 px-4 rounded transition-all">
-                <i class="fas fa-book-open mr-2"></i>
-                Read Newsletter
-              </button>
+              <i
+                class="fas fa-chevron-down text-primary-blue transition-transform flex-shrink-0"
+                [class.rotate-180]="expandedSynopsisIndex === i"></i>
+            </button>
+            <div *ngIf="expandedSynopsisIndex === i" class="px-5 md:px-6 pb-6">
+              <p class="text-gray-700 leading-relaxed border-t border-gray-100 pt-4">
+                {{ synopsis.body }}
+              </p>
             </div>
           </div>
-        </div>
-
-        <!-- Empty State (if no newsletters) -->
-        <div *ngIf="archivedNewsletters.length === 0 && !loading" class="text-center py-12">
-          <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
-          <p class="text-xl text-gray-600">No archived newsletters available at this time.</p>
-          <p class="text-gray-500 mt-2">Check back soon for our monthly updates!</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Information Section -->
-  <section class="py-12 bg-primary-blue text-white">
+  <!-- Member Milestones -->
+  <section class="py-12 md:py-16 bg-white">
     <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl font-bold mb-6 font-cinzel">About The Trestle Board</h2>
-        <div class="space-y-4 text-lg">
-          <p>
-            The Trestle Board is the official monthly newsletter of St. Petersburg Lodge No. 139 F&AM. 
-            Published at the beginning of each month, it contains:
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-3">Member Milestones</h2>
+          <p class="text-gray-600">July birthdays, Masonic anniversaries, and recent honors.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+          <div class="border border-gray-200 p-6 bg-neutral-light">
+            <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-4 flex items-center">
+              <i class="fas fa-birthday-cake text-primary-gold mr-3"></i>
+              July Birthdays
+            </h3>
+            <ul class="space-y-2">
+              <li
+                *ngFor="let person of birthdays"
+                class="flex justify-between gap-4 text-sm md:text-base py-2 border-b border-gray-200 last:border-0">
+                <span class="font-medium text-gray-800">{{ person.name }}</span>
+                <span class="text-gray-600 whitespace-nowrap">{{ person.detail }}</span>
+              </li>
+            </ul>
+            <p class="mt-4 text-center text-primary-blue font-semibold text-sm">
+              We wish each Brother a very happy birthday.
+            </p>
+          </div>
+
+          <div class="border border-gray-200 p-6 bg-neutral-light">
+            <h3 class="font-cinzel text-xl text-primary-blue font-bold mb-4 flex items-center">
+              <i class="fas fa-medal text-primary-gold mr-3"></i>
+              July Raisings
+            </h3>
+            <ul class="space-y-2">
+              <li
+                *ngFor="let person of raisings"
+                class="flex justify-between gap-4 text-sm md:text-base py-2 border-b border-gray-200 last:border-0">
+                <span class="font-medium text-gray-800">{{ person.name }}</span>
+                <span class="text-primary-blue font-semibold whitespace-nowrap text-right">{{ person.detail }}</span>
+              </li>
+            </ul>
+            <p class="mt-4 text-center text-primary-blue font-semibold text-sm">
+              Congratulations on your years in the Craft.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-primary-blue text-white p-6 md:p-8">
+          <h3 class="font-cinzel text-xl md:text-2xl font-bold text-primary-gold mb-3">
+            {{ milestoneHighlight.title }}
+          </h3>
+          <p class="leading-relaxed text-white/95">{{ milestoneHighlight.body }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Masonic Education -->
+  <section class="py-12 md:py-16 bg-neutral-light">
+    <div class="container mx-auto px-4">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-3">Masonic Education</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Grand Lodge of Florida degree booklets, etiquette guides, and selected essays.
           </p>
-          <div class="grid md:grid-cols-2 gap-6 mt-8">
-            <div class="bg-primary-blue-dark p-6 rounded-lg">
-              <i class="fas fa-calendar-alt text-primary-gold text-3xl mb-3"></i>
-              <h3 class="font-bold mb-2 font-cinzel">Events & Calendar</h3>
-              <p class="text-sm">Upcoming meetings, degree work, and special events</p>
-            </div>
-            <div class="bg-primary-blue-dark p-6 rounded-lg">
-              <i class="fas fa-gavel text-primary-gold text-3xl mb-3"></i>
-              <h3 class="font-bold mb-2 font-cinzel">Lodge News</h3>
-              <p class="text-sm">Updates from the Worshipful Master and officers</p>
-            </div>
-            <div class="bg-primary-blue-dark p-6 rounded-lg">
-              <i class="fas fa-book text-primary-gold text-3xl mb-3"></i>
-              <h3 class="font-bold mb-2 font-cinzel">Masonic Education</h3>
-              <p class="text-sm">Educational articles and historical information</p>
-            </div>
-            <div class="bg-primary-blue-dark p-6 rounded-lg">
-              <i class="fas fa-users text-primary-gold text-3xl mb-3"></i>
-              <h3 class="font-bold mb-2 font-cinzel">Member Updates</h3>
-              <p class="text-sm">Birthdays, anniversaries, and member news</p>
-            </div>
-          </div>
+        </div>
+
+        <h3 class="font-cinzel text-lg text-primary-blue font-bold mb-4">Degree &amp; Instruction Booklets</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <a
+            *ngFor="let resource of bookletResources()"
+            [href]="resource.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="edu-card block bg-white border border-gray-200 p-4 hover:border-primary-gold transition-colors">
+            <i class="fas fa-book-open text-primary-gold mb-2"></i>
+            <h4 class="font-semibold text-primary-blue text-sm mb-1 leading-snug">{{ resource.title }}</h4>
+            <p class="text-xs text-gray-600">{{ resource.description }}</p>
+          </a>
+        </div>
+
+        <h3 class="font-cinzel text-lg text-primary-blue font-bold mb-4">Articles &amp; References</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a
+            *ngFor="let resource of otherEducationResources()"
+            [href]="resource.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="edu-card block bg-white border border-gray-200 p-4 hover:border-primary-gold transition-colors">
+            <i class="fas fa-scroll text-primary-gold mb-2"></i>
+            <h4 class="font-semibold text-primary-blue text-sm mb-1 leading-snug">{{ resource.title }}</h4>
+            <p class="text-xs text-gray-600">{{ resource.description }}</p>
+          </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Subscription CTA -->
-  <section class="py-12 bg-neutral-light">
+  <!-- Lodge resources (no duplication of full pages) -->
+  <section class="py-12 md:py-16 bg-white">
     <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl font-bold text-primary-blue mb-4 font-cinzel">Stay Informed</h2>
-        <p class="text-lg text-gray-700 mb-8">
-          Members receive the Trestle Board automatically via email. 
-          For questions or to update your contact information, please contact the Secretary's Office.
-        </p>
-        <a 
-          routerLink="/secretary-office" 
-          class="inline-block bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 shadow-lg">
-          <i class="fas fa-envelope mr-2"></i>
-          Contact Secretary's Office
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="font-cinzel text-3xl md:text-4xl text-primary-blue font-bold mb-3">Lodge Resources</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Schedules, officers, history, and forms already live elsewhere on the site — use these links rather than a second copy here.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <a
+            *ngFor="let link of lodgeResourceLinks"
+            [routerLink]="link.route"
+            class="resource-link group block border border-gray-200 p-5 hover:bg-primary-blue transition-colors">
+            <i [class]="link.icon + ' text-primary-gold text-2xl mb-3'"></i>
+            <h3 class="font-cinzel text-lg font-bold text-primary-blue group-hover:text-white mb-1 transition-colors">
+              {{ link.title }}
+            </h3>
+            <p class="text-sm text-gray-600 group-hover:text-primary-gold-light transition-colors">
+              {{ link.description }}
+            </p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-12 bg-primary-blue text-white">
+    <div class="container mx-auto px-4 text-center max-w-3xl">
+      <h2 class="font-cinzel text-2xl md:text-3xl font-bold mb-4">Records &amp; Member Services</h2>
+      <p class="text-lg text-primary-gold-light mb-8">
+        Need dues help, membership records, certificates, or official correspondence?
+        Those standing services live on the Secretary's Office page — this Trestle Board is for updates.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          routerLink="/secretary-office"
+          class="inline-flex items-center justify-center bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-bold py-3 px-8 transition-colors">
+          <i class="fas fa-user-tie mr-2"></i>
+          Secretary's Office
+        </a>
+        <a
+          routerLink="/calendar"
+          class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-primary-gold text-white font-bold py-3 px-8 transition-colors">
+          <i class="fas fa-calendar-alt mr-2"></i>
+          View Calendar
         </a>
       </div>
     </div>
   </section>
 </div>
-

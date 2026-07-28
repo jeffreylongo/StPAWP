@@ -86,40 +86,59 @@
   <div class="container mx-auto px-4 relative z-10">
     <div class="text-center mb-12">
       <span class="inline-block bg-primary-gold text-primary-blue-darker px-4 py-1 rounded-full text-sm font-bold mb-4 uppercase tracking-wider">
-        <i class="fas fa-star mr-2"></i>Don't Miss These Events<i class="fas fa-star ml-2"></i>
+        <i class="fas fa-star mr-2"></i>Don't Miss This Event<i class="fas fa-star ml-2"></i>
       </span>
-      <h2 class="font-cinzel text-3xl md:text-4xl text-white font-bold mb-4">Featured Upcoming Events</h2>
+      <h2 class="font-cinzel text-3xl md:text-4xl text-white font-bold mb-4">Featured Upcoming Event</h2>
       <div class="w-24 h-1 bg-primary-gold mx-auto mb-6"></div>
       <p class="text-primary-gold-light text-lg max-w-2xl mx-auto">
-        Special educational lectures hosted by our lodge. Mark your calendars!
+        Mark your calendars — officers are required; all members are strongly encouraged to attend.
       </p>
     </div>
     
-    <div class="max-w-5xl mx-auto">
-      <div class="flyer-card group">
-        <div class="relative">
-          <!-- Corner ribbon -->
-          <div class="absolute -top-2 -right-2 z-20">
-            <div class="bg-primary-gold text-primary-blue-darker font-bold text-xs px-4 py-1 rounded-full shadow-lg transform rotate-12">
-              UPCOMING
+    <div class="max-w-4xl mx-auto">
+      <div class="featured-event-card relative border-4 border-primary-gold rounded-xl bg-primary-blue-darker/80 backdrop-blur-sm overflow-hidden shadow-2xl">
+        <div class="absolute top-4 right-4 z-10">
+          <span class="bg-primary-gold text-primary-blue-darker font-bold text-xs px-4 py-1 rounded-full shadow-lg uppercase tracking-wide">
+            Upcoming
+          </span>
+        </div>
+        <div class="p-6 md:p-10">
+          <div class="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
+            <div class="flex-shrink-0 text-center md:text-left">
+              <div class="inline-flex flex-col items-center justify-center bg-primary-gold text-primary-blue-darker rounded-lg px-5 py-4 min-w-[7rem]">
+                <span class="text-xs font-bold uppercase tracking-wider">August</span>
+                <span class="font-cinzel text-4xl font-bold leading-none">14</span>
+                <span class="text-xs font-semibold mt-1">Friday</span>
+              </div>
+            </div>
+            <div class="flex-1 text-white">
+              <h3 class="font-cinzel text-2xl md:text-3xl font-bold text-primary-gold mb-3">
+                Grand Master's Official Visit (GMOV) to District 18
+              </h3>
+              <p class="text-primary-gold-light font-semibold mb-4">
+                The Most Worshipful Grand Master of Masons of Florida, Haskell R. Vest, Jr.
+              </p>
+              <div class="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-6 text-sm md:text-base mb-5">
+                <span class="inline-flex items-center">
+                  <i class="fas fa-clock mr-2 text-primary-gold"></i>
+                  5:00 PM – 8:00 PM
+                </span>
+                <span class="inline-flex items-center">
+                  <i class="fas fa-map-marker-alt mr-2 text-primary-gold"></i>
+                  Masonic Home
+                </span>
+              </div>
+              <ul class="space-y-2 text-sm md:text-base text-white/90 mb-5">
+                <li><strong class="text-primary-gold">Arrive:</strong> 5:00 PM</li>
+                <li><strong class="text-primary-gold">Dinner:</strong> 5:30 PM</li>
+                <li><strong class="text-primary-gold">Tiled GMOV meeting:</strong> 6:30 PM</li>
+              </ul>
+              <p class="text-sm md:text-base leading-relaxed text-white/90 border-t border-primary-gold/30 pt-4">
+                This event is <strong class="text-primary-gold">mandatory for Officers</strong> of St. Petersburg Lodge
+                and it is highly encouraged that all members of our Lodge attend.
+              </p>
             </div>
           </div>
-          <!-- Gold border frame -->
-          <div class="absolute inset-0 border-4 border-primary-gold rounded-xl transform group-hover:scale-[1.02] transition-transform duration-500 z-10 pointer-events-none"></div>
-          <!-- Image container -->
-          <div class="relative overflow-hidden rounded-xl shadow-2xl transform transition-all duration-500 group-hover:scale-[1.02]">
-            <img src="assets/flyers/David Wood Lecture V2 Wide Screen 1.69.png" 
-                 alt="David Wood Lecture Flyer" 
-                 class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105">
-            <!-- Hover overlay -->
-            <div class="absolute inset-0 bg-primary-gold opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-          </div>
-        </div>
-        <div class="mt-5 text-center">
-          <span class="inline-flex items-center bg-white bg-opacity-10 backdrop-blur-sm text-white font-semibold px-4 py-2 rounded-full">
-            <i class="fas fa-calendar-alt mr-2 text-primary-gold"></i>
-            Featured Lodge Lecture
-          </span>
         </div>
       </div>
     </div>
@@ -233,7 +252,10 @@
               </p>
             </div>
             <div class="text-sm text-gray-700 leading-relaxed">
-              <p class="mb-3">{{ data.lastMeeting.content | stripHtml | slice:0:120 }}{{ (data.lastMeeting.content | stripHtml).length > 120 ? '...' : '' }}</p>
+              <p class="mb-3">{{ data.lastMeeting.content | stripHtml | slice:0:160 }}{{ (data.lastMeeting.content | stripHtml).length > 160 ? '...' : '' }}</p>
+              <ul *ngIf="data.lastMeeting.metadata?.highlights?.length" class="space-y-1 mb-3 text-xs text-gray-600">
+                <li *ngFor="let highlight of data.lastMeeting.metadata?.highlights?.slice(0, 3)">• {{ highlight }}</li>
+              </ul>
               <div class="text-xs text-gray-500">
                 <strong>Meeting Date:</strong> {{ data.lastMeeting.metadata?.meeting_date || 'Recent' }}
               </div>
@@ -247,7 +269,12 @@
               What's Coming Up
             </h4>
             <div class="text-sm text-gray-700 leading-relaxed">
-              <p class="mb-3">{{ data.nextMeeting.content | stripHtml | slice:0:100 }}{{ (data.nextMeeting.content | stripHtml).length > 100 ? '...' : '' }}</p>
+              <ul *ngIf="data.nextMeeting.metadata?.next_meeting_highlights?.length; else nextMeetingFallback" class="space-y-1 mb-3">
+                <li *ngFor="let highlight of data.nextMeeting.metadata?.next_meeting_highlights">• {{ highlight }}</li>
+              </ul>
+              <ng-template #nextMeetingFallback>
+                <p class="mb-3">{{ data.nextMeeting.content | stripHtml | slice:0:120 }}{{ (data.nextMeeting.content | stripHtml).length > 120 ? '...' : '' }}</p>
+              </ng-template>
               <div class="text-xs text-gray-500">
                 <strong>Next Meeting:</strong> {{ data.nextMeeting.metadata?.next_meeting || 'Check calendar for details' }}
               </div>
@@ -266,17 +293,17 @@
           <div class="bg-white bg-opacity-10 p-4 rounded-lg">
             <h4 class="font-semibold text-primary-gold mb-2">Brother Accomplishments</h4>
             <div class="text-sm space-y-2">
-              <div class="flex items-center">
-                <i class="fas fa-graduation-cap text-primary-gold mr-2"></i>
-                <span>MM1 Course Completion by Brother Jeff Longo</span>
+              <div class="flex items-start">
+                <i class="fas fa-medal text-primary-gold mr-2 mt-0.5"></i>
+                <span>50 Year Certificate &amp; Pin: R∴W∴ Charles Wagner, PDDGM</span>
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-medal text-primary-gold mr-2"></i>
-                <span>40 Year Award: Worshipful John Gunter, P∴M∴</span>
+              <div class="flex items-start">
+                <i class="fas fa-graduation-cap text-primary-gold mr-2 mt-0.5"></i>
+                <span>Fellow Craft Catechism proficiency — MM Degree August 11</span>
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-star text-primary-gold mr-2"></i>
-                <span>55 Year Award: Worshipful John Gicking</span>
+              <div class="flex items-start">
+                <i class="fas fa-scroll text-primary-gold mr-2 mt-0.5"></i>
+                <span>Lodge Charter restored and reframed for the Craft</span>
               </div>
             </div>
           </div>
@@ -284,17 +311,17 @@
           <div class="bg-white bg-opacity-10 p-4 rounded-lg">
             <h4 class="font-semibold text-primary-gold mb-2">Lodge Updates</h4>
             <div class="text-sm space-y-2">
-              <div class="flex items-center">
-                <i class="fas fa-check-circle text-primary-gold mr-2"></i>
-                <span>By-Law Section 1.01 Address Correction Approved</span>
+              <div class="flex items-start">
+                <i class="fas fa-star text-primary-gold mr-2 mt-0.5"></i>
+                <span>Grand Master’s Official Visit (GMOV) — August 14</span>
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-building text-primary-gold mr-2"></i>
-                <span>New Lodge Building Planning in Progress</span>
+              <div class="flex items-start">
+                <i class="fas fa-building text-primary-gold mr-2 mt-0.5"></i>
+                <span>New Lodge building under construction</span>
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-newspaper text-primary-gold mr-2"></i>
-                <span>Trestle Board Newsletter Restoration</span>
+              <div class="flex items-start">
+                <i class="fas fa-newspaper text-primary-gold mr-2 mt-0.5"></i>
+                <span>Trestle Board live with officer messages &amp; education</span>
               </div>
             </div>
           </div>
@@ -308,13 +335,16 @@
       <div class="bg-gradient-to-br from-primary-blue to-primary-blue-dark text-white p-4 rounded-lg shadow-md">
         <div class="flex items-center mb-3">
           <i class="fas fa-birthday-cake text-primary-gold text-xl mr-2"></i>
-          <h4 class="font-cinzel text-base font-bold">Birthdays</h4>
+          <h4 class="font-cinzel text-base font-bold">July Birthdays</h4>
         </div>
-        <div class="text-xs">
-          <p class="mb-2">{{ data.birthdays.content | stripHtml | slice:0:60 }}{{ (data.birthdays.content | stripHtml).length > 60 ? '...' : '' }}</p>
-          <div class="text-primary-gold-light">
-            <strong>{{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers</strong> celebrating
+        <div class="text-xs space-y-1.5 max-h-36 overflow-y-auto">
+          <div *ngFor="let brother of data.birthdays.metadata?.birthday_brothers || []" class="flex justify-between gap-2">
+            <span class="truncate">{{ brother.name }}</span>
+            <span class="text-primary-gold-light whitespace-nowrap">{{ brother.date }}</span>
           </div>
+        </div>
+        <div class="text-primary-gold-light mt-3 pt-2 border-t border-white/20">
+          <strong>{{ data.birthdays.metadata?.birthday_brothers?.length || 0 }} Brothers</strong> celebrating
         </div>
       </div>
 
@@ -322,34 +352,37 @@
       <div class="bg-gradient-to-br from-primary-gold to-primary-gold-light text-primary-blue-darker p-4 rounded-lg shadow-md">
         <div class="flex items-center mb-3">
           <i class="fas fa-medal text-primary-blue text-xl mr-2"></i>
-          <h4 class="font-cinzel text-base font-bold">Masonic Anniversaries</h4>
+          <h4 class="font-cinzel text-base font-bold">July Raisings</h4>
         </div>
-        <div class="text-xs">
-          <p class="mb-2">{{ data.anniversaries.content | stripHtml | slice:0:60 }}{{ (data.anniversaries.content | stripHtml).length > 60 ? '...' : '' }}</p>
-          <div class="text-primary-blue">
-            <strong>{{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers</strong> with anniversaries
+        <div class="text-xs space-y-2">
+          <div *ngFor="let brother of data.anniversaries.metadata?.anniversary_brothers || []">
+            <div class="font-semibold">{{ brother.name }}</div>
+            <div class="text-primary-blue">{{ brother.years }} years · {{ brother.date }}</div>
           </div>
+        </div>
+        <div class="text-primary-blue mt-3 pt-2 border-t border-primary-blue/20">
+          <strong>{{ data.anniversaries.metadata?.anniversary_brothers?.length || 0 }} Brothers</strong> with anniversaries
         </div>
       </div>
 
-      <!-- Community Activities -->
+      <!-- Coming Up -->
       <div class="bg-gradient-to-br from-neutral-light to-gray-200 text-primary-blue p-4 rounded-lg shadow-md">
         <div class="flex items-center mb-3">
-          <i class="fas fa-hands-helping text-primary-gold text-xl mr-2"></i>
-          <h4 class="font-cinzel text-base font-bold">New Opportunities</h4>
+          <i class="fas fa-calendar-check text-primary-gold text-xl mr-2"></i>
+          <h4 class="font-cinzel text-base font-bold">Coming Up</h4>
         </div>
         <div class="text-xs space-y-1">
-          <div class="flex items-center">
-            <i class="fas fa-users text-primary-gold mr-1"></i>
-            <span>Funeral Team Formation</span>
+          <div class="flex items-start">
+            <i class="fas fa-gavel text-primary-gold mr-1 mt-0.5"></i>
+            <span>MM Degree — Aug 11</span>
           </div>
-          <div class="flex items-center">
-            <i class="fas fa-graduation-cap text-primary-gold mr-1"></i>
-            <span>Masonic Mentorship Program</span>
+          <div class="flex items-start">
+            <i class="fas fa-star text-primary-gold mr-1 mt-0.5"></i>
+            <span>GMOV District 18 — Aug 14</span>
           </div>
-          <div class="flex items-center">
-            <i class="fas fa-book text-primary-gold mr-1"></i>
-            <span>Catechism Coaching</span>
+          <div class="flex items-start">
+            <i class="fas fa-handshake text-primary-gold mr-1 mt-0.5"></i>
+            <span>Stated &amp; DDOV — Aug 18</span>
           </div>
         </div>
       </div>
@@ -357,17 +390,17 @@
       <!-- Resources -->
       <div class="bg-gradient-to-br from-neutral-light to-gray-200 text-primary-blue p-4 rounded-lg shadow-md">
         <div class="flex items-center mb-3">
-          <i class="fas fa-library text-primary-gold text-xl mr-2"></i>
+          <i class="fas fa-book-open text-primary-gold text-xl mr-2"></i>
           <h4 class="font-cinzel text-base font-bold">Available Resources</h4>
         </div>
         <div class="text-xs space-y-1">
           <div class="flex items-center">
-            <i class="fas fa-book text-primary-gold mr-1"></i>
-            <span>Virtual Masonic Library</span>
+            <i class="fas fa-newspaper text-primary-gold mr-1"></i>
+            <span>Trestle Board Newsletter</span>
           </div>
           <div class="flex items-center">
-            <i class="fas fa-file-alt text-primary-gold mr-1"></i>
-            <span>Trestle Board Newsletter</span>
+            <i class="fas fa-graduation-cap text-primary-gold mr-1"></i>
+            <span>GL Degree Education Booklets</span>
           </div>
           <div class="flex items-center">
             <i class="fas fa-calendar-alt text-primary-gold mr-1"></i>
@@ -378,11 +411,16 @@
     </div>
 
     <!-- Call to Action -->
-    <div class="text-center">
-      <a routerLink="/secretary-office" 
+    <div class="text-center flex flex-col sm:flex-row gap-4 justify-center">
+      <a routerLink="/trestle-board" 
          class="inline-flex items-center bg-primary-blue hover:bg-primary-blue-dark text-white px-6 py-3 rounded-md transition-colors">
         <i class="fas fa-newspaper mr-2"></i>
-        <span>Visit Secretary's Office for Full Details</span>
+        <span>Read the Trestle Board</span>
+      </a>
+      <a routerLink="/secretary-office" 
+         class="inline-flex items-center bg-white border border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white px-6 py-3 rounded-md transition-colors">
+        <i class="fas fa-user-tie mr-2"></i>
+        <span>Secretary's Office</span>
       </a>
     </div>
   </div>
@@ -409,15 +447,18 @@
           <h3 class="font-cinzel text-lg font-bold">Masonic Education</h3>
         </div>
         <div class="text-sm">
-          <p class="mb-3">Access our virtual Masonic library and educational resources for continuous learning and growth.</p>
+          <p class="mb-3">Grand Lodge degree booklets, etiquette guides, and essays are available on the Trestle Board.</p>
           <div class="text-primary-gold-light">
             <strong>Available Resources:</strong>
             <ul class="mt-2 space-y-1">
-              <li>• Virtual Library Access</li>
-              <li>• MM1 Course Materials</li>
-              <li>• Catechism Coaching</li>
+              <li>• GL 201–208 Instruction Booklets</li>
+              <li>• Florida Directory 2026</li>
+              <li>• Ritual &amp; Hiramic Legend essays</li>
             </ul>
           </div>
+          <a routerLink="/trestle-board" class="inline-block mt-4 text-primary-gold font-semibold text-sm hover:underline">
+            Open Trestle Board →
+          </a>
         </div>
       </div>
 
@@ -428,13 +469,13 @@
           <h3 class="font-cinzel text-lg font-bold">New Building Progress</h3>
         </div>
         <div class="text-sm">
-          <p class="mb-3">Stay updated on the progress of our new lodge building and facility improvements.</p>
+          <p class="mb-3">Our new St. Petersburg Lodge building is under construction — a rare privilege for this generation of the Craft.</p>
           <div class="text-primary-blue">
             <strong>Current Status:</strong>
             <ul class="mt-2 space-y-1">
-              <li>• Planning Phase</li>
-              <li>• Site Selection</li>
-              <li>• Fundraising</li>
+              <li>• Construction underway</li>
+              <li>• Progress photos coming soon</li>
+              <li>• Building for future generations</li>
             </ul>
           </div>
         </div>
@@ -447,13 +488,13 @@
           <h3 class="font-cinzel text-lg font-bold">Community Service</h3>
         </div>
         <div class="text-sm">
-          <p class="mb-3">Join our community service initiatives and make a positive impact in St. Petersburg.</p>
+          <p class="mb-3">Recent Craft support includes local schools, youth, and Grand Lodge charities.</p>
           <div class="text-primary-blue-dark">
-            <strong>Opportunities:</strong>
+            <strong>Recent Causes:</strong>
             <ul class="mt-2 space-y-1">
-              <li>• Funeral Team</li>
-              <li>• Mentorship Program</li>
-              <li>• Charitable Works</li>
+              <li>• Northshore Elementary (100th anniversary)</li>
+              <li>• Grand Master’s Charity</li>
+              <li>• First Lady’s Project</li>
             </ul>
           </div>
         </div>

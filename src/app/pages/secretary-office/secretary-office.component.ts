@@ -1,134 +1,113 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CalendarService } from '../../services/calendar.service';
-import { CalendarEvent } from '../../interfaces';
-import { SecretaryOfficeService, SecretaryOfficeData, SecretaryUpdate } from '../../services/secretary-office.service';
-import { Observable, of, combineLatest } from 'rxjs';
-import { catchError, map, filter, take } from 'rxjs/operators';
-import { CleanWordPressContentPipe } from '../../pipes/strip-html.pipe';
+
+interface OfficeService {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+interface ResourceLink {
+  title: string;
+  description: string;
+  route: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-secretary-office',
   standalone: true,
-  imports: [CommonModule, RouterModule, CleanWordPressContentPipe],
+  imports: [CommonModule, RouterModule],
   templateUrl: './secretary-office.component.html',
-  styleUrls: ['./secretary-office.component.css']
+  styleUrls: ['./secretary-office.component.css'],
 })
-export class SecretaryOfficeComponent implements OnInit {
-  upcomingEvents: CalendarEvent[] = [];
-  secretaryData$!: Observable<SecretaryOfficeData>;
-  isLoadingEvents = true;
+export class SecretaryOfficeComponent {
+  readonly secretary = {
+    name: 'Worshipful John Livingston, P∴M∴',
+    role: 'Lodge Secretary',
+    phone: '(727) 418-3356',
+    phoneHref: 'tel:7274183356',
+    email: 'secretary@stpete139.org',
+    emailHref: 'mailto:secretary@stpete139.org',
+  };
 
-  constructor(
-    private calendarService: CalendarService,
-    private secretaryOfficeService: SecretaryOfficeService
-  ) {}
+  readonly officeServices: OfficeService[] = [
+    {
+      title: 'Membership Records',
+      description: 'Petitions, demits, affiliations, dual membership, and standing with the Lodge and Grand Lodge.',
+      icon: 'fas fa-address-book',
+    },
+    {
+      title: 'Dues & Correspondence',
+      description: 'Annual dues questions, receipts, official Lodge correspondence, and notices to the Craft.',
+      icon: 'fas fa-file-invoice-dollar',
+    },
+    {
+      title: 'Certificates & Longevity',
+      description: 'Raising certificates, proficiency records, and assistance with longevity awards and pins.',
+      icon: 'fas fa-certificate',
+    },
+    {
+      title: 'Forms & Petitions',
+      description: 'Guidance on Lodge petitions, by-laws, and other documents members need to complete.',
+      icon: 'fas fa-file-signature',
+    },
+    {
+      title: 'Visitor & Guest Letters',
+      description: 'Letters of good standing and coordination for visiting Brethren and courtesy work.',
+      icon: 'fas fa-envelope-open-text',
+    },
+    {
+      title: 'Funeral & Memorial Support',
+      description: 'Coordination with families and the Lodge for Masonic funeral or memorial arrangements.',
+      icon: 'fas fa-dove',
+    },
+  ];
 
-  ngOnInit(): void {
-    this.loadEvents();
-    this.secretaryData$ = this.secretaryOfficeService.getSecretaryOfficeData();
-  }
+  readonly resourceLinks: ResourceLink[] = [
+    {
+      title: 'The Trestle Board',
+      description: 'Officer messages, meeting synopses, milestones, and education updates',
+      route: '/trestle-board',
+      icon: 'fas fa-newspaper',
+    },
+    {
+      title: 'Events Calendar',
+      description: 'Degrees, practices, dinners, and fellowship dates',
+      route: '/calendar',
+      icon: 'fas fa-calendar-alt',
+    },
+    {
+      title: 'Forms & Petitions',
+      description: 'Downloadable Lodge forms and membership documents',
+      route: '/forms',
+      icon: 'fas fa-file-alt',
+    },
+    {
+      title: 'Dues & Donations',
+      description: 'How to pay dues and support Lodge charities',
+      route: '/dues-donations',
+      icon: 'fas fa-hand-holding-heart',
+    },
+    {
+      title: 'Lodge Officers',
+      description: 'Current officer directory and contacts',
+      route: '/officers',
+      icon: 'fas fa-users',
+    },
+    {
+      title: 'Contact the Lodge',
+      description: 'General inquiries and visitor information',
+      route: '/contact',
+      icon: 'fas fa-comments',
+    },
+  ];
 
-  loadEvents(): void {
-    this.isLoadingEvents = true;
-
-    // Wait for calendar service to finish loading, then get real events
-    // Filter for St. Pete Lodge events only (calendarId = 1)
-    combineLatest([
-      this.calendarService.loading$,
-      this.calendarService.getUpcomingEvents(90) // Get next 3 months of events
-    ]).pipe(
-      filter(([loading, _]) => !loading), // Only proceed when loading is complete
-      take(1), // Take only the first emission after loading completes
-      map(([_, events]) => events.filter(event => event.calendarId === 1)), // Only St. Pete Lodge events
-      catchError(error => {
-        console.error('Error loading calendar events:', error);
-        return of([]);
-      })
-    )
-      .subscribe({
-        next: (events) => {
-          this.upcomingEvents = events;
-          this.isLoadingEvents = false;
-          console.log(`📋 Secretary Office loaded ${events.length} real upcoming Lodge events`);
-        },
-        error: (error) => {
-          console.error('Error loading events:', error);
-          this.upcomingEvents = [];
-          this.isLoadingEvents = false;
-        }
-      });
-  }
-
-  // Get next 3 months preview for the calendar section
-  getNext3MonthsPreview(): Array<{ month: string; events: CalendarEvent[] }> {
-    const months = [];
-    const today = new Date();
-    
-    console.log(`📅 Secretary Office - Total upcoming events: ${this.upcomingEvents.length}`);
-    console.log(`📅 Today's date: ${today.toDateString()}`);
-    console.log(`📅 Today's month: ${today.getMonth()}, Year: ${today.getFullYear()}`);
-    
-    // Debug: Show all events and their dates
-    this.upcomingEvents.forEach((event, index) => {
-      console.log(`📅 Event ${index}: ${event.title} - Date: ${event.date.toDateString()}, Month: ${event.date.getMonth()}, Year: ${event.date.getFullYear()}`);
-    });
-    
-    for (let i = 0; i < 3; i++) {
-      const monthDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
-      const monthName = monthDate.toLocaleDateString('en-US', { month: 'long' });
-      
-      console.log(`📅 Processing ${monthName}: monthDate = ${monthDate.toDateString()}, monthDate.getMonth() = ${monthDate.getMonth()}`);
-      
-      const monthEvents = this.upcomingEvents.filter(event => {
-        const eventMonth = event.date.getMonth();
-        const eventYear = event.date.getFullYear();
-        const matches = eventMonth === monthDate.getMonth() && eventYear === monthDate.getFullYear();
-        
-        if (monthName === 'August') {
-          console.log(`🔍 August event check: ${event.title} - Month: ${eventMonth}, Year: ${eventYear}, Matches: ${matches}`);
-        }
-        
-        return matches;
-      });
-      
-      console.log(`📅 ${monthName}: ${monthEvents.length} events`);
-      
-      months.push({
-        month: monthName,
-        events: monthEvents
-      });
-    }
-    
-    return months;
-  }
-
-  // Get icon class for month preview
-  getIconClassForMonth(monthData: { month: string; events: CalendarEvent[] }): string {
-    if (monthData.events.length === 0) return 'fas fa-calendar-times text-gray-400';
-    if (monthData.events.length >= 3) return 'fas fa-calendar-check text-green-500';
-    return 'fas fa-calendar-alt text-blue-500';
-  }
-
-  // Get CSS class for event type badges
-  getEventTypeClass(type: string): string {
-    switch (type) {
-      case 'meeting':
-        return 'bg-blue-100 text-blue-800';
-      case 'degree':
-        return 'bg-purple-100 text-purple-800';
-      case 'dinner':
-        return 'bg-green-100 text-green-800';
-      case 'education':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  }
-
-  // TrackBy function for performance optimization
-  trackByEventId(index: number, event: CalendarEvent): number {
-    return event.id;
-  }
+  readonly meetingBasics = [
+    { label: 'Stated Communication', value: 'Third Tuesday of each month' },
+    { label: 'Dinner', value: '6:30 PM' },
+    { label: 'Meeting', value: '7:30 PM' },
+    { label: 'Temporary Location', value: '3325 1st St. NE, St. Petersburg, FL 33704' },
+  ];
 }

@@ -219,27 +219,9 @@
   overflow: hidden;
 }
 
-/* Flyer Card Styles */
-.flyer-card {
-  @apply block;
-}
-
-.flyer-card img {
-  @apply rounded-xl;
-}
-
-/* Flyer hover glow effect */
-.flyer-card:hover > .relative {
-  filter: drop-shadow(0 0 20px rgba(198, 168, 74, 0.5));
-}
-
-/* Flyer card animation */
-.flyer-card {
+/* Featured event card (text-based when no flyer) */
+.featured-event-card {
   animation: float 6s ease-in-out infinite;
-}
-
-.flyer-card:nth-child(2) {
-  animation-delay: -3s;
 }
 
 @keyframes float {

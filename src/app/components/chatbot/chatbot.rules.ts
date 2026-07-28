@@ -692,13 +692,13 @@ Financial assistance is available - contact the Secretary confidentially.`,
 **Phone:** (727) 418-3356
 **Email:** secretary@stpete139.org
 
-The Secretary handles:
+Standing member services:
 • Membership records
 • Official correspondence
 • Lodge forms and documents
-• Dues payments
+• Dues questions & certificates
 
-Office hours available by appointment.`,
+For living updates (news, milestones, officer messages), visit the **Trestle Board**.`,
     priority: 40,
   },
 
@@ -710,12 +710,13 @@ Office hours available by appointment.`,
     patterns: ['trestle', 'newsletter', 'bulletin', 'publication'],
     response: `**Trestle Board:**
 
-Our Trestle Board is the lodge newsletter containing:
-• Messages from the Worshipful Master
-• Upcoming events and activities
-• Lodge news and announcements
+This is where Lodge updates live:
+• Officer messages (WM, Wardens, Secretary, Chaplain)
+• Stated Communication synopses
+• Member milestones & education resources
 
-Visit the **Trestle Board** page to read the latest edition.`,
+Visit the **Trestle Board** page for the latest edition.
+For records, dues, and forms, use the **Secretary's Office**.`,
     priority: 40,
   },
 

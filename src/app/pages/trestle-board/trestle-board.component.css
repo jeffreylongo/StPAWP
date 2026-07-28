@@ -1,14 +1,80 @@
-/* Trestle Board Component Styles */
+/* Trestle Board — native edition layout */
 
-/* Animation for newsletter cards */
-.newsletter-card-enter {
-  animation: slideInUp 0.5s ease-out;
+.officer-tab {
+  background: #fff;
+  color: var(--primary-blue);
+  border-color: #e5e7eb;
 }
 
-@keyframes slideInUp {
+.officer-tab:hover {
+  border-color: var(--primary-gold);
+  color: var(--primary-blue-dark);
+}
+
+.officer-tab.active {
+  background: var(--primary-blue);
+  color: #fff;
+  border-color: var(--primary-blue);
+}
+
+.officer-tab-photo {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  object-position: center top;
+  border: 1.5px solid var(--primary-gold);
+  flex-shrink: 0;
+}
+
+.officer-tab.active .officer-tab-photo {
+  border-color: #fff;
+}
+
+.officer-portrait {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 9999px;
+  padding: 3px;
+  background: linear-gradient(145deg, var(--primary-gold), #e5d9b6 45%, var(--primary-blue));
+  box-shadow: 0 4px 14px rgba(7, 26, 54, 0.12);
+}
+
+.officer-portrait img {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border: 2px solid #fff;
+}
+
+.officer-signoff-photo {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  object-position: center top;
+  border: 2px solid var(--primary-gold);
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .officer-portrait {
+    width: 6rem;
+    height: 6rem;
+  }
+}
+
+.officer-panel {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -16,35 +82,14 @@
   }
 }
 
-/* Hover effect for newsletter cards */
-.newsletter-card:hover {
-  transform: translateY(-5px);
-  transition: transform 0.3s ease;
+.edu-card:hover h4 {
+  color: var(--primary-blue-dark);
 }
 
-/* PDF icon pulse animation on hover */
-.fa-file-pdf:hover {
-  animation: pulse 1s infinite;
+.resource-link:hover i {
+  color: var(--primary-gold-light);
 }
 
-/* Custom scrollbar for long content */
-.newsletter-content::-webkit-scrollbar {
-  width: 8px;
+.rotate-180 {
+  transform: rotate(180deg);
 }
-
-.newsletter-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.newsletter-content::-webkit-scrollbar-thumb {
-  background: var(--primary-blue);
-  border-radius: 4px;
-}
-
-.newsletter-content::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-blue-dark);
-}
-
-
-

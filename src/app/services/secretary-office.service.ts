@@ -6,7 +6,6 @@ import { WordPressPage } from '../interfaces/wordpress.interface';
 import { 
   getLastMeetingDate, 
   getNextMeetingDate, 
-  formatMeetingDate, 
   formatNextMeeting 
 } from '../utils/meeting-dates.util';
 import { environment } from '../../environments/environment';
@@ -42,112 +41,90 @@ export interface SecretaryOfficeData {
 export class SecretaryOfficeService {
   private readonly baseUrl = environment.wordpress.apiUrl;
   
-  // Fallback data if WordPress is unavailable
+  // Fallback data if WordPress is unavailable — kept in sync with the native Trestle Board
   private get fallbackData(): SecretaryOfficeData {
     const lastMeeting = getLastMeetingDate();
     const nextMeeting = getNextMeetingDate();
+    const monthName = new Date().toLocaleDateString('en-US', { month: 'long' });
     
     return {
       lastMeeting: {
         id: 1,
-        title: `${lastMeeting.toLocaleDateString('en-US', { month: 'long' })} Stated Communication`,
-        content: 'Our last Stated Communication featured important business and fellowship. The Craft approved the By-law change to Section 1.01 which corrects the Lodge address.',
+        title: 'Stated Communication — June 21, 2026',
+        content: 'We opened in Due Form with 26 members & visitors present. The Craft received news of Brothers who Passed to the Celestial Lodge above, balloted a Resolution for Honorary Membership, welcomed four first-time visitors, heard from R∴W∴ Steve Clark, and witnessed Fellow Craft Catechism proficiency. A petition from Mr. Jeffrey A. Williams was referred to investigation. The Craft voted support for community and Grand Lodge charities. Brother Craig Hull presented Masonic Education.',
         date: lastMeeting.toISOString().split('T')[0],
         type: 'meeting-summary',
         metadata: {
-          meeting_date: formatMeetingDate(lastMeeting),
+          meeting_date: 'June 21, 2026',
           highlights: [
-            'Approved By-law change to Section 1.01 correcting the Lodge address',
-            'Brother Jeff Longo received a certificate from Grand Lodge honoring his completion of the MM1 course',
-            '40 Year Longevity Award presented to Worshipful John Gunter',
-            '55 Year Longevity Award presented to Worshipful John Gicking'
+            'Fellow Craft Catechism proficiency demonstrated — Master Mason Degree set for August 11',
+            'Petition for the Three Degrees received from Mr. Jeffrey A. Williams',
+            'Support approved for Northshore Elementary, Grand Master’s Charity, and other causes',
+            'Masonic Education presented by Brother Craig Hull, Junior Warden'
           ]
         }
       },
       nextMeeting: {
         id: 2,
         title: `${nextMeeting.toLocaleDateString('en-US', { month: 'long' })} Stated Communication`,
-        content: `Next Stated Communication: ${formatNextMeeting(nextMeeting)}. EA Catechism Proficiency from Brothers Raymond Wilson and Malek Chevalier. Among other business, we will be receiving the Entered Apprentice Catechism Proficiency.`,
+        content: `Next Stated Communication: ${formatNextMeeting(nextMeeting)}. District Deputy Grand Master’s Official Visit (DDOV) to St. Petersburg Lodge No. 139. Dinner 6:30 PM / Stated Meeting 7:30 PM. Dress code is Suit and Tie (do not wear a tuxedo — only the DDGM wears a tuxedo to his DDOV). Mandatory for Lodge officers.`,
         date: nextMeeting.toISOString().split('T')[0],
         type: 'upcoming',
         metadata: {
           next_meeting: formatNextMeeting(nextMeeting),
           next_meeting_highlights: [
-            'Entered Apprentice Catechism Proficiency from Brother Raymond Wilson',
-            'Entered Apprentice Catechism Proficiency from Brother Malek Chevalier'
+            'District Deputy Grand Master’s Official Visit (DDOV)',
+            'Dinner 6:30 PM · Stated Meeting 7:30 PM',
+            'Dress: Suit and Tie (officers — no tuxedo)',
+            'Mandatory for Officers of St. Petersburg Lodge'
           ]
         }
       },
       birthdays: {
         id: 3,
-        title: `${nextMeeting.toLocaleDateString('en-US', { month: 'long' })} Birthdays`,
-        content: '22 Brothers celebrating birthdays this month. We wish each and every Brother a Very Happy Birthday!',
-        date: new Date(nextMeeting.getFullYear(), nextMeeting.getMonth(), 1).toISOString().split('T')[0],
+        title: `${monthName} Birthdays`,
+        content: '7 Brothers celebrating birthdays in July. We wish each and every Brother a Very Happy Birthday!',
+        date: new Date().toISOString().split('T')[0],
         type: 'birthdays',
-      metadata: {
-        birthday_brothers: [
-          { name: 'Worshipful George Rovert Gaston, Jr', date: '3rd' },
-          { name: 'Brother Raymond Walter Lampe', date: '5th' },
-          { name: 'Brother Patrick Royal Green', date: '6th' },
-          { name: 'Brother Michael Reed Hutchins', date: '6th' },
-          { name: 'Brother Charles Flow Lambeth', date: '7th' },
-          { name: 'Brother Robert Theodore Eubank', date: '8th' },
-          { name: 'Worshipful David Michael Rosenthal', date: '10th' },
-          { name: 'Brother Gregory Jack Jarrell', date: '13th' },
-          { name: 'Worshipful Chave Stevens Aspinall', date: '16th' },
-          { name: 'Brother Edmund Eugene Olson', date: '17th' },
-          { name: 'Brother John Warren Edds', date: '17th' },
-          { name: 'Worshipful William Grant Smith', date: '20th' },
-          { name: 'Brother Robert George Faustino', date: '21st' },
-          { name: 'Brother Richard Lee Hoskins', date: '22nd' },
-          { name: 'Brother James William Lich', date: '22nd' },
-          { name: 'Brother Kenneth J Zeiler', date: '23rd' }
-        ]
-      }
+        metadata: {
+          birthday_brothers: [
+            { name: 'Albert Currie Hopper III, P∴M∴', date: '10th' },
+            { name: 'Hardy William Bryan III, P∴M∴', date: '20th' },
+            { name: 'Richard Alan Aarts, P∴M∴', date: '24th' },
+            { name: 'James Calloway Stinson, Jr.', date: '26th' },
+            { name: 'Rocco Nick Griesi, P∴M∴', date: '29th' },
+            { name: 'Earl Clayton Ray, PDDGM', date: '30th' },
+            { name: 'Alan Scott Rosenthal, PDDGM', date: '31st' }
+          ]
+        }
       },
       anniversaries: {
         id: 4,
-        title: `${nextMeeting.toLocaleDateString('en-US', { month: 'long' })} Anniversaries`,
-        content: `18 Brothers celebrating Masonic anniversaries in ${nextMeeting.toLocaleDateString('en-US', { month: 'long' })}. Brothers, if you were Raised 67 years ago or 9 years ago, or anywhere in between, your Lodge congratulates you on your longevity and thanks you for your continuous support!`,
-        date: new Date(nextMeeting.getFullYear(), nextMeeting.getMonth(), 1).toISOString().split('T')[0],
+        title: `${monthName} Masonic Anniversaries`,
+        content: '2 Brothers celebrating July Raising anniversaries. Your Lodge congratulates you and thanks you for your continuous support!',
+        date: new Date().toISOString().split('T')[0],
         type: 'anniversaries',
         metadata: {
-        anniversary_brothers: [
-          { name: 'Worshipful John Gunter', date: 'June 1985', years: 40 },
-          { name: 'Worshipful John Gicking', date: 'June 1970', years: 55 },
-          { name: 'Brother Robert Smith', date: 'June 1958', years: 67 },
-          { name: 'Worshipful Michael Johnson', date: 'June 1990', years: 35 },
-          { name: 'Brother David Wilson', date: 'June 2000', years: 25 },
-          { name: 'Worshipful Thomas Brown', date: 'June 1975', years: 50 },
-          { name: 'Brother James Davis', date: 'June 1980', years: 45 },
-          { name: 'Worshipful Richard Miller', date: 'June 1995', years: 30 },
-          { name: 'Brother William Taylor', date: 'June 1965', years: 60 },
-          { name: 'Worshipful Christopher Anderson', date: 'June 2010', years: 15 },
-          { name: 'Brother Daniel Thomas', date: 'June 2005', years: 20 },
-          { name: 'Worshipful Joseph Jackson', date: 'June 1988', years: 37 },
-          { name: 'Brother Matthew White', date: 'June 2015', years: 10 },
-          { name: 'Worshipful Andrew Harris', date: 'June 2012', years: 13 },
-          { name: 'Brother Joshua Martin', date: 'June 2008', years: 17 },
-          { name: 'Worshipful Ryan Garcia', date: 'June 2018', years: 7 },
-          { name: 'Brother Kevin Rodriguez', date: 'June 2016', years: 9 },
-          { name: 'Worshipful Steven Martinez', date: 'June 2020', years: 5 }
-        ]
-      }
+          anniversary_brothers: [
+            { name: 'Mark Steven Hanisee', date: 'July 22, 1980', years: 45 },
+            { name: 'James William M. Thomas, P∴M∴', date: 'July 26, 1974', years: 51 }
+          ]
+        }
       },
       upcomingEvents: {
         id: 5,
         title: 'What You Can Look Forward to in the Coming Months',
-        content: 'The return of the Trestle Board, Updates on the progress of the new building, Access to countless Masonic books and papers in our virtual library, Learning how to become a member of our new Funeral Team, Attend classes to become a Masonic Mentor and/or Catechism coach, And much more!',
-        date: new Date(nextMeeting.getFullYear(), nextMeeting.getMonth(), 1).toISOString().split('T')[0],
+        content: 'Grand Master’s Official Visit (GMOV) August 14, Master Mason Degree August 11, August Stated Communication with DDOV, Fellow Craft Degree work in September, new building progress, and the living Trestle Board with education resources for the Craft.',
+        date: new Date().toISOString().split('T')[0],
         type: 'upcoming',
         metadata: {
           highlights: [
-            'The return of the Trestle Board',
-            'Updates on the progress of the new building',
-            'Access to countless Masonic books and papers in our virtual library',
-            'Learning how to become a member of our new Funeral Team',
-            'Attend classes to become a Masonic Mentor and/or Catechism coach',
-            'And much more!'
+            'Grand Master’s Official Visit (GMOV) — Friday, August 14',
+            'Master Mason Degree — Tuesday, August 11',
+            'Stated Communication & DDOV — Tuesday, August 18',
+            'Fellow Craft Degree — Tuesday, September 22',
+            'New Lodge building progress updates',
+            'Trestle Board education resources for members'
           ]
         }
       }
@@ -158,63 +135,8 @@ export class SecretaryOfficeService {
 
   // Get all secretary office data
   getSecretaryOfficeData(): Observable<SecretaryOfficeData> {
-    // Try to get from WordPress first - fetch from the 4 actual pages
-    return this.http.get<WordPressPage[]>(`${this.baseUrl}/pages?slug[]=congratulations&slug[]=what-you-missed-at-the-last-meeting&slug[]=what-you-will-miss-if-you-dont-attend-the-next-meeting&slug[]=what-you-can-look-forward-to-in-the-coming-months`).pipe(
-      map(pages => {
-        // Map WordPress pages to our SecretaryOfficeData structure
-        const congratulations = pages.find(p => p.slug === 'congratulations');
-        const lastMeeting = pages.find(p => p.slug === 'what-you-missed-at-the-last-meeting');
-        const nextMeeting = pages.find(p => p.slug === 'what-you-will-miss-if-you-dont-attend-the-next-meeting');
-        const upcoming = pages.find(p => p.slug === 'what-you-can-look-forward-to-in-the-coming-months');
-
-        return {
-          lastMeeting: {
-            id: lastMeeting?.id || 1,
-            title: lastMeeting?.title?.rendered || 'What You Missed at the Last Meeting',
-            content: lastMeeting?.content?.rendered || this.fallbackData.lastMeeting.content,
-            date: lastMeeting?.date || this.fallbackData.lastMeeting.date,
-            type: 'meeting-summary' as const,
-            metadata: this.fallbackData.lastMeeting.metadata
-          },
-          nextMeeting: {
-            id: nextMeeting?.id || 2,
-            title: nextMeeting?.title?.rendered || 'What You Will Miss if You Don\'t Attend the Next Meeting',
-            content: nextMeeting?.content?.rendered || this.fallbackData.nextMeeting.content,
-            date: nextMeeting?.date || this.fallbackData.nextMeeting.date,
-            type: 'upcoming' as const,
-            metadata: this.fallbackData.nextMeeting.metadata
-          },
-          birthdays: {
-            id: congratulations?.id || 3,
-            title: congratulations?.title?.rendered || 'Birthdays and Masonic Anniversaries',
-            content: congratulations?.content?.rendered || this.fallbackData.birthdays.content,
-            date: congratulations?.date || this.fallbackData.birthdays.date,
-            type: 'birthdays' as const,
-            metadata: this.fallbackData.birthdays.metadata
-          },
-          anniversaries: {
-            id: congratulations?.id || 4,
-            title: congratulations?.title?.rendered || 'Birthdays and Masonic Anniversaries',
-            content: congratulations?.content?.rendered || this.fallbackData.anniversaries.content,
-            date: congratulations?.date || this.fallbackData.anniversaries.date,
-            type: 'anniversaries' as const,
-            metadata: this.fallbackData.anniversaries.metadata
-          },
-          upcomingEvents: {
-            id: upcoming?.id || 5,
-            title: upcoming?.title?.rendered || 'What You Can Look Forward to in the Coming Months',
-            content: upcoming?.content?.rendered || this.fallbackData.upcomingEvents.content,
-            date: upcoming?.date || this.fallbackData.upcomingEvents.date,
-            type: 'upcoming' as const,
-            metadata: this.fallbackData.upcomingEvents.metadata
-          }
-        };
-      }),
-      catchError(() => {
-        // Fallback to static data if WordPress is unavailable
-        return of(this.fallbackData);
-      })
-    );
+    // Native Trestle Board–aligned content (WordPress page feed was unreliable/outdated)
+    return of(this.fallbackData);
   }
 
   // Get specific content by type
