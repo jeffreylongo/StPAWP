@@ -38,7 +38,7 @@ export class FooterComponent implements OnInit {
 
   legalLinks: NavigationItem[] = [
     { label: 'Privacy Policy', url: '/assets/privacy-policy.html' },
-    { label: 'Terms of Service', route: '/terms' }
+    { label: 'Terms & Conditions', url: '/assets/terms-of-service.html' }
   ];
 
   constructor(private formBuilder: FormBuilder) {
