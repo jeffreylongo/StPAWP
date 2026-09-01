@@ -1,26 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CalendarService } from '../../services/calendar.service';
 import { SecretaryOfficeService, SecretaryOfficeData } from '../../services/secretary-office.service';
 import { LodgeEmblemComponent } from '../../components/lodge-emblem/lodge-emblem.component';
 import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/masonic-quote.component';
+import { TextAlertBannerComponent } from '../../shared/components/text-alert-banner/text-alert-banner.component';
 import { CalendarEvent } from '../../interfaces';
-import { Observable, of, combineLatest } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, combineLatest, Subject } from 'rxjs';
+import { catchError, map, takeUntil } from 'rxjs/operators';
 import { StripHtmlPipe } from '../../pipes/strip-html.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LodgeEmblemComponent, MasonicQuoteComponent, StripHtmlPipe],
+  imports: [CommonModule, RouterModule, LodgeEmblemComponent, MasonicQuoteComponent, StripHtmlPipe, TextAlertBannerComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   upcomingEvents: CalendarEvent[] = [];
   secretaryData$!: Observable<SecretaryOfficeData>;
   isLoadingEvents = true;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private calendarService: CalendarService,
@@ -28,29 +30,37 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadEvents();
+    this.subscribeToLodgeEvents();
     this.secretaryData$ = this.secretaryOfficeService.getSecretaryOfficeData();
   }
 
-    loadEvents(): void {
-    this.isLoadingEvents = true;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    // Show lodge events as soon as they're available, even while other calendars still load.
+  loadEvents(): void {
+    this.isLoadingEvents = true;
+    this.calendarService.refreshCalendars();
+  }
+
+  private subscribeToLodgeEvents(): void {
     combineLatest([
       this.calendarService.loading$,
       this.calendarService.getNext6MonthsEvents()
     ]).pipe(
+      takeUntil(this.destroy$),
       map(([loading, events]) => ({
         loading,
         lodgeEvents: events
-          .filter(event => event.calendarId === 1) // Only St. Pete Lodge events
-          .slice(0, 10) // Limit to next 10 events for home page display
+          .filter(event => event.calendarId === 1)
+          .slice(0, 10)
       })),
       catchError(error => {
         console.error('Error loading calendar events:', error);
         return of({
           loading: false,
-          lodgeEvents: this.generateMockEvents()
+          lodgeEvents: [] as CalendarEvent[]
         });
       })
     )
@@ -62,47 +72,9 @@ export class HomeComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading events:', error);
-          this.upcomingEvents = this.generateMockEvents();
           this.isLoadingEvents = false;
         }
       });
-  }
-
-  private generateMockEvents(): CalendarEvent[] {
-    // This would be replaced with actual calendar data from your WordPress calendar plugin
-    const today = new Date();
-    const events: CalendarEvent[] = [];
-    
-    // Generate some upcoming events for demonstration
-    for (let i = 1; i <= 5; i++) {
-      const eventDate = new Date(today);
-      eventDate.setDate(today.getDate() + (i * 3));
-      
-      const eventTypes = [
-        { title: 'Stated Communication', time: '19:30', endTime: '21:30', location: 'St. Petersburg Lodge No. 139', type: 'meeting' as const },
-        { title: 'EA Degree', time: '19:00', endTime: '21:00', location: 'St. Petersburg Lodge No. 139', type: 'degree' as const },
-        { title: 'Fellowship Dinner', time: '18:30', endTime: '20:30', location: 'Lodge Dining Hall', type: 'dinner' as const },
-        { title: 'Officer Practice', time: '19:00', endTime: '20:30', location: 'St. Petersburg Lodge No. 139', type: 'meeting' as const },
-        { title: 'Masonic Education', time: '19:30', endTime: '21:00', location: 'St. Petersburg Lodge No. 139', type: 'education' as const }
-      ];
-      
-      const eventType = eventTypes[i % eventTypes.length];
-      
-      events.push({
-        id: i,
-        title: eventType.title,
-        date: eventDate,
-        startTime: eventType.time,
-        endTime: eventType.endTime,
-        location: eventType.location,
-        description: `Monthly ${eventType.title.toLowerCase()} for all members and candidates.`,
-        type: eventType.type,
-        calendarId: 1,
-        calendarName: 'St. Petersburg Lodge No. 139'
-      });
-    }
-    
-    return events;
   }
 
   // TrackBy function for performance optimization

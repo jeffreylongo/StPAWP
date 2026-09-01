@@ -20,6 +20,7 @@ export class CalendarService {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private lastSyncSubject = new BehaviorSubject<Date | null>(null);
   private initialized = false;
+  private loadGeneration = 0;
 
   public events$ = this.eventsSubject.asObservable();
   public loading$ = this.loadingSubject.asObservable();
@@ -27,8 +28,18 @@ export class CalendarService {
 
   private readonly STORAGE_KEY = 'stpete_lodge_calendar_events';
   private readonly CACHE_DURATION_HOURS = 12;
-  private readonly REQUEST_TIMEOUT_MS = 12000;
+  private readonly REQUEST_TIMEOUT_MS = 15000;
   private readonly RETRY_COUNT = 1;
+  private readonly DEV_ICS_PREFIXES: Record<string, string> = {
+    'calendar.google.com': '/ics-google',
+    'localendar.com': '/ics-localendar',
+    'tampascottishrite.org': '/ics-scottish-rite',
+    'tampayorkritebodies.com': '/ics-york-rite'
+  };
+  private readonly PUBLIC_ICS_PROXIES = [
+    'https://api.codetabs.com/v1/proxy?quest=',
+    'https://api.allorigins.win/raw?url='
+  ];
 
   // Calendar sources
   private calendarSources: CalendarSource[] = [
@@ -101,9 +112,24 @@ export class CalendarService {
   }
 
   /**
+   * Force a fresh fetch from all sources, keeping cached events until replacements arrive.
+   */
+  refreshCalendars(): void {
+    this.initialized = true;
+    const current = this.eventsSubject.value;
+    const cachedEvents = current.length > 0 ? current : this.loadEventsFromCache();
+    if (cachedEvents.length > 0 && this.eventsSubject.value.length === 0) {
+      this.eventsSubject.next(cachedEvents);
+    }
+    this.loadingSubject.next(true);
+    this.loadAllCalendars(cachedEvents);
+  }
+
+  /**
    * Load all calendars progressively - real events only
    */
   private loadAllCalendars(cachedEvents: CalendarEvent[] = []): void {
+    const generation = ++this.loadGeneration;
     let loadedCount = 0;
     const activeSources = this.calendarSources.filter(s => s.isActive);
     const totalSources = activeSources.length;
@@ -120,19 +146,24 @@ export class CalendarService {
 
     sortedSources.forEach(source => {
       this.fetchIcsFromSource(source).subscribe({
-        next: (events) => {
-          loadedCount++;
-          
-          const sourceEvents = events ?? [];
-          eventsBySource.set(source.id, sourceEvents);
-
-          if (sourceEvents.length > 0) {
-            console.log(`✅ ${loadedCount}/${totalSources} - Loaded ${sourceEvents.length} events from ${source.name}`);
-          } else {
-            console.log(`⚠️ ${loadedCount}/${totalSources} - No events from ${source.name}`);
+        next: (result) => {
+          if (generation !== this.loadGeneration) {
+            return;
           }
 
-          // Update UI progressively as each calendar loads
+          loadedCount++;
+          const previous = eventsBySource.get(source.id) ?? [];
+
+          if (!result.failed) {
+            eventsBySource.set(source.id, result.events);
+            console.log(`✅ ${loadedCount}/${totalSources} - Loaded ${result.events.length} events from ${source.name}`);
+          } else if (previous.length > 0) {
+            console.warn(`⚠️ ${loadedCount}/${totalSources} - Failed ${source.name}; keeping ${previous.length} cached events`);
+          } else {
+            eventsBySource.set(source.id, []);
+            console.warn(`❌ ${loadedCount}/${totalSources} - Failed to load ${source.name}`);
+          }
+
           this.eventsSubject.next(this.flattenEventsBySource(eventsBySource));
           
           if (loadedCount >= totalSources) {
@@ -140,8 +171,16 @@ export class CalendarService {
           }
         },
         error: (err) => {
+          if (generation !== this.loadGeneration) {
+            return;
+          }
+
           loadedCount++;
+          const previous = eventsBySource.get(source.id) ?? [];
           console.warn(`❌ ${loadedCount}/${totalSources} - Failed to load ${source.name}:`, err);
+          if (previous.length === 0) {
+            eventsBySource.set(source.id, []);
+          }
           
           if (loadedCount >= totalSources) {
             this.finishLoading(this.flattenEventsBySource(eventsBySource));
@@ -158,7 +197,11 @@ export class CalendarService {
     console.log(`✅ All calendars loaded. Total: ${events.length} events`);
     this.loadingSubject.next(false);
     this.lastSyncSubject.next(new Date());
-    this.saveEventsToCache(events);
+    if (events.length > 0) {
+      this.saveEventsToCache(events);
+    } else {
+      console.warn('Skipping empty calendar cache write');
+    }
   }
 
   /**
@@ -263,54 +306,52 @@ export class CalendarService {
   }
 
   /**
-   * Fetch ICS data from a single source
+   * Fetch ICS data from a single source.
+   * Same-origin proxy first (dev Angular proxy / prod Netlify function), then direct, then public proxies.
    */
-  private fetchIcsFromSource(source: CalendarSource): Observable<CalendarEvent[]> {
-    // Handle AASR calendar (requires multiple month URLs)
+  private fetchIcsFromSource(source: CalendarSource): Observable<{ events: CalendarEvent[]; failed: boolean }> {
     if (source.requiresMultipleMonths) {
-      return this.fetchMultipleMonthsFromSource(source);
+      return this.fetchMultipleMonthsFromSource(source).pipe(
+        map(events => ({ events, failed: false })),
+        catchError(() => of({ events: [], failed: true }))
+      );
     }
 
     console.log(`🌐 Fetching ICS data from ${source.name}...`);
 
-    // Try direct fetch first; if response is not valid ICS, fall back to proxies.
-    return this.fetchTextWithResilience(source.url).pipe(
-      map(icsData => {
-        if (!this.isValidIcsContent(icsData)) {
-          throw new Error(`Invalid ICS response from direct fetch for ${source.name}`);
-        }
-        return icsData;
-      }),
-      catchError(() => {
-        console.log(`⚠️ Direct fetch failed for ${source.name}, trying server proxy...`);
-        return this.fetchViaServerProxy(source.url).pipe(
-          map(icsData => {
-            if (!this.isValidIcsContent(icsData)) {
-              throw new Error(`Invalid ICS response from server proxy for ${source.name}`);
-            }
-            return icsData;
-          }),
-          catchError(() => {
-            console.log(`⚠️ Server proxy failed for ${source.name}, trying public proxies...`);
-            const proxies = [
-              'https://api.allorigins.win/get?url=',
-              'https://corsproxy.io/?',
-              'https://api.codetabs.com/v1/proxy?quest='
-            ];
-            return this.fetchWithProxyFallback(source.url, proxies, source);
-          })
-        );
-      }),
-      map(icsData => {
-        const events = this.parseIcsData(icsData, source);
-        console.log(`🎯 Parsed ${events.length} events from ${source.name}`);
-        return events;
-      }),
+    return this.fetchIcsText(source.url, source.name).pipe(
+      map(icsData => ({
+        events: this.parseIcsData(icsData, source),
+        failed: false
+      })),
       catchError(error => {
         console.error(`❌ All methods failed for ${source.name}:`, error);
-        return of([]);
+        return of({ events: [], failed: true });
       })
     );
+  }
+
+  private fetchIcsText(url: string, name: string): Observable<string> {
+    return this.fetchViaSameOriginProxy(url).pipe(
+      map(icsData => this.requireValidIcs(icsData, `${name} (same-origin proxy)`)),
+      catchError(() => {
+        console.log(`⚠️ Same-origin proxy failed for ${name}, trying direct fetch...`);
+        return this.fetchTextWithResilience(url).pipe(
+          map(icsData => this.requireValidIcs(icsData, `${name} (direct)`))
+        );
+      }),
+      catchError(() => {
+        console.log(`⚠️ Direct fetch failed for ${name}, trying public proxies...`);
+        return this.fetchWithProxyFallback(url, this.PUBLIC_ICS_PROXIES, name);
+      })
+    );
+  }
+
+  private requireValidIcs(icsData: string, label: string): string {
+    if (!this.isValidIcsContent(icsData)) {
+      throw new Error(`Invalid ICS response from ${label}`);
+    }
+    return icsData;
   }
 
   /**
@@ -321,11 +362,7 @@ export class CalendarService {
     const months: Observable<CalendarEvent[]>[] = [];
     
     // List of CORS proxies to try for multi-month calendars
-    const proxies = [
-      'https://api.allorigins.win/raw?url=',
-      'https://thingproxy.freeboard.io/fetch/',
-      'https://cors-anywhere.herokuapp.com/'
-    ];
+    const proxies = this.PUBLIC_ICS_PROXIES;
     
     // Fetch 6 months of data
     for (let i = 0; i < 6; i++) {
@@ -359,26 +396,29 @@ export class CalendarService {
   /**
    * Try multiple proxies for a single URL
    */
-  private fetchWithMultipleProxies(url: string, proxies: string[], source: CalendarSource, year: number, month: string, proxyIndex: number = 0): Observable<CalendarEvent[]> {
-    if (proxyIndex >= proxies.length) {
-      // All public proxies failed: try server proxy first, then direct fetch as final fallback.
-      return this.fetchViaServerProxy(url).pipe(
+  private fetchWithMultipleProxies(url: string, proxies: string[], source: CalendarSource, year: number, month: string, proxyIndex: number = -1): Observable<CalendarEvent[]> {
+    if (proxyIndex === -1) {
+      return this.fetchViaSameOriginProxy(url).pipe(
         map(icsData => {
-          const events = this.parseIcsData(icsData, source);
-          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events (server proxy)`);
+          const events = this.parseIcsData(this.requireValidIcs(icsData, `${source.name} same-origin`), source);
+          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events (same-origin proxy)`);
           return events;
         }),
-        catchError(() => this.fetchTextWithResilience(url).pipe(
-          map(icsData => {
-            const events = this.parseIcsData(icsData, source);
-            console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events (direct fallback)`);
-            return events;
-          }),
-          catchError(() => {
-            console.warn(`❌ Failed to load ${source.name} ${year}-${month}`);
-            return of([]);
-          })
-        ))
+        catchError(() => this.fetchWithMultipleProxies(url, proxies, source, year, month, 0))
+      );
+    }
+
+    if (proxyIndex >= proxies.length) {
+      return this.fetchTextWithResilience(url).pipe(
+        map(icsData => {
+          const events = this.parseIcsData(this.requireValidIcs(icsData, `${source.name} direct`), source);
+          console.log(`📅 ${source.name} ${year}-${month}: ${events.length} events (direct fallback)`);
+          return events;
+        }),
+        catchError(() => {
+          console.warn(`❌ Failed to load ${source.name} ${year}-${month}`);
+          return of([]);
+        })
       );
     }
 
@@ -404,47 +444,16 @@ export class CalendarService {
   /**
    * Try multiple CORS proxies with fallback
    */
-  private fetchWithProxyFallback(url: string, proxies: string[], source: CalendarSource, proxyIndex: number = 0): Observable<string> {
+  private fetchWithProxyFallback(url: string, proxies: string[], name: string, proxyIndex: number = 0): Observable<string> {
     if (proxyIndex >= proxies.length) {
-      return this.fetchViaServerProxy(url).pipe(
-        catchError(() => throwError(() => new Error('All CORS proxies and server proxy failed')))
-      );
-    }
-
-    // Handle allorigins.win /get endpoint (returns JSON with content)
-    if (proxies[proxyIndex].includes('allorigins.win/get')) {
-      const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
-      
-      return this.http.get<{contents: string}>(proxiedUrl).pipe(
-        timeout(this.REQUEST_TIMEOUT_MS),
-        retry(this.RETRY_COUNT),
-        map(response => {
-          if (response.contents?.startsWith('data:')) {
-            const base64Match = response.contents.match(/base64,(.+)/);
-            if (base64Match) {
-              return atob(base64Match[1]);
-            }
-          }
-          const content = response.contents || '';
-          if (!this.isValidIcsContent(content)) {
-            throw new Error('Invalid ICS response from allorigins/get');
-          }
-          return content;
-        }),
-        catchError(() => this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1))
-      );
+      return throwError(() => new Error(`All CORS proxies failed for ${name}`));
     }
 
     const proxiedUrl = proxies[proxyIndex] + encodeURIComponent(url);
 
     return this.fetchTextWithResilience(proxiedUrl).pipe(
-      map(icsData => {
-        if (!this.isValidIcsContent(icsData)) {
-          throw new Error('Invalid ICS response from proxy');
-        }
-        return icsData;
-      }),
-      catchError(() => this.fetchWithProxyFallback(url, proxies, source, proxyIndex + 1))
+      map(icsData => this.requireValidIcs(icsData, `${name} (${proxies[proxyIndex]})`)),
+      catchError(() => this.fetchWithProxyFallback(url, proxies, name, proxyIndex + 1))
     );
   }
 
@@ -879,9 +888,36 @@ export class CalendarService {
     );
   }
 
-  private fetchViaServerProxy(url: string): Observable<string> {
+  private fetchViaSameOriginProxy(url: string): Observable<string> {
+    const localPrefix = this.devIcsPrefix(url);
+    if (localPrefix) {
+      const parsed = new URL(url);
+      const rest = url.slice(parsed.origin.length);
+      return this.fetchTextWithResilience(`${localPrefix}${rest}`);
+    }
+
     const proxyUrl = `/.netlify/functions/calendar-proxy?url=${encodeURIComponent(url)}`;
     return this.fetchTextWithResilience(proxyUrl);
+  }
+
+  private fetchViaServerProxy(url: string): Observable<string> {
+    return this.fetchViaSameOriginProxy(url);
+  }
+
+  private devIcsPrefix(url: string): string | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1') {
+      return null;
+    }
+    try {
+      const parsed = new URL(url);
+      return this.DEV_ICS_PREFIXES[parsed.hostname] ?? null;
+    } catch {
+      return null;
+    }
   }
 
   /**

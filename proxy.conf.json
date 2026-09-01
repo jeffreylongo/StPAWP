@@ -1,0 +1,47 @@
+{
+  "/ics-google": {
+    "target": "https://calendar.google.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ics-google": ""
+    },
+    "headers": {
+      "accept": "text/calendar, text/plain, */*",
+      "user-agent": "StPeteLodge139CalendarProxy/1.0"
+    }
+  },
+  "/ics-localendar": {
+    "target": "https://localendar.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ics-localendar": ""
+    },
+    "headers": {
+      "accept": "text/calendar, text/plain, */*"
+    }
+  },
+  "/ics-scottish-rite": {
+    "target": "https://tampascottishrite.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ics-scottish-rite": ""
+    },
+    "headers": {
+      "accept": "text/calendar, text/plain, */*"
+    }
+  },
+  "/ics-york-rite": {
+    "target": "https://tampayorkritebodies.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ics-york-rite": ""
+    },
+    "headers": {
+      "accept": "text/calendar, text/plain, */*"
+    }
+  }
+}

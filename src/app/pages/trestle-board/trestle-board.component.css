@@ -82,14 +82,6 @@
   }
 }
 
-.edu-card:hover h4 {
-  color: var(--primary-blue-dark);
-}
-
-.resource-link:hover i {
-  color: var(--primary-gold-light);
-}
-
 .rotate-180 {
   transform: rotate(180deg);
 }

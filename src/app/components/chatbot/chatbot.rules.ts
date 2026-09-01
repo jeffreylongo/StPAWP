@@ -142,11 +142,24 @@ After becoming a Master Mason, you may explore:
 
 ⚔️ **Scottish Rite** - Continuing Masonic education through additional degrees
 🏰 **York Rite** - Chapter, Council, and Commandery degrees
-🎪 **Shrine** - Known for children's hospitals and fun fellowship
+🎪 **Shriners International** - Known for children's hospitals and fun fellowship
 🎭 **Grotto** - Social organization for Master Masons
 
 Check the links at the bottom of our website for more information on these organizations!`,
     priority: 140,
+  },
+
+  {
+    id: 'text-alerts',
+    description: 'Lodge text alert signup',
+    matchType: 'contains',
+    patterns: ['text alert', 'text alerts', 'sms', 'text message', 'texting', 'stpete139'],
+    response: `📱 **Lodge Text Alerts**
+
+TEXT **stpete139** to **727-634-7127** to be added to our text alerts.
+
+You'll receive lodge-related notices such as meeting reminders and event updates. Message and data rates may apply. Text STOP to opt out.`,
+    priority: 145,
   },
 
   // I love you - Star Wars reference
@@ -327,7 +340,7 @@ The Scottish Rite confers degrees 4° through 32°, with the honorary 33° award
 
 **However**, once you become a Master Mason, there are social organizations where libations flow freely:
 
-🎪 **Shrine** - Famous for their festive gatherings
+🎪 **Shriners International** - Famous for their festive gatherings
 🎭 **Grotto** - Known for good times and fellowship
 
 Ask about appendant bodies for more info!`,
@@ -570,7 +583,7 @@ To join St. Petersburg Lodge 139, you must:
 
 **Next Steps:**
 1. Join us for dinner any 3rd Tuesday - we'd love to meet you!
-2. Download a petition from our **Becoming a Mason** page
+2. Download **GL-601** (Petition for the Degrees) and **GL-602** (Supplementary Information) from our **Becoming a Mason** or **Forms & Petitions** page
 3. Complete your petition with two lodge members as sponsors
 
 **Petitions Chairman:** W∴ Chris Webb, P∴M∴ - (727) 393-6007
@@ -692,13 +705,9 @@ Financial assistance is available - contact the Secretary confidentially.`,
 **Phone:** (727) 418-3356
 **Email:** secretary@stpete139.org
 
-Standing member services:
-• Membership records
-• Official correspondence
-• Lodge forms and documents
-• Dues questions & certificates
-
-For living updates (news, milestones, officer messages), visit the **Trestle Board**.`,
+The official working office is **139sec.org**.
+Officer messages are on the **Trestle Board**.
+Degree booklets are on **Masonic Education**.`,
     priority: 40,
   },
 
@@ -710,14 +719,23 @@ For living updates (news, milestones, officer messages), visit the **Trestle Boa
     patterns: ['trestle', 'newsletter', 'bulletin', 'publication'],
     response: `**Trestle Board:**
 
-This is where Lodge updates live:
-• Officer messages (WM, Wardens, Secretary, Chaplain)
-• Stated Communication synopses
-• Member milestones & education resources
+The Trestle Board carries **officer messages** for the current edition.
 
-Visit the **Trestle Board** page for the latest edition.
-For records, dues, and forms, use the **Secretary's Office**.`,
+• Notices and records: **139sec.org**
+• Degree booklets and essays: **Masonic Education**
+• Contact the Secretary: **Secretary's Office** page`,
     priority: 40,
+  },
+
+  {
+    id: 'masonic-education',
+    description: 'Masonic education booklets and essays',
+    matchType: 'contains',
+    patterns: ['masonic education', 'education booklet', 'gl 201', 'gl 203', 'catechism booklet', 'etiquette booklet'],
+    response: `**Masonic Education:**
+
+Grand Lodge of Florida degree booklets, etiquette, and essays are on our **Masonic Education** page. Those files are hosted by the Secretary at **139sec.org**.`,
+    priority: 45,
   },
 
   // Masonry general - from about.component.ts

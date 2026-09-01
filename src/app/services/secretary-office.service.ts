@@ -114,7 +114,7 @@ export class SecretaryOfficeService {
       upcomingEvents: {
         id: 5,
         title: 'What You Can Look Forward to in the Coming Months',
-        content: 'Grand Master’s Official Visit (GMOV) August 14, Master Mason Degree August 11, August Stated Communication with DDOV, Fellow Craft Degree work in September, new building progress, and the living Trestle Board with education resources for the Craft.',
+        content: 'Grand Master’s Official Visit (GMOV) August 14, Master Mason Degree August 11, August Stated Communication with DDOV, Fellow Craft Degree work in September, new building progress, and Masonic Education resources for the Craft.',
         date: new Date().toISOString().split('T')[0],
         type: 'upcoming',
         metadata: {
@@ -124,7 +124,7 @@ export class SecretaryOfficeService {
             'Stated Communication & DDOV — Tuesday, August 18',
             'Fellow Craft Degree — Tuesday, September 22',
             'New Lodge building progress updates',
-            'Trestle Board education resources for members'
+            'Masonic Education resources for members'
           ]
         }
       }

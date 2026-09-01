@@ -98,7 +98,7 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     // Set the chat window height to match the visible viewport
     // Subtract the top offset (115px for navbar)
-    const navbarHeight = 115;
+    const navbarHeight = 148;
     const newHeight = visibleHeight - navbarHeight + offsetTop;
 
     this.renderer.setStyle(chatEl, 'height', `${Math.max(newHeight, 200)}px`);

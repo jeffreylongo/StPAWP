@@ -55,7 +55,7 @@ import { RouterModule } from '@angular/router';
               <li>Submitting your mobile number through a website form or online sign-up and consenting to receive SMS messages</li>
               <li>Providing verbal opt-in to a lodge officer or authorized representative</li>
               <li>Signing up in person at a lodge meeting or event</li>
-              <li>Texting a designated keyword to our messaging number, if offered</li>
+              <li>Texting <strong>stpete139</strong> to <strong>727-634-7127</strong></li>
             </ul>
             <p>
               By opting in, you confirm that you are the owner or customary user of the mobile number

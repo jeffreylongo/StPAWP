@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TextAlertBannerComponent } from '../../shared/components/text-alert-banner/text-alert-banner.component';
 
 interface ContactForm {
   name: string;
@@ -14,7 +15,7 @@ interface ContactForm {
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TextAlertBannerComponent],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css']
 })

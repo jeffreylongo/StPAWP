@@ -307,7 +307,7 @@
 
   .chat-window {
     position: fixed;
-    top: 115px; /* Account for mobile navbar height */
+    top: 148px; /* Account for mobile navbar height + text alert banner */
     right: 0;
     left: 0;
     bottom: 0;

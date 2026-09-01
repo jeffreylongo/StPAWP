@@ -49,7 +49,7 @@ import { RouterModule } from '@angular/router';
               <li>In-person sign-up at lodge events or meetings</li>
               <li>Verbal opt-in provided to lodge officers or authorized representatives</li>
               <li>Email or phone communications with the lodge</li>
-              <li>Text message keyword or reply opt-in, if offered</li>
+              <li>Texting <strong>stpete139</strong> to <strong>727-634-7127</strong></li>
             </ul>
           </div>
 

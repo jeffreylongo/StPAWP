@@ -14,6 +14,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/trestle-board/trestle-board.component').then(m => m.TrestleBoardComponent)
   },
   {
+    path: 'masonic-education',
+    loadComponent: () => import('./pages/masonic-education/masonic-education.component').then(m => m.MasonicEducationComponent)
+  },
+  {
     path: 'about-139',
     loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent)
   },

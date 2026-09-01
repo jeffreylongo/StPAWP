@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { LodgeEmblemComponent } from '../lodge-emblem/lodge-emblem.component';
+import { TextAlertBannerComponent } from '../../shared/components/text-alert-banner/text-alert-banner.component';
 import { NavigationItem } from '../../interfaces';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, LodgeEmblemComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, LodgeEmblemComponent, TextAlertBannerComponent],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
@@ -32,7 +33,7 @@ export class FooterComponent implements OnInit {
     { label: 'Grand Lodge of Florida', url: 'https://grandlodgefl.com' },
     { label: 'Scottish Rite', url: 'https://scottishrite.org' },
     { label: 'York Rite', url: 'https://yorkrite.org' },
-    { label: 'Shrine', url: 'https://shrinersinternational.org' },
+    { label: 'Shriners International', url: 'https://shrinersinternational.org' },
     { label: 'Grottoes International', url: 'https://scgrotto.org' }
   ];
 

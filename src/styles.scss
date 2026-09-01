@@ -60,12 +60,12 @@ body {
   font-family: var(--font-sans); 
   font-size: 1rem; 
   line-height: 1.6; 
-  padding-top: 120px; /* Account for fixed header */
+  padding-top: 152px; /* Account for fixed header + text alert banner */
 }
 
 @media (max-width: 768px) {
   body {
-    padding-top: 115px; /* Adjusted padding for mobile navbar height */
+    padding-top: 148px; /* Adjusted padding for mobile navbar height + text alert banner */
   }
 }
 

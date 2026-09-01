@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/masonic-quote.component';
+import { TextAlertBannerComponent } from '../../shared/components/text-alert-banner/text-alert-banner.component';
 
 @Component({
   selector: 'app-becoming-mason',
   standalone: true,
-  imports: [CommonModule, RouterModule, MasonicQuoteComponent],
+  imports: [CommonModule, RouterModule, MasonicQuoteComponent, TextAlertBannerComponent],
   template: `
     <div class="bg-primary-blue-dark text-white py-16">
       <div class="container mx-auto px-4">
@@ -19,6 +20,8 @@ import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/mas
         <p class="text-primary-gold-light text-xl mt-4">Begin Your Journey in Freemasonry</p>
       </div>
     </div>
+
+    <app-text-alert-banner variant="section"></app-text-alert-banner>
     
     <div class="container mx-auto px-4 py-12">
       <!-- Introduction Section -->
@@ -138,60 +141,80 @@ import { MasonicQuoteComponent } from '../../shared/components/masonic-quote/mas
         </div>
       </div>
 
-      <!-- Call to Action Section -->
-      <div class="max-w-4xl mx-auto mb-16">
-        <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8">
-          <div class="text-center mb-8">
-            <h3 class="font-cinzel text-2xl font-bold text-primary-blue mb-4">Take the Next Step</h3>
-            <div class="w-16 h-1 bg-primary-gold mx-auto mb-6"></div>
-            <p class="text-gray-600 text-lg">
-              Ready to begin your Masonic journey? Here's how to get started:
-            </p>
-          </div>
-          
-          <div class="grid md:grid-cols-2 gap-8 mb-8">
-            <div class="text-center">
-              <div class="bg-primary-blue text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-file-download text-2xl"></i>
-              </div>
-              <h4 class="font-cinzel text-xl font-bold text-primary-blue mb-3">Download a Petition</h4>
-              <p class="text-gray-600 mb-4">
-                Complete and submit your petition for membership to begin the process.
+      <!-- Petitions Section -->
+      <div class="max-w-5xl mx-auto mb-16">
+        <div class="text-center mb-10">
+          <h3 class="font-cinzel text-3xl font-bold text-primary-blue mb-4">Petitions</h3>
+          <div class="w-24 h-1 bg-primary-gold mx-auto mb-6"></div>
+          <p class="text-gray-600 text-lg max-w-3xl mx-auto">
+            New members should complete both forms below. Affiliation, dual, plural, and reinstatement petitions are available on our Forms &amp; Petitions page.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white border-2 border-primary-gold rounded-lg shadow-md overflow-hidden">
+            <div class="bg-primary-blue text-white p-5">
+              <p class="text-primary-gold text-xs font-bold uppercase tracking-wider mb-1">GL-601</p>
+              <h4 class="font-cinzel text-xl font-bold">Petition for the Degrees of Freemasonry</h4>
+            </div>
+            <div class="p-6">
+              <p class="text-gray-600 mb-6">
+                The official Grand Lodge petition to begin the process of joining St. Petersburg Lodge No. 139. Complete this form with two lodge members as sponsors.
               </p>
-              <a href="https://y91.b3b.myftpupload.com/wp-content/uploads/2023/11/On-Line-Petition-For-Membership.pdf" 
+              <a href="assets/petitions/GL-601-PETITION-FOR-THE-DEGREES-OF-FREEMASONRY-1.pdf"
                  target="_blank"
                  rel="noopener noreferrer"
                  class="bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold px-6 py-3 rounded-lg transition inline-flex items-center">
                 <i class="fas fa-download mr-2"></i>
-                Download Petition PDF
-              </a>
-            </div>
-            
-            <div class="text-center">
-              <div class="bg-primary-gold text-primary-blue-darker w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-envelope text-2xl"></i>
-              </div>
-              <h4 class="font-cinzel text-xl font-bold text-primary-blue mb-3">Contact Our Secretary</h4>
-              <p class="text-gray-600 mb-4">
-                Have questions? Our Secretary is here to help guide you through the process.
-              </p>
-              <a href="mailto:secretary&#64;stpete139.org" 
-                 class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold px-6 py-3 rounded-lg transition inline-flex items-center">
-                <i class="fas fa-envelope mr-2"></i>
-                Send Email
+                Download GL-601
               </a>
             </div>
           </div>
-          
-          <div class="text-center">
-            <p class="text-gray-600 mb-4">
-              Or visit us on any third Tuesday for dinner and to learn more about our lodge.
-            </p>
-            <a routerLink="/contact" 
-               class="border-2 border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white px-8 py-3 rounded-lg transition inline-flex items-center">
-              <i class="fas fa-info-circle mr-2"></i>
-              More Contact Information
-            </a>
+
+          <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
+            <div class="bg-primary-blue-dark text-white p-5">
+              <p class="text-primary-gold text-xs font-bold uppercase tracking-wider mb-1">GL-602</p>
+              <h4 class="font-cinzel text-xl font-bold">Supplementary Information</h4>
+            </div>
+            <div class="p-6">
+              <p class="text-gray-600 mb-6">
+                Submit this companion questionnaire with your GL-601 petition. It provides additional information for the Petitions Committee.
+              </p>
+              <a href="assets/petitions/GL-602-SUPPLEMENTARY-INFORMATION.pdf"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold px-6 py-3 rounded-lg transition inline-flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Download GL-602
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-neutral-light rounded-lg p-8">
+          <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h4 class="font-cinzel text-xl font-bold text-primary-blue mb-3">Already a Mason?</h4>
+              <p class="text-gray-600 mb-4">
+                Transfer, dual membership, plural membership, and reinstatement petitions are available for download.
+              </p>
+              <a routerLink="/forms"
+                 class="bg-primary-gold hover:bg-primary-gold-light text-primary-blue-darker font-semibold px-6 py-3 rounded-lg transition inline-flex items-center">
+                <i class="fas fa-file-alt mr-2"></i>
+                All Petitions &amp; Forms
+              </a>
+            </div>
+            <div>
+              <h4 class="font-cinzel text-xl font-bold text-primary-blue mb-3">Questions?</h4>
+              <p class="text-gray-600 mb-4">
+                Our Secretary can help you choose the correct petition and walk you through the process.
+              </p>
+              <a href="mailto:secretary&#64;stpete139.org"
+                 class="border-2 border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white px-6 py-3 rounded-lg transition inline-flex items-center">
+                <i class="fas fa-envelope mr-2"></i>
+                Email the Secretary
+              </a>
+            </div>
           </div>
         </div>
       </div>

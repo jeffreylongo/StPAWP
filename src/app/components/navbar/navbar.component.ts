@@ -2,12 +2,13 @@ import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } fro
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LodgeEmblemComponent } from '../lodge-emblem/lodge-emblem.component';
+import { TextAlertBannerComponent } from '../../shared/components/text-alert-banner/text-alert-banner.component';
 import { NavigationItem } from '../../interfaces';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, LodgeEmblemComponent],
+  imports: [CommonModule, RouterModule, LodgeEmblemComponent, TextAlertBannerComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -32,7 +33,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   secretaryMenuItems: NavigationItem[] = [
     { label: 'The Secretary\'s Office', route: '/secretary-office' },
-    { label: 'The Trestle Board', route: '/trestle-board' }
+    { label: '139sec.org', url: 'https://139sec.org', isExternal: true, target: '_blank' },
+    { label: 'The Trestle Board', route: '/trestle-board' },
+    { label: 'Masonic Education', route: '/masonic-education' }
   ];
 
   mainMenuItems: NavigationItem[] = [
