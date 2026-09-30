@@ -226,13 +226,11 @@ export class OfficersComponent {
     },
     {
       role: 'Marshall',
-      name: 'Worshipful Chris Webb, P∴M∴',
-      imageUrl: 'assets/officers/Chriss Webb Marshal 1.jpg',
+      name: 'TBA',
+      imageUrl: 'assets/officers/placeholder.svg',
       description: 'Assisting with lodge order, ceremonial activities, and membership applications.',
       icon: 'fas fa-users-cog',
-      tag: 'Order, Ceremony and Membership',
-      phone: '(727) 393-6007',
-      imagePosition: 'center 20%'
+      tag: 'Order, Ceremony and Membership'
     },
     {
       role: 'Senior Deacon',
