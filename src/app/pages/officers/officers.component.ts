@@ -37,7 +37,7 @@ interface Committee {
           <span class="text-primary-gold">Officers</span>
         </nav>
         <h1 class="font-cinzel text-4xl md:text-5xl font-bold">Lodge Officers</h1>
-        <p class="text-primary-gold-light text-xl mt-4">2025 Masonic Year</p>
+        <p class="text-primary-gold-light text-xl mt-4">2026 Masonic Year</p>
       </div>
     </div>
     
