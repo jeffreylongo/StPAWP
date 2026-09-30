@@ -263,12 +263,12 @@ export class OfficersComponent {
     },
     {
       role: 'Junior Steward',
-      name: 'Brother Raymond Wilson',
-      imageUrl: 'assets/officers/placeholder.svg',
+      name: 'Worshipful Chris Webb, P∴M∴',
+      imageUrl: 'assets/officers/Chriss Webb Marshal 1.jpg',
       description: 'Assisting with lodge hospitality and refreshments.',
       icon: 'fas fa-utensils',
       tag: 'Hospitality and Service',
-      photoPending: true
+      imagePosition: 'center 20%'
     },
     {
       role: 'Tyler',
