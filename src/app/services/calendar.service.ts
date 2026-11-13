@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, combineLatest, throwError } from 'rxjs';
 import { map, catchError, timeout, retry } from 'rxjs/operators';
-import { format, addDays, addMonths, startOfMonth, endOfMonth, isWithinInterval, isSameDay } from 'date-fns';
+import { format, addDays, addMonths } from 'date-fns';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { CalendarEvent, CalendarSource, CalendarSyncResult } from '../interfaces';
 
@@ -223,60 +223,71 @@ export class CalendarService {
   }
 
   /**
-   * Get upcoming events (next N days)
+   * Get upcoming events (next N days).
+   * Uses localDate for timezone-independent filtering based on America/New_York dates.
    */
   getUpcomingEvents(days: number = 180): Observable<CalendarEvent[]> {
     this.initializeIfNeeded();
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = format(today, 'yyyy-MM-dd');
     const futureDate = addDays(today, days);
+    const futureStr = format(futureDate, 'yyyy-MM-dd');
     
     return this.events$.pipe(
       map(events => {
         const upcomingEvents = events
           .filter(event => {
-            const eventDate = new Date(event.date);
-            eventDate.setHours(0, 0, 0, 0);
-            return eventDate >= today && eventDate <= futureDate;
+            const eventDateStr = event.localDate || format(new Date(event.date), 'yyyy-MM-dd');
+            return eventDateStr >= todayStr && eventDateStr <= futureStr;
           })
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          .sort((a, b) => (a.localDate || '').localeCompare(b.localDate || '') || 
+                          new Date(a.date).getTime() - new Date(b.date).getTime());
         return upcomingEvents;
       })
     );
   }
 
   /**
-   * Get events for a specific month
+   * Get events for a specific month.
+   * Uses localDate for timezone-independent filtering based on America/New_York dates.
    */
   getEventsForMonth(year: number, month: number): Observable<CalendarEvent[]> {
     this.initializeIfNeeded();
     
-    const monthDate = new Date(year, month, 1);
-    const startOfMonthDate = startOfMonth(monthDate);
-    const endOfMonthDate = endOfMonth(monthDate);
+    // Create date range strings for the month
+    const monthStr = String(month + 1).padStart(2, '0');
+    const startStr = `${year}-${monthStr}-01`;
+    const endDay = new Date(year, month + 1, 0).getDate(); // Last day of month
+    const endStr = `${year}-${monthStr}-${String(endDay).padStart(2, '0')}`;
     
     return this.events$.pipe(
       map(events => events
         .filter(event => {
-          const eventDate = new Date(event.date);
-          return isWithinInterval(eventDate, { start: startOfMonthDate, end: endOfMonthDate });
+          const eventDateStr = event.localDate || format(new Date(event.date), 'yyyy-MM-dd');
+          return eventDateStr >= startStr && eventDateStr <= endStr;
         })
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .sort((a, b) => (a.localDate || '').localeCompare(b.localDate || '') ||
+                        new Date(a.date).getTime() - new Date(b.date).getTime())
       )
     );
   }
 
   /**
-   * Get events for a date range
+   * Get events for a date range.
+   * Uses localDate for timezone-independent filtering based on America/New_York dates.
    */
   getEventsForDateRange(startDate: Date, endDate: Date): Observable<CalendarEvent[]> {
+    const startStr = format(startDate, 'yyyy-MM-dd');
+    const endStr = format(endDate, 'yyyy-MM-dd');
+    
     return this.events$.pipe(
       map(events => events
         .filter(event => {
-          const eventDate = new Date(event.date);
-          return isWithinInterval(eventDate, { start: startDate, end: endDate });
+          const eventDateStr = event.localDate || format(new Date(event.date), 'yyyy-MM-dd');
+          return eventDateStr >= startStr && eventDateStr <= endStr;
         })
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .sort((a, b) => (a.localDate || '').localeCompare(b.localDate || '') ||
+                        new Date(a.date).getTime() - new Date(b.date).getTime())
       )
     );
   }
@@ -655,6 +666,7 @@ export class CalendarService {
             id: this.hashStringToNumber(`${icsEvent.UID}-${dateKey}`),
             title: this.unescapeIcsText(icsEvent.SUMMARY || 'Untitled Event'),
             date: occurrenceDate,
+            localDate: this.formatDateInTimezone(occurrenceDate, tzid),
             startTime: startTimeStr,
             endTime: endTimeStr,
             location: this.unescapeIcsText(icsEvent.LOCATION || source.name),
@@ -834,6 +846,7 @@ export class CalendarService {
         id: Math.floor(id),
         title: this.unescapeIcsText(icsEvent.SUMMARY || 'Untitled Event'),
         date: startDate,
+        localDate: this.formatDateInTimezone(startDate, tzid),
         startTime: startTimeStr,
         endTime: endTimeStr,
         location: this.unescapeIcsText(icsEvent.LOCATION || source.name),
@@ -1044,10 +1057,14 @@ export class CalendarService {
         return [];
       }
 
-      const normalizedEvents = parsed.events.map(event => ({
-        ...event,
-        date: new Date(event.date)
-      }));
+      const normalizedEvents = parsed.events.map(event => {
+        const date = new Date(event.date);
+        return {
+          ...event,
+          date,
+          localDate: event.localDate ?? this.formatDateInTimezone(date, 'America/New_York')
+        };
+      });
 
       const lastSync = parsed.lastSync ? new Date(parsed.lastSync) : null;
       if (lastSync && !Number.isNaN(lastSync.getTime())) {

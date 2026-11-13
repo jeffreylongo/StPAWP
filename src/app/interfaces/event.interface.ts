@@ -17,6 +17,8 @@ export interface CalendarEvent extends Event {
   calendarId?: number;
   calendarName?: string;
   uid?: string;
+  /** The event's date in America/New_York timezone (YYYY-MM-DD), for timezone-independent day bucketing */
+  localDate?: string;
 }
 
 // ICS Calendar specific interfaces
