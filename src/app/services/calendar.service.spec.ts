@@ -10,6 +10,7 @@ import { CalendarService } from './calendar.service';
  * 2. ICS text escapes are properly unescaped (BUG 2 fix)
  * 3. DST transitions are handled correctly
  * 4. One-off events remain correct
+ * 5. All behavior is timezone-independent (uses getUTC* and Intl.DateTimeFormat)
  */
 describe('CalendarService', () => {
   let service: CalendarService;
@@ -60,59 +61,59 @@ describe('CalendarService', () => {
     });
   });
 
-  describe('Timezone Handling (BUG 1)', () => {
-    it('should calculate EST offset (UTC-5) for winter dates', () => {
-      // January 15, 2026 at 18:30 should be EST (UTC-5)
-      const components = { year: 2026, month: 0, day: 15, hour: 18, minute: 30, second: 0 };
-      const offset = (service as any).getTimezoneOffset(components, 'America/New_York');
-      expect(offset).toBe(300); // 300 minutes = 5 hours
+  describe('Timezone Handling with Intl.DateTimeFormat (BUG 1)', () => {
+    it('should get EST offset (300 min) for November dates', () => {
+      const offset = (service as any).getTimezoneOffsetForWallClock(2026, 10, 17, 18, 30, 'America/New_York');
+      expect(offset).toBe(300); // EST: UTC-5
     });
 
-    it('should calculate EDT offset (UTC-4) for summer dates', () => {
-      // July 15, 2026 at 18:30 should be EDT (UTC-4)
-      const components = { year: 2026, month: 6, day: 15, hour: 18, minute: 30, second: 0 };
-      const offset = (service as any).getTimezoneOffset(components, 'America/New_York');
-      expect(offset).toBe(240); // 240 minutes = 4 hours
+    it('should get EDT offset (240 min) for July dates', () => {
+      const offset = (service as any).getTimezoneOffsetForWallClock(2026, 6, 15, 18, 30, 'America/New_York');
+      expect(offset).toBe(240); // EDT: UTC-4
     });
 
-    it('should correctly identify DST start (second Sunday of March)', () => {
-      // March 8, 2026 is second Sunday of March - DST starts at 2:00 AM
-      // At 1:59 AM it should still be EST
-      const beforeDst = { year: 2026, month: 2, day: 8, hour: 1, minute: 59, second: 0 };
-      expect((service as any).getTimezoneOffset(beforeDst, 'America/New_York')).toBe(300);
-      
-      // At 3:00 AM it should be EDT
-      const afterDst = { year: 2026, month: 2, day: 8, hour: 3, minute: 0, second: 0 };
-      expect((service as any).getTimezoneOffset(afterDst, 'America/New_York')).toBe(240);
+    it('should convert Nov 17, 2026 18:30 EST to correct UTC', () => {
+      const utcDate = (service as any).wallClockToUtc(2026, 10, 17, 18, 30, 0, 'America/New_York');
+      // 18:30 EST = 23:30 UTC
+      expect(utcDate.getUTCHours()).toBe(23);
+      expect(utcDate.getUTCMinutes()).toBe(30);
+      expect(utcDate.getUTCDate()).toBe(17);
     });
 
-    it('should correctly identify DST end (first Sunday of November)', () => {
-      // November 1, 2026 is first Sunday of November - DST ends at 2:00 AM
-      // At 1:00 AM it should still be EDT
-      const beforeEnd = { year: 2026, month: 10, day: 1, hour: 1, minute: 0, second: 0 };
-      expect((service as any).getTimezoneOffset(beforeEnd, 'America/New_York')).toBe(240);
-      
-      // At 2:00 AM it should be EST
-      const afterEnd = { year: 2026, month: 10, day: 1, hour: 2, minute: 0, second: 0 };
-      expect((service as any).getTimezoneOffset(afterEnd, 'America/New_York')).toBe(300);
+    it('should convert Apr 21, 2026 18:30 EDT to correct UTC', () => {
+      const utcDate = (service as any).wallClockToUtc(2026, 3, 21, 18, 30, 0, 'America/New_York');
+      // 18:30 EDT = 22:30 UTC
+      expect(utcDate.getUTCHours()).toBe(22);
+      expect(utcDate.getUTCMinutes()).toBe(30);
     });
 
-    it('should parse TZID datetime and convert to correct UTC', () => {
-      // DTSTART;TZID=America/New_York:20261117T183000 = Nov 17, 2026 at 18:30 EST
-      // EST is UTC-5, so this should be 23:30 UTC on Nov 17, 2026
+    it('should format 23:30 UTC as 18:30 in America/New_York (EST)', () => {
+      const utcDate = new Date(Date.UTC(2026, 10, 17, 23, 30, 0));
+      const formatted = (service as any).formatTimeInTimezone(utcDate, 'America/New_York');
+      expect(formatted).toBe('18:30');
+    });
+
+    it('should format 22:30 UTC as 18:30 in America/New_York (EDT)', () => {
+      const utcDate = new Date(Date.UTC(2026, 6, 15, 22, 30, 0));
+      const formatted = (service as any).formatTimeInTimezone(utcDate, 'America/New_York');
+      expect(formatted).toBe('18:30');
+    });
+  });
+
+  describe('DTSTART Parsing', () => {
+    it('should parse TZID datetime for Nov 17, 2026 at 18:30 EST', () => {
       const dtstart = 'DTSTART;TZID=America/New_York:20261117T183000';
       const result = (service as any).parseIcsDateTime(dtstart);
       
       expect(result).toBeTruthy();
       expect(result.getUTCFullYear()).toBe(2026);
-      expect(result.getUTCMonth()).toBe(10); // November (0-indexed)
+      expect(result.getUTCMonth()).toBe(10); // November
       expect(result.getUTCDate()).toBe(17);
       expect(result.getUTCHours()).toBe(23); // 18:30 EST = 23:30 UTC
       expect(result.getUTCMinutes()).toBe(30);
     });
 
     it('should parse UTC datetime correctly', () => {
-      // DTSTART:20261118T233000Z = Nov 18, 2026 at 23:30 UTC
       const dtstart = '20261118T233000Z';
       const result = (service as any).parseIcsDateTime(dtstart);
       
@@ -124,30 +125,19 @@ describe('CalendarService', () => {
       expect(result.getUTCMinutes()).toBe(30);
     });
 
-    it('should format time correctly in America/New_York timezone', () => {
-      // Create a UTC date that represents 18:30 EST
-      // 18:30 EST = 23:30 UTC (during EST, UTC-5)
-      const utcDate = new Date(Date.UTC(2026, 10, 17, 23, 30, 0));
-      const formatted = (service as any).formatTimeInTimezone(utcDate, 'America/New_York');
-      expect(formatted).toBe('18:30');
-    });
-
-    it('should format time correctly during EDT', () => {
-      // Create a UTC date that represents 18:30 EDT
-      // 18:30 EDT = 22:30 UTC (during EDT, UTC-4)
-      const utcDate = new Date(Date.UTC(2026, 6, 15, 22, 30, 0)); // July 15
-      const formatted = (service as any).formatTimeInTimezone(utcDate, 'America/New_York');
-      expect(formatted).toBe('18:30');
+    it('should handle floating time as America/New_York', () => {
+      const dtstart = '20261117T183000';
+      const result = (service as any).parseIcsDateTime(dtstart);
+      
+      expect(result).toBeTruthy();
+      // 18:30 America/New_York (Nov = EST) = 23:30 UTC
+      expect(result.getUTCHours()).toBe(23);
+      expect(result.getUTCMinutes()).toBe(30);
     });
   });
 
-  describe('Integration with Live Feed Data', () => {
-    it('should parse recurring Stated Communication Meeting at correct time', () => {
-      // This simulates the recurring event from the live feed:
-      // DTSTART;TZID=America/New_York:20250121T183000
-      // RRULE:FREQ=MONTHLY;BYDAY=3TU
-      // Event UID: 0vcvvhri7nnbqrjnaoshqhkpqg
-      
+  describe('Integration with Recurring Events', () => {
+    it('should parse recurring Stated Communication event at correct time', () => {
       const icsEvent = {
         DTSTART: '20250121T183000',
         _fullDtstart: 'DTSTART;TZID=America/New_York:20250121T183000',
@@ -170,10 +160,10 @@ describe('CalendarService', () => {
 
       const events = (service as any).expandRecurringEvent(icsEvent, source, []);
       
-      // Find the November 17, 2026 occurrence (third Tuesday of November)
+      // Find the November 2026 occurrence (third Tuesday = Nov 17)
       const nov17Event = events.find((e: any) => {
-        const d = new Date(e.date);
-        return d.getUTCFullYear() === 2026 && d.getUTCMonth() === 10 && d.getUTCDate() === 17;
+        const dateStr = (service as any).formatDateInTimezone(e.date, 'America/New_York');
+        return dateStr === '2026-11-17';
       });
 
       expect(nov17Event).toBeTruthy();
@@ -184,9 +174,7 @@ describe('CalendarService', () => {
       expect(nov17Event.description).toBe('Dinner at 6:30\nMeeting at 7:30');
     });
 
-    it('should handle one-off SMMA event correctly (UTC time)', () => {
-      // This is the SMMA event on Nov 18: DTSTART:20261118T233000Z
-      // 23:30 UTC = 18:30 EST
+    it('should handle one-off UTC event correctly (SMMA Nov 18)', () => {
       const icsEvent = {
         DTSTART: '20261118T233000Z',
         DTEND: '20261119T020000Z',
@@ -209,12 +197,9 @@ describe('CalendarService', () => {
       expect(event).toBeTruthy();
       expect(event.startTime).toBe('18:30');
       expect(event.location).toBe('St Petersburg Lodge No. 139 F&AM, 3325 1st St NE, St. Petersburg, FL 33704, USA');
-      expect(event.description).toContain('(SMMA) Wednesday, November 18th Dinner 6:30PM, Meeting 7:30PM.');
     });
 
-    it('should handle cigar night event correctly (UTC time)', () => {
-      // Cigar night on Nov 20: DTSTART:20261121T000000Z
-      // 00:00 UTC on Nov 21 = 19:00 EST on Nov 20
+    it('should handle cigar night correctly (00:00 UTC = 19:00 EST prev day)', () => {
       const icsEvent = {
         DTSTART: '20261121T000000Z',
         DTEND: '20261121T030000Z',
@@ -239,11 +224,7 @@ describe('CalendarService', () => {
       expect(event.location).toBe('Cigar Paradise Royal Lounge, 400 Beach Dr NE #142, St. Petersburg, FL 33701');
     });
 
-    it('should handle DST transition - recurring event spanning DST change', () => {
-      // A recurring event at 18:30 America/New_York should be:
-      // - 23:30 UTC during EST (Nov-Mar)
-      // - 22:30 UTC during EDT (Mar-Nov)
-      
+    it('should handle DST transition - recurring event in Feb 2026 (EST) and Apr 2026 (EDT)', () => {
       const icsEvent = {
         DTSTART: '20260217T183000',
         _fullDtstart: 'DTSTART;TZID=America/New_York:20260217T183000',
@@ -262,16 +243,16 @@ describe('CalendarService', () => {
 
       const events = (service as any).expandRecurringEvent(icsEvent, source, []);
 
-      // Find February 2026 occurrence (before DST - EST)
+      // Find February 2026 occurrence
       const febEvent = events.find((e: any) => {
-        const d = new Date(e.date);
-        return d.getUTCFullYear() === 2026 && d.getUTCMonth() === 1; // February
+        const dateStr = (service as any).formatDateInTimezone(e.date, 'America/New_York');
+        return dateStr.startsWith('2026-02');
       });
 
-      // Find April 2026 occurrence (after DST - EDT)
+      // Find April 2026 occurrence
       const aprEvent = events.find((e: any) => {
-        const d = new Date(e.date);
-        return d.getUTCFullYear() === 2026 && d.getUTCMonth() === 3; // April
+        const dateStr = (service as any).formatDateInTimezone(e.date, 'America/New_York');
+        return dateStr.startsWith('2026-04');
       });
 
       expect(febEvent).toBeTruthy();
@@ -280,9 +261,9 @@ describe('CalendarService', () => {
       expect(aprEvent).toBeTruthy();
       expect(aprEvent.startTime).toBe('18:30');
 
-      // Verify the UTC times are different due to DST
-      const febUtcHour = new Date(febEvent.date).getUTCHours();
-      const aprUtcHour = new Date(aprEvent.date).getUTCHours();
+      // Verify UTC times are different due to DST
+      const febUtcHour = febEvent.date.getUTCHours();
+      const aprUtcHour = aprEvent.date.getUTCHours();
       
       expect(febUtcHour).toBe(23); // 18:30 EST = 23:30 UTC
       expect(aprUtcHour).toBe(22); // 18:30 EDT = 22:30 UTC

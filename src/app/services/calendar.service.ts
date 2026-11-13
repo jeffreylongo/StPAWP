@@ -563,8 +563,11 @@ export class CalendarService {
   }
 
   /**
-   * Expand a recurring event into individual occurrences
-   * Properly handles timezone-aware DTSTART for correct local time across DST changes
+   * Expand a recurring event into individual occurrences.
+   * 
+   * IMPORTANT: rrule.js treats DTSTART without a Z suffix as "wall-clock UTC" -
+   * it returns Date objects where the UTC fields contain the wall time, not local fields.
+   * We must read occurrences with getUTC* methods and use UTC-based between() bounds.
    */
   private expandRecurringEvent(icsEvent: any, source: CalendarSource, exceptions: any[]): CalendarEvent[] {
     const events: CalendarEvent[] = [];
@@ -586,48 +589,50 @@ export class CalendarService {
       const endDate = icsEvent.DTEND ? this.parseIcsDateTime(icsEvent.DTEND) : startDate;
       const duration = endDate ? endDate.getTime() - startDate.getTime() : 60 * 60 * 1000;
 
-      // Build RRULE string using the local time components (not converted to UTC)
-      // This ensures rrule generates occurrences at the same local time
+      // Build RRULE string using the wall-clock time components
+      // rrule will put these values in the UTC fields of returned Dates
       const dtStartForRRule = `${startComponents.year}${String(startComponents.month + 1).padStart(2, '0')}${String(startComponents.day).padStart(2, '0')}T${String(startComponents.hour).padStart(2, '0')}${String(startComponents.minute).padStart(2, '0')}${String(startComponents.second).padStart(2, '0')}`;
       const rruleString = `DTSTART:${dtStartForRRule}\nRRULE:${icsEvent.RRULE}`;
       
-      // Parse the RRULE - occurrences will be at the same local time components
       const rule = rrulestr(rruleString);
       
-      // Get occurrences for the next 6 months
+      // Create UTC-based bounds for between() that work regardless of host timezone
+      // rrule returns wall-clock in UTC fields, so bounds must also be wall-clock in UTC fields
       const now = new Date();
-      const rangeStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const rangeEnd = addMonths(now, 7);
+      const rangeStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+      const rangeEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 7, 1));
       
       const occurrences = rule.between(rangeStart, rangeEnd, true);
       
       console.log(`📅 Expanding recurring event "${icsEvent.SUMMARY}": ${occurrences.length} occurrences found`);
 
-      // Create exception date map for quick lookup
+      // Create exception date map using timezone-independent keys (YYYY-MM-DD in event timezone)
       const exceptionDates = new Map<string, any>();
       for (const exception of exceptions) {
-        const exDate = this.parseIcsDateTime(exception['RECURRENCE-ID'] || exception._fullRecurrenceId || '');
-        if (exDate) {
-          const dateKey = format(exDate, 'yyyy-MM-dd');
+        const fullRecId = exception._full_RECURRENCE_ID || exception['RECURRENCE-ID'] || '';
+        const recIdValue = fullRecId.includes(':') ? fullRecId.split(':').pop()! : fullRecId;
+        const recIdComponents = this.parseBasicDateTimeComponents(recIdValue);
+        if (recIdComponents) {
+          // Key by wall-clock date in event timezone
+          const dateKey = `${recIdComponents.year}-${String(recIdComponents.month + 1).padStart(2, '0')}-${String(recIdComponents.day).padStart(2, '0')}`;
           exceptionDates.set(dateKey, exception);
         }
       }
 
       for (const occurrence of occurrences) {
-        // rrule returns dates with the local time components we gave it, but as "local" Date objects
-        // We need to interpret these components in the event's timezone, not system local time
-        const occComponents = {
-          year: occurrence.getFullYear(),
-          month: occurrence.getMonth(),
-          day: occurrence.getDate(),
-          hour: occurrence.getHours(),
-          minute: occurrence.getMinutes(),
-          second: occurrence.getSeconds()
-        };
+        // CRITICAL: rrule puts wall-clock time in UTC fields, so read with getUTC* methods
+        const wallYear = occurrence.getUTCFullYear();
+        const wallMonth = occurrence.getUTCMonth();
+        const wallDay = occurrence.getUTCDate();
+        const wallHour = occurrence.getUTCHours();
+        const wallMinute = occurrence.getUTCMinutes();
+        const wallSecond = occurrence.getUTCSeconds();
         
-        // Convert from event timezone to UTC for proper Date object
-        const occurrenceDate = this.convertTimezoneToUtc(occComponents, tzid);
-        const dateKey = format(occurrenceDate, 'yyyy-MM-dd');
+        // Convert wall-clock components from event timezone to actual UTC instant
+        const occurrenceDate = this.wallClockToUtc(wallYear, wallMonth, wallDay, wallHour, wallMinute, wallSecond, tzid);
+        
+        // Exception key uses wall-clock date (timezone-independent)
+        const dateKey = `${wallYear}-${String(wallMonth + 1).padStart(2, '0')}-${String(wallDay).padStart(2, '0')}`;
         
         // Check if this occurrence has been modified (exception instance)
         const exceptionEvent = exceptionDates.get(dateKey);
@@ -639,10 +644,10 @@ export class CalendarService {
             events.push(modifiedEvent);
           }
         } else {
-          // Create a regular occurrence with times formatted in America/New_York
+          // Create a regular occurrence with times formatted in event timezone
           const occurrenceEnd = new Date(occurrenceDate.getTime() + duration);
           
-          // Format times in the event's timezone (America/New_York)
+          // Format times using Intl.DateTimeFormat for correct timezone handling
           const startTimeStr = this.formatTimeInTimezone(occurrenceDate, tzid);
           const endTimeStr = this.formatTimeInTimezone(occurrenceEnd, tzid);
           
@@ -677,36 +682,127 @@ export class CalendarService {
   }
 
   /**
-   * Format a UTC Date's time in a specific timezone as HH:mm
+   * Convert wall-clock time in a specific timezone to a UTC Date.
+   * Uses Intl.DateTimeFormat to get the correct offset for the actual instant.
+   */
+  private wallClockToUtc(year: number, month: number, day: number, hour: number, minute: number, second: number, tzid: string): Date {
+    // Get the offset for this wall-clock time in the target timezone
+    const offsetMinutes = this.getTimezoneOffsetForWallClock(year, month, day, hour, minute, tzid);
+    
+    // Create UTC date by adding the offset (offset is minutes behind UTC)
+    return new Date(Date.UTC(year, month, day, hour, minute, second) + offsetMinutes * 60000);
+  }
+
+  /**
+   * Get the UTC offset in minutes for a wall-clock time in a specific timezone.
+   * Uses Intl.DateTimeFormat for accurate DST handling.
+   * Positive values mean the timezone is behind UTC (e.g., EST = +300).
+   */
+  private getTimezoneOffsetForWallClock(year: number, month: number, day: number, hour: number, minute: number, tzid: string): number {
+    try {
+      // Normalize timezone identifier
+      const normalizedTzid = this.normalizeTimezoneId(tzid);
+      
+      // Create a formatter that outputs the timezone offset
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: normalizedTzid,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZoneName: 'longOffset'
+      });
+      
+      // We need to find the UTC instant that corresponds to this wall-clock time.
+      // Start with an initial guess (treating wall-clock as UTC)
+      let guessUtc = Date.UTC(year, month, day, hour, minute, 0);
+      
+      // Get what wall-clock time that UTC instant shows in the target timezone
+      const parts = formatter.formatToParts(new Date(guessUtc));
+      const tzPart = parts.find(p => p.type === 'timeZoneName');
+      
+      if (tzPart && tzPart.value) {
+        // Parse offset like "GMT-05:00" or "GMT-04:00"
+        const offsetMatch = tzPart.value.match(/GMT([+-])(\d{2}):(\d{2})/);
+        if (offsetMatch) {
+          const sign = offsetMatch[1] === '-' ? 1 : -1; // Inverted: GMT-05 means +300 minutes
+          const hours = parseInt(offsetMatch[2], 10);
+          const mins = parseInt(offsetMatch[3], 10);
+          return sign * (hours * 60 + mins);
+        }
+      }
+      
+      // Fallback to EST if parsing fails
+      return 300;
+    } catch {
+      // Fallback to EST (UTC-5) if Intl API fails
+      return 300;
+    }
+  }
+
+  /**
+   * Normalize timezone identifier to IANA format
+   */
+  private normalizeTimezoneId(tzid: string): string {
+    const tzMap: Record<string, string> = {
+      'US/Eastern': 'America/New_York',
+      'Eastern': 'America/New_York',
+      'US/Central': 'America/Chicago',
+      'US/Mountain': 'America/Denver',
+      'US/Pacific': 'America/Los_Angeles'
+    };
+    return tzMap[tzid] || tzid;
+  }
+
+  /**
+   * Format a UTC Date's time in a specific timezone as HH:mm.
+   * Uses Intl.DateTimeFormat for correct timezone handling.
    */
   private formatTimeInTimezone(utcDate: Date, tzid: string): string {
-    // Convert UTC to the target timezone
-    const utcHours = utcDate.getUTCHours();
-    const utcMinutes = utcDate.getUTCMinutes();
-    
-    // Get the offset for this date in the target timezone
-    const components = {
-      year: utcDate.getUTCFullYear(),
-      month: utcDate.getUTCMonth(),
-      day: utcDate.getUTCDate(),
-      hour: utcHours,
-      minute: utcMinutes,
-      second: 0
-    };
-    
-    // Offset is minutes behind UTC, so we subtract to get local time
-    const offsetMinutes = this.getTimezoneOffset(components, tzid);
-    const totalMinutes = utcHours * 60 + utcMinutes - offsetMinutes;
-    
-    // Handle day wraparound
-    let adjustedMinutes = totalMinutes;
-    if (adjustedMinutes < 0) adjustedMinutes += 24 * 60;
-    if (adjustedMinutes >= 24 * 60) adjustedMinutes -= 24 * 60;
-    
-    const localHours = Math.floor(adjustedMinutes / 60);
-    const localMins = adjustedMinutes % 60;
-    
-    return `${String(localHours).padStart(2, '0')}:${String(localMins).padStart(2, '0')}`;
+    try {
+      const normalizedTzid = this.normalizeTimezoneId(tzid);
+      
+      const formatter = new Intl.DateTimeFormat('en-GB', {
+        timeZone: normalizedTzid,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      
+      return formatter.format(utcDate);
+    } catch {
+      // Fallback: manual calculation assuming EST (UTC-5)
+      const utcHours = utcDate.getUTCHours();
+      const utcMinutes = utcDate.getUTCMinutes();
+      let localHours = utcHours - 5;
+      if (localHours < 0) localHours += 24;
+      return `${String(localHours).padStart(2, '0')}:${String(utcMinutes).padStart(2, '0')}`;
+    }
+  }
+
+  /**
+   * Format a UTC Date's date in a specific timezone as YYYY-MM-DD.
+   * Uses Intl.DateTimeFormat for correct timezone handling.
+   */
+  private formatDateInTimezone(utcDate: Date, tzid: string): string {
+    try {
+      const normalizedTzid = this.normalizeTimezoneId(tzid);
+      
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: normalizedTzid,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      
+      return formatter.format(utcDate);
+    } catch {
+      // Fallback: use UTC date
+      return `${utcDate.getUTCFullYear()}-${String(utcDate.getUTCMonth() + 1).padStart(2, '0')}-${String(utcDate.getUTCDate()).padStart(2, '0')}`;
+    }
   }
 
   /**
@@ -786,7 +882,7 @@ export class CalendarService {
           if (localDate && tzid) {
             return this.convertTimezoneToUtc(localDate, tzid);
           }
-          return localDate ? this.componentsToUtcDate(localDate) : null;
+          return localDate ? this.convertTimezoneToUtc(localDate, 'America/New_York') : null;
         }
       }
       
@@ -853,81 +949,14 @@ export class CalendarService {
   }
 
   /**
-   * Convert datetime components to a UTC Date, treating components as local system time
-   */
-  private componentsToUtcDate(c: { year: number; month: number; day: number; hour: number; minute: number; second: number }): Date {
-    const localDate = new Date(c.year, c.month, c.day, c.hour, c.minute, c.second);
-    return new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
-  }
-
-  /**
    * Convert datetime components from a specific timezone to UTC.
-   * Handles America/New_York (EST/EDT) DST rules.
+   * Uses Intl.DateTimeFormat for accurate DST handling.
    */
   private convertTimezoneToUtc(
     c: { year: number; month: number; day: number; hour: number; minute: number; second: number },
     tzid: string
   ): Date {
-    // Calculate offset based on timezone
-    const offsetMinutes = this.getTimezoneOffset(c, tzid);
-    
-    // Create UTC date by adding the offset (offset is minutes behind UTC, so we add)
-    return new Date(Date.UTC(
-      c.year, c.month, c.day,
-      c.hour, c.minute, c.second
-    ) + offsetMinutes * 60000);
-  }
-
-  /**
-   * Get the UTC offset in minutes for a datetime in a specific timezone.
-   * Positive values mean the timezone is behind UTC (e.g., EST = +300).
-   */
-  private getTimezoneOffset(
-    c: { year: number; month: number; day: number; hour: number; minute: number; second: number },
-    tzid: string
-  ): number {
-    // For America/New_York and related Eastern US timezones
-    if (tzid === 'America/New_York' || tzid === 'US/Eastern' || tzid === 'Eastern') {
-      return this.getEasternOffset(c.year, c.month, c.day, c.hour);
-    }
-    
-    // Default to EST (UTC-5) for unknown timezones in this calendar context
-    return 300;
-  }
-
-  /**
-   * Determine if a date/time falls in EDT (Daylight Saving Time) for America/New_York.
-   * DST starts: Second Sunday in March at 2:00 AM local time
-   * DST ends: First Sunday in November at 2:00 AM local time
-   * Returns offset in minutes (300 for EST, 240 for EDT)
-   */
-  private getEasternOffset(year: number, month: number, day: number, hour: number): number {
-    // March (month=2): DST starts second Sunday at 2:00 AM
-    const dstStart = this.getNthSunday(year, 2, 2); // Second Sunday of March
-    
-    // November (month=10): DST ends first Sunday at 2:00 AM
-    const dstEnd = this.getNthSunday(year, 10, 1); // First Sunday of November
-    
-    // Create comparison values (month*100 + day gives a sortable date within year)
-    const dateValue = month * 10000 + day * 100 + hour;
-    const dstStartValue = 2 * 10000 + dstStart * 100 + 2; // March dstStart at 2:00
-    const dstEndValue = 10 * 10000 + dstEnd * 100 + 2; // November dstEnd at 2:00
-    
-    // Check if we're in DST period
-    if (dateValue >= dstStartValue && dateValue < dstEndValue) {
-      return 240; // EDT: UTC-4
-    }
-    return 300; // EST: UTC-5
-  }
-
-  /**
-   * Get the day of month for the Nth Sunday of a given month/year
-   */
-  private getNthSunday(year: number, month: number, n: number): number {
-    const firstOfMonth = new Date(year, month, 1);
-    const dayOfWeek = firstOfMonth.getDay(); // 0 = Sunday
-    const firstSunday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
-    return firstSunday + (n - 1) * 7;
+    return this.wallClockToUtc(c.year, c.month, c.day, c.hour, c.minute, c.second, tzid);
   }
 
   /**
