@@ -192,7 +192,7 @@
               </div>
             </div>
             
-            <p *ngIf="event.description" class="mt-3 text-gray-700">
+            <p *ngIf="event.description" class="mt-3 text-gray-700 whitespace-pre-line">
               {{ event.description }}
             </p>
             
@@ -235,7 +235,7 @@
         {{ selectedEvent.location }}
       </div>
       <div *ngIf="selectedEvent.description" class="pt-3 border-t">
-        <p class="text-gray-700">{{ selectedEvent.description }}</p>
+        <p class="text-gray-700 whitespace-pre-line">{{ selectedEvent.description }}</p>
       </div>
     </div>
   </div>
