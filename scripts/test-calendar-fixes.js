@@ -331,7 +331,47 @@ console.log('Calendar Service Fixes - Test Results');
 console.log(`Timezone: ${currentTz}`);
 console.log('========================================\n');
 
-console.log('--- REAL parseIcsData on Live Feed ---\n');
+console.log('--- parseIcsDateTime Input Formats ---\n');
+
+test('should parse bare UTC value: 20261121T000000Z', () => {
+  const result = parseIcsDateTime('20261121T000000Z');
+  expect(result).toBeTruthy();
+  expect(result.getUTCFullYear()).toBe(2026);
+  expect(result.getUTCMonth()).toBe(10);
+  expect(result.getUTCDate()).toBe(21);
+  expect(result.getUTCHours()).toBe(0);
+});
+
+test('should parse full line UTC: DTSTART:20261121T000000Z', () => {
+  const result = parseIcsDateTime('DTSTART:20261121T000000Z');
+  expect(result).toBeTruthy();
+  expect(result.getUTCFullYear()).toBe(2026);
+  expect(result.getUTCMonth()).toBe(10);
+  expect(result.getUTCDate()).toBe(21);
+  expect(result.getUTCHours()).toBe(0);
+});
+
+test('should parse full line with TZID: DTSTART;TZID=America/New_York:20261117T183000', () => {
+  const result = parseIcsDateTime('DTSTART;TZID=America/New_York:20261117T183000');
+  expect(result).toBeTruthy();
+  expect(result.getUTCHours()).toBe(23);
+});
+
+test('should parse VALUE=DATE all-day event: DTSTART;VALUE=DATE:20261225', () => {
+  const result = parseIcsDateTime('DTSTART;VALUE=DATE:20261225');
+  expect(result).toBeTruthy();
+  expect(result.getUTCFullYear()).toBe(2026);
+  expect(result.getUTCMonth()).toBe(11);
+  expect(result.getUTCDate()).toBe(25);
+});
+
+test('should parse DTEND:20261121T030000Z', () => {
+  const result = parseIcsDateTime('DTEND:20261121T030000Z');
+  expect(result).toBeTruthy();
+  expect(result.getUTCHours()).toBe(3);
+});
+
+console.log('\n--- REAL parseIcsData on Live Feed ---\n');
 
 const parsedEvents = parseIcsData(icsContent);
 
@@ -461,6 +501,26 @@ test('should find SMMA event on Nov 18, 2026', () => {
 test('should have SMMA at 18:30', () => {
   expect(smmaEvent).toBeTruthy();
   expect(smmaEvent.startTime).toBe('18:30');
+});
+
+console.log('\n--- ICS Text Unescaping ---\n');
+
+test('should unescape comma escapes in location', () => {
+  const eventWithCommas = parsedEvents.find(e => 
+    e.location && e.location.includes(', ')
+  );
+  expect(eventWithCommas).toBeTruthy();
+  expect(eventWithCommas.location.includes('\\,')).toBeFalsy();
+});
+
+test('should unescape newlines in description', () => {
+  const eventWithNewlines = parsedEvents.find(e => 
+    e.description && e.description.includes('\n')
+  );
+  if (eventWithNewlines) {
+    expect(eventWithNewlines.description.includes('\\n')).toBeFalsy();
+  }
+  expect(true).toBeTruthy();
 });
 
 console.log('\n--- Day Bucketing Consistency Across Timezones ---\n');

@@ -201,11 +201,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Uses localDate (America/New_York date string) for timezone-independent bucketing.
    */
   getEventsForDay(day: Date): CalendarEvent[] {
-    // Format the calendar grid day as YYYY-MM-DD (these are local midnight dates)
     const dayStr = format(day, 'yyyy-MM-dd');
-    return this.getDisplayEvents().filter(event => 
-      event.localDate === dayStr
-    );
+    return this.getDisplayEvents().filter(event => {
+      const eventDateStr = event.localDate || format(new Date(event.date), 'yyyy-MM-dd');
+      return eventDateStr === dayStr;
+    });
   }
 
   /**

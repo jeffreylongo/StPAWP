@@ -1057,10 +1057,14 @@ export class CalendarService {
         return [];
       }
 
-      const normalizedEvents = parsed.events.map(event => ({
-        ...event,
-        date: new Date(event.date)
-      }));
+      const normalizedEvents = parsed.events.map(event => {
+        const date = new Date(event.date);
+        return {
+          ...event,
+          date,
+          localDate: event.localDate ?? this.formatDateInTimezone(date, 'America/New_York')
+        };
+      });
 
       const lastSync = parsed.lastSync ? new Date(parsed.lastSync) : null;
       if (lastSync && !Number.isNaN(lastSync.getTime())) {
