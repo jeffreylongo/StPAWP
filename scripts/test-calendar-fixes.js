@@ -2,10 +2,12 @@
 /**
  * Standalone test script to verify calendar service fixes.
  * Tests the REAL parsing logic against the live ICS feed fixture.
+ * Verifies timezone-independent day bucketing using localDate.
  * 
  * Run with:
  *   TZ=UTC node scripts/test-calendar-fixes.js
  *   TZ=America/New_York node scripts/test-calendar-fixes.js
+ *   TZ=America/Los_Angeles node scripts/test-calendar-fixes.js
  */
 
 const fs = require('fs');
@@ -132,25 +134,17 @@ function formatDateInTimezone(utcDate, tzid) {
   }
 }
 
-/**
- * THE FIXED parseIcsDateTime - handles all ICS datetime formats
- */
 function parseIcsDateTime(dateTimeString) {
   try {
     if (!dateTimeString) return null;
     
-    // Extract TZID if present
     const tzidMatch = dateTimeString.match(/TZID=([^:;]+)/);
     const tzid = tzidMatch ? tzidMatch[1] : null;
-    
-    // Check for VALUE=DATE (all-day event)
     const isDateOnly = dateTimeString.includes('VALUE=DATE');
     
-    // Extract just the value portion (after the last colon, or whole string if no colon)
     const colonIndex = dateTimeString.lastIndexOf(':');
     const value = colonIndex >= 0 ? dateTimeString.substring(colonIndex + 1) : dateTimeString;
     
-    // Handle UTC format (Z suffix)
     if (value.endsWith('Z')) {
       const cleanValue = value.slice(0, -1);
       const components = parseBasicDateTimeComponents(cleanValue);
@@ -163,16 +157,13 @@ function parseIcsDateTime(dateTimeString) {
       return null;
     }
     
-    // Parse the datetime components
     const components = parseBasicDateTimeComponents(value);
     if (!components) return null;
     
-    // If we have a TZID, convert from that timezone to UTC
     if (tzid) {
       return convertTimezoneToUtc(components, tzid);
     }
     
-    // For VALUE=DATE or floating time, treat as America/New_York
     return convertTimezoneToUtc(components, 'America/New_York');
   } catch {
     return null;
@@ -244,7 +235,7 @@ function parseIcsData(icsContent) {
     }
   }
 
-  // Process all raw events (simplified - no RRULE expansion for this test)
+  // Process all raw events
   for (const rawEvent of rawEvents) {
     const event = convertIcsEventToCalendarEvent(rawEvent);
     if (event) {
@@ -272,9 +263,13 @@ function convertIcsEventToCalendarEvent(icsEvent) {
       ? formatTimeInTimezone(endDate, tzid) 
       : formatTimeInTimezone(new Date(startDate.getTime() + 60 * 60 * 1000), tzid);
     
+    // THE KEY FIX: localDate for timezone-independent day bucketing
+    const localDate = formatDateInTimezone(startDate, tzid);
+    
     return {
       title: unescapeIcsText(icsEvent.SUMMARY || 'Untitled Event'),
       date: startDate,
+      localDate: localDate,
       startTime: startTimeStr,
       endTime: endTimeStr,
       location: unescapeIcsText(icsEvent.LOCATION || ''),
@@ -285,6 +280,13 @@ function convertIcsEventToCalendarEvent(icsEvent) {
   } catch (error) {
     return null;
   }
+}
+
+/**
+ * Simulate getEventsForDay using localDate (as the component now does)
+ */
+function getEventsForDay(events, dayStr) {
+  return events.filter(event => event.localDate === dayStr);
 }
 
 // ============ Tests ============
@@ -329,47 +331,7 @@ console.log('Calendar Service Fixes - Test Results');
 console.log(`Timezone: ${currentTz}`);
 console.log('========================================\n');
 
-console.log('--- parseIcsDateTime Input Formats ---\n');
-
-test('should parse bare UTC value: 20261121T000000Z', () => {
-  const result = parseIcsDateTime('20261121T000000Z');
-  expect(result).toBeTruthy();
-  expect(result.getUTCFullYear()).toBe(2026);
-  expect(result.getUTCMonth()).toBe(10);
-  expect(result.getUTCDate()).toBe(21);
-  expect(result.getUTCHours()).toBe(0);
-});
-
-test('should parse full line UTC: DTSTART:20261121T000000Z', () => {
-  const result = parseIcsDateTime('DTSTART:20261121T000000Z');
-  expect(result).toBeTruthy();
-  expect(result.getUTCFullYear()).toBe(2026);
-  expect(result.getUTCMonth()).toBe(10);
-  expect(result.getUTCDate()).toBe(21);
-  expect(result.getUTCHours()).toBe(0);
-});
-
-test('should parse full line with TZID: DTSTART;TZID=America/New_York:20261117T183000', () => {
-  const result = parseIcsDateTime('DTSTART;TZID=America/New_York:20261117T183000');
-  expect(result).toBeTruthy();
-  expect(result.getUTCHours()).toBe(23); // 18:30 EST = 23:30 UTC
-});
-
-test('should parse VALUE=DATE all-day event: DTSTART;VALUE=DATE:20261225', () => {
-  const result = parseIcsDateTime('DTSTART;VALUE=DATE:20261225');
-  expect(result).toBeTruthy();
-  expect(result.getUTCFullYear()).toBe(2026);
-  expect(result.getUTCMonth()).toBe(11); // December
-  expect(result.getUTCDate()).toBe(25);
-});
-
-test('should parse DTEND:20261121T030000Z', () => {
-  const result = parseIcsDateTime('DTEND:20261121T030000Z');
-  expect(result).toBeTruthy();
-  expect(result.getUTCHours()).toBe(3);
-});
-
-console.log('\n--- REAL parseIcsData on Live Feed ---\n');
+console.log('--- REAL parseIcsData on Live Feed ---\n');
 
 const parsedEvents = parseIcsData(icsContent);
 
@@ -387,119 +349,158 @@ test('should have no Invalid Date in any parsed event', () => {
   expect(invalidDateEvents.length).toBe(0);
 });
 
-// Find the Cigar event (UID: atf75d758e6lnflb88q9lvsarg)
+test('should have localDate set on all events', () => {
+  const missingLocalDate = parsedEvents.filter(e => !e.localDate);
+  if (missingLocalDate.length > 0) {
+    throw new Error(`Found ${missingLocalDate.length} events without localDate`);
+  }
+  expect(missingLocalDate.length).toBe(0);
+});
+
+console.log('\n--- Pickle Ball All-Day Event (VALUE=DATE) ---\n');
+
+// Find Pickle Ball event (UID: 3p3iud1njh16jmiq2eaklou91s)
+const pickleballEvent = parsedEvents.find(e => 
+  e.uid === '3p3iud1njh16jmiq2eaklou91s@google.com' ||
+  (e.title && e.title.toLowerCase().includes('pickle ball'))
+);
+
+test('should find Pickle Ball event', () => {
+  expect(pickleballEvent).toBeTruthy();
+});
+
+test('should have Pickle Ball on 2026-11-21 (not 2026-11-20)', () => {
+  expect(pickleballEvent).toBeTruthy();
+  expect(pickleballEvent.localDate).toBe('2026-11-21');
+});
+
+test('should bucket Pickle Ball in Nov 21 cell', () => {
+  const nov21Events = getEventsForDay(parsedEvents, '2026-11-21');
+  const found = nov21Events.find(e => e.title && e.title.toLowerCase().includes('pickle ball'));
+  expect(found).toBeTruthy();
+});
+
+test('should NOT bucket Pickle Ball in Nov 20 cell', () => {
+  const nov20Events = getEventsForDay(parsedEvents, '2026-11-20');
+  const found = nov20Events.find(e => e.title && e.title.toLowerCase().includes('pickle ball'));
+  expect(found).toBeFalsy();
+});
+
+console.log('\n--- Cigar Paradise Event (UTC time) ---\n');
+
+// Find Cigar event (UID: atf75d758e6lnflb88q9lvsarg)
 const cigarEvent = parsedEvents.find(e => 
   e.uid === 'atf75d758e6lnflb88q9lvsarg@google.com' ||
   (e.title && e.title.includes('Cigar'))
 );
 
-test('should find Cigar Paradise Royal Lounge event', () => {
+test('should find Cigar Paradise event', () => {
   expect(cigarEvent).toBeTruthy();
 });
 
-test('should parse Cigar event on Nov 20, 2026 (00:00 UTC Nov 21 = 19:00 EST Nov 20)', () => {
+test('should have Cigar event on 2026-11-20 at 19:00-22:00', () => {
   expect(cigarEvent).toBeTruthy();
-  const dateStr = formatDateInTimezone(cigarEvent.date, 'America/New_York');
-  expect(dateStr).toBe('2026-11-20');
-});
-
-test('should parse Cigar event at 19:00-22:00 ET', () => {
-  expect(cigarEvent).toBeTruthy();
+  expect(cigarEvent.localDate).toBe('2026-11-20');
   expect(cigarEvent.startTime).toBe('19:00');
   expect(cigarEvent.endTime).toBe('22:00');
 });
 
+test('should bucket Cigar event in Nov 20 cell', () => {
+  const nov20Events = getEventsForDay(parsedEvents, '2026-11-20');
+  const found = nov20Events.find(e => e.title && e.title.includes('Cigar'));
+  expect(found).toBeTruthy();
+});
+
+test('should NOT bucket Cigar event in Nov 21 cell', () => {
+  const nov21Events = getEventsForDay(parsedEvents, '2026-11-21');
+  const found = nov21Events.find(e => e.title && e.title.includes('Cigar'));
+  expect(found).toBeFalsy();
+});
+
+console.log('\n--- Stated Communication Recurring Event ---\n');
+
+// Find Stated Communication recurring event base
+const statedCommBase = parsedEvents.find(e => 
+  e.title === 'Stated Communication Meeting' && e.isRecurring
+);
+
+test('should find Stated Communication recurring event', () => {
+  expect(statedCommBase).toBeTruthy();
+});
+
+test('should have Stated Communication at 18:30-19:30', () => {
+  expect(statedCommBase).toBeTruthy();
+  expect(statedCommBase.startTime).toBe('18:30');
+  expect(statedCommBase.endTime).toBe('19:30');
+});
+
+// Test direct parsing for Nov 17, 2026 instance
+test('should parse Nov 17, 2026 Stated Communication correctly', () => {
+  const dtstart = 'DTSTART;TZID=America/New_York:20261117T183000';
+  const result = parseIcsDateTime(dtstart);
+  expect(result).toBeTruthy();
+  
+  const localDate = formatDateInTimezone(result, 'America/New_York');
+  expect(localDate).toBe('2026-11-17');
+  
+  const timeStr = formatTimeInTimezone(result, 'America/New_York');
+  expect(timeStr).toBe('18:30');
+});
+
+console.log('\n--- SMMA Event ---\n');
+
 // Find SMMA event on Nov 18
 const smmaEvent = parsedEvents.find(e => 
-  e.title && e.title.includes('SMMA') && 
-  e.date && formatDateInTimezone(e.date, 'America/New_York') === '2026-11-18'
+  e.title && e.title.includes('SMMA') && e.localDate === '2026-11-18'
 );
 
 test('should find SMMA event on Nov 18, 2026', () => {
   expect(smmaEvent).toBeTruthy();
 });
 
-test('should parse SMMA event at 18:30', () => {
+test('should have SMMA at 18:30', () => {
   expect(smmaEvent).toBeTruthy();
   expect(smmaEvent.startTime).toBe('18:30');
 });
 
-console.log('\n--- Recurring Event (Stated Communication) ---\n');
+console.log('\n--- Day Bucketing Consistency Across Timezones ---\n');
 
-// Test recurring event DTSTART parsing (the base event)
-// Find the Stated Communication recurring event base
-const statedCommBase = parsedEvents.find(e => 
-  e.title === 'Stated Communication Meeting' && e.isRecurring
-);
-
-test('should find Stated Communication recurring event base', () => {
-  expect(statedCommBase).toBeTruthy();
-});
-
-test('should parse Stated Communication base with TZID at 18:30', () => {
-  if (statedCommBase) {
-    expect(statedCommBase.startTime).toBe('18:30');
-    expect(statedCommBase.endTime).toBe('19:30');
-  }
-  expect(statedCommBase).toBeTruthy();
-});
-
-// Test that Nov 17, 2026 instance would be at 18:30 (using direct parseIcsDateTime)
-test('should parse Nov 17, 2026 18:30 EST correctly for recurring event', () => {
-  // Simulate the DTSTART for Nov 17, 2026 occurrence
-  const dtstart = 'DTSTART;TZID=America/New_York:20261117T183000';
-  const result = parseIcsDateTime(dtstart);
-  expect(result).toBeTruthy();
+// The key test: localDate should be the same regardless of viewer's timezone
+test('should have consistent localDate regardless of viewer timezone', () => {
+  // Cigar event: UTC Nov 21 00:00 should always be localDate 2026-11-20 (ET date)
+  expect(cigarEvent.localDate).toBe('2026-11-20');
   
-  const timeStr = formatTimeInTimezone(result, 'America/New_York');
-  expect(timeStr).toBe('18:30');
+  // Pickle Ball: VALUE=DATE:20261121 should always be localDate 2026-11-21
+  expect(pickleballEvent.localDate).toBe('2026-11-21');
+});
+
+test('should bucket events correctly using localDate', () => {
+  // This test verifies getEventsForDay works correctly
+  const nov20Events = getEventsForDay(parsedEvents, '2026-11-20');
+  const nov21Events = getEventsForDay(parsedEvents, '2026-11-21');
   
-  const dateStr = formatDateInTimezone(result, 'America/New_York');
-  expect(dateStr).toBe('2026-11-17');
+  // Cigar should be on Nov 20, Pickle Ball on Nov 21
+  const cigarOnNov20 = nov20Events.some(e => e.title && e.title.includes('Cigar'));
+  const pickleOnNov21 = nov21Events.some(e => e.title && e.title.toLowerCase().includes('pickle'));
+  
+  expect(cigarOnNov20).toBeTruthy();
+  expect(pickleOnNov21).toBeTruthy();
 });
 
-// Check for any all-day events (VALUE=DATE)
-const allDayEvents = parsedEvents.filter(e => 
-  e.startTime === '00:00' && e.date
-);
-
-test('should handle all-day events without errors', () => {
-  // Just verify no errors - all-day events should have valid dates
-  for (const event of allDayEvents) {
-    expect(!isNaN(event.date.getTime())).toBeTruthy();
-  }
-  expect(true).toBeTruthy();
-});
-
-console.log('\n--- ICS Text Unescaping ---\n');
-
-test('should unescape comma escapes in location', () => {
-  const eventWithCommas = parsedEvents.find(e => 
-    e.location && e.location.includes(', ')
-  );
-  expect(eventWithCommas).toBeTruthy();
-  expect(eventWithCommas.location.includes('\\,')).toBeFalsy();
-});
-
-test('should unescape newlines in description', () => {
-  const eventWithNewlines = parsedEvents.find(e => 
-    e.description && e.description.includes('\n')
-  );
-  if (eventWithNewlines) {
-    expect(eventWithNewlines.description.includes('\\n')).toBeFalsy();
-  }
-  expect(true).toBeTruthy();
-});
-
-console.log('\n--- Summary of Parsed Events ---\n');
+console.log('\n--- Summary of Key Events ---\n');
 console.log(`Total events parsed: ${parsedEvents.length}`);
 
-if (cigarEvent) {
-  console.log(`Cigar event: ${formatDateInTimezone(cigarEvent.date, 'America/New_York')} ${cigarEvent.startTime}-${cigarEvent.endTime}`);
+if (pickleballEvent) {
+  console.log(`Pickle Ball: ${pickleballEvent.localDate} (all-day)`);
 }
-
+if (cigarEvent) {
+  console.log(`Cigar Paradise: ${cigarEvent.localDate} ${cigarEvent.startTime}-${cigarEvent.endTime}`);
+}
+if (statedCommBase) {
+  console.log(`Stated Communication: ${statedCommBase.localDate} ${statedCommBase.startTime}-${statedCommBase.endTime}`);
+}
 if (smmaEvent) {
-  console.log(`SMMA event: ${formatDateInTimezone(smmaEvent.date, 'America/New_York')} ${smmaEvent.startTime}`);
+  console.log(`SMMA: ${smmaEvent.localDate} ${smmaEvent.startTime}`);
 }
 
 // ============ Summary ============

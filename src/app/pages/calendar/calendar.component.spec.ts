@@ -37,6 +37,7 @@ describe('CalendarComponent', () => {
       id: 1,
       title: 'Stated Communication',
       date: new Date('2025-01-15T19:30:00'),
+      localDate: '2025-01-15',
       startTime: '19:30',
       endTime: '21:30',
       location: 'St. Petersburg Lodge No. 139',
@@ -50,6 +51,7 @@ describe('CalendarComponent', () => {
       id: 2,
       title: 'York Rite Meeting',
       date: new Date('2025-01-20T19:30:00'),
+      localDate: '2025-01-20',
       startTime: '19:30',
       endTime: '21:30',
       location: 'Tampa York Rite Bodies',
@@ -65,8 +67,6 @@ describe('CalendarComponent', () => {
     const calendarServiceSpy = jasmine.createSpyObj('CalendarService', [
       'getCalendarSources',
       'getNext6MonthsEvents',
-      'forceYorkRiteSync',
-      'clearCacheAndResync',
       'updateCalendarSource',
       'downloadCalendarICS'
     ], {
@@ -98,7 +98,6 @@ describe('CalendarComponent', () => {
 
     calendarService.getCalendarSources.and.returnValue(mockCalendarSources);
     calendarService.getNext6MonthsEvents.and.returnValue(of(mockEvents));
-    calendarService.forceYorkRiteSync.and.returnValue();
     calendarService.downloadCalendarICS.and.returnValue(of({ success: true, eventsCount: 10, message: 'Success' }));
 
     fixture = TestBed.createComponent(CalendarComponent);
@@ -163,6 +162,8 @@ describe('CalendarComponent', () => {
 
   it('should get events for a specific day', () => {
     component.events = mockEvents;
+    component.activeView = 'combined';
+    component.calendarSources = mockCalendarSources;
     const testDate = new Date('2025-01-15');
     const eventsForDay = component.getEventsForDay(testDate);
     expect(eventsForDay.length).toBe(1);
@@ -215,13 +216,15 @@ describe('CalendarComponent', () => {
 
   it('should get display events based on active view', () => {
     component.events = mockEvents;
+    component.calendarSources = mockCalendarSources;
     
-    component.activeView = 'lodge';
+    // viewId format is `source-${sourceId}`
+    component.activeView = 'source-1';
     let displayEvents = component.getDisplayEvents();
     expect(displayEvents.length).toBe(1);
     expect(displayEvents[0].calendarId).toBe(1);
     
-    component.activeView = 'yorkrite';
+    component.activeView = 'source-4';
     displayEvents = component.getDisplayEvents();
     expect(displayEvents.length).toBe(1);
     expect(displayEvents[0].calendarId).toBe(4);
@@ -233,13 +236,17 @@ describe('CalendarComponent', () => {
 
   it('should get events for specific source', () => {
     component.events = mockEvents;
+    component.calendarSources = mockCalendarSources;
+    // Set currentMonth to January 2025 when mock events occur
+    component.currentMonth = new Date('2025-01-01');
     const lodgeEvents = component.getEventsForSource(1);
     expect(lodgeEvents.length).toBe(1);
     expect(lodgeEvents[0].calendarId).toBe(1);
   });
 
   it('should get correct source view button class', () => {
-    component.activeView = 'lodge';
+    // viewId format is `source-${sourceId}`, so set activeView accordingly
+    component.activeView = 'source-1';
     const activeClass = component.getSourceViewButtonClass(1);
     expect(activeClass).toContain('bg-primary-blue text-white');
     
@@ -257,10 +264,7 @@ describe('CalendarComponent', () => {
     expect(buttonClass).toContain('bg-white text-primary-blue');
   });
 
-  it('should force York Rite sync', () => {
-    component.forceYorkRiteSync();
-    expect(calendarService.forceYorkRiteSync).toHaveBeenCalled();
-  });
+  // Note: forceYorkRiteSync was removed from component
 
   it('should download calendar ICS', () => {
     component.calendarSources = mockCalendarSources;
@@ -307,15 +311,7 @@ describe('CalendarComponent', () => {
     expect(calendarService.updateCalendarSource).toHaveBeenCalledWith(1, false);
   });
 
-  it('should clear cache and resync', (done) => {
-    calendarService.clearCacheAndResync.and.returnValue(of({ success: true, eventsCount: 5, message: 'Success' }));
-    component.clearCacheAndResync();
-    
-    setTimeout(() => {
-      expect(calendarService.clearCacheAndResync).toHaveBeenCalled();
-      done();
-    }, 100);
-  });
+  // Note: clearCacheAndResync was removed from component
 
   it('should cleanup subscriptions on destroy', () => {
     spyOn(component['destroy$'], 'next');

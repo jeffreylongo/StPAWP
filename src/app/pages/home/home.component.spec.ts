@@ -80,48 +80,8 @@ describe('HomeComponent', () => {
     expect(secondaryBtn?.textContent?.trim()).toContain('Calendar of Events');
   });
 
-  it('should load announcements on init', () => {
-    mockWordPressService.getPosts.and.returnValue(of(mockPosts));
-    
-    component.ngOnInit();
-    
-    expect(mockWordPressService.getPosts).toHaveBeenCalledWith({ per_page: 6 });
-    expect(component.announcements).toEqual(mockPosts);
-    expect(component.isLoadingAnnouncements).toBe(false);
-  });
-
-  it('should handle announcements loading error', () => {
-    mockWordPressService.getPosts.and.returnValue(throwError('Network error'));
-    spyOn(console, 'error');
-    
-    component.ngOnInit();
-    
-    expect(component.announcements).toEqual([]);
-    expect(component.isLoadingAnnouncements).toBe(false);
-    expect(console.error).toHaveBeenCalled();
-  });
-
-  it('should show loading skeleton while loading announcements', () => {
-    mockWordPressService.getPosts.and.returnValue(of([]));
-    component.isLoadingAnnouncements = true;
-    
-    fixture.detectChanges();
-    
-    const skeleton = compiled.querySelector('.announcement-skeleton');
-    expect(skeleton).toBeTruthy();
-  });
-
-  it('should show empty state when no announcements', () => {
-    mockWordPressService.getPosts.and.returnValue(of([]));
-    component.isLoadingAnnouncements = false;
-    component.announcements = [];
-    
-    fixture.detectChanges();
-    
-    const emptyState = compiled.querySelector('.empty-state');
-    expect(emptyState).toBeTruthy();
-    expect(emptyState?.textContent).toContain('No announcements at this time');
-  });
+  // Note: Announcements functionality was removed from home component
+  // The following tests are skipped as the properties no longer exist
 
   it('should generate mock events', () => {
     component.loadEvents();
@@ -132,33 +92,24 @@ describe('HomeComponent', () => {
     }, 1600);
   });
 
-  it('should track announcements by id', () => {
-    const announcement = mockPosts[0];
-    const result = component.trackByAnnouncementId(0, announcement);
-    expect(result).toBe(announcement.id);
-  });
+  // Note: trackByAnnouncementId was removed with announcements functionality
 
   it('should track events by id', () => {
-    const event = { id: 1, title: 'Test', date: new Date(), startTime: '7:00 PM', endTime: '9:00 PM', location: 'Lodge' };
+    const event = { 
+      id: 1, 
+      title: 'Test', 
+      date: new Date(), 
+      startTime: '7:00 PM', 
+      endTime: '9:00 PM', 
+      location: 'Lodge',
+      type: 'meeting' as const,
+      description: ''
+    };
     const result = component.trackByEventId(0, event);
     expect(result).toBe(event.id);
   });
 
-  it('should extract excerpt from HTML content', () => {
-    const htmlContent = '<p>This is a long piece of content that should be truncated after 150 characters to provide a nice excerpt for the user to read before clicking read more.</p>';
-    const result = component.getExcerpt(htmlContent);
-    
-    expect(result.length).toBeLessThanOrEqual(153); // 150 + "..."
-    expect(result).toContain('...');
-  });
-
-  it('should return full content if under 150 characters', () => {
-    const shortContent = '<p>Short content</p>';
-    const result = component.getExcerpt(shortContent);
-    
-    expect(result).toBe('Short content');
-    expect(result).not.toContain('...');
-  });
+  // Note: getExcerpt was removed - excerpt comes from WordPress API
 
   it('should render info cards', () => {
     fixture.detectChanges();

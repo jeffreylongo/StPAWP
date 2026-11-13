@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, addMonths, subMonths } from 'date-fns';
 
 import { CalendarService } from '../../services/calendar.service';
 import { ToastService } from '../../services/toast.service';
@@ -197,11 +197,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get events for a specific day
+   * Get events for a specific day.
+   * Uses localDate (America/New_York date string) for timezone-independent bucketing.
    */
   getEventsForDay(day: Date): CalendarEvent[] {
+    // Format the calendar grid day as YYYY-MM-DD (these are local midnight dates)
+    const dayStr = format(day, 'yyyy-MM-dd');
     return this.getDisplayEvents().filter(event => 
-      isSameDay(new Date(event.date), day)
+      event.localDate === dayStr
     );
   }
 
@@ -289,17 +292,22 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get events for a specific calendar source
+   * Get events for a specific calendar source.
+   * Uses localDate for timezone-independent month filtering.
    */
   getEventsForSource(sourceId: number): CalendarEvent[] {
     // Filter events for this source AND the current displayed month
-    const monthStart = startOfMonth(this.currentMonth);
-    const monthEnd = endOfMonth(this.currentMonth);
+    const year = this.currentMonth.getFullYear();
+    const month = this.currentMonth.getMonth();
+    const monthStr = String(month + 1).padStart(2, '0');
+    const startStr = `${year}-${monthStr}-01`;
+    const endDay = new Date(year, month + 1, 0).getDate();
+    const endStr = `${year}-${monthStr}-${String(endDay).padStart(2, '0')}`;
     
     return this.events.filter(event => {
       if (event.calendarId !== sourceId) return false;
-      const eventDate = new Date(event.date);
-      return eventDate >= monthStart && eventDate <= monthEnd;
+      const eventDateStr = event.localDate || format(new Date(event.date), 'yyyy-MM-dd');
+      return eventDateStr >= startStr && eventDateStr <= endStr;
     });
   }
 
