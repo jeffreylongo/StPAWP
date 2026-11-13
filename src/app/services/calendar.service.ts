@@ -865,31 +865,36 @@ export class CalendarService {
 
   /**
    * Parse ICS date/time format
-   * Handles UTC times (Z suffix), timezone-aware times (TZID), and floating times
+   * Handles all forms:
+   * - Full line with TZID: DTSTART;TZID=America/New_York:20261117T183000
+   * - Full line with VALUE=DATE: DTSTART;VALUE=DATE:20261117
+   * - Full line bare: DTSTART:20261121T000000Z
+   * - Just value with Z: 20261121T000000Z
+   * - Just value floating: 20261121T183000
+   * - Just value date: 20261121
    */
   private parseIcsDateTime(dateTimeString: string): Date | null {
     try {
       if (!dateTimeString) return null;
       
-      // Handle timezone format: DTSTART;TZID=America/New_York:20080728T183000
-      if (dateTimeString.includes(';TZID=')) {
-        const tzidMatch = dateTimeString.match(/TZID=([^:;]+)/);
-        const tzid = tzidMatch ? tzidMatch[1] : null;
-        const parts = dateTimeString.split(':');
-        if (parts.length >= 2) {
-          const dateTimePart = parts[parts.length - 1];
-          const localDate = this.parseBasicDateTimeComponents(dateTimePart);
-          if (localDate && tzid) {
-            return this.convertTimezoneToUtc(localDate, tzid);
-          }
-          return localDate ? this.convertTimezoneToUtc(localDate, 'America/New_York') : null;
-        }
-      }
+      // Extract TZID if present (before extracting value)
+      const tzidMatch = dateTimeString.match(/TZID=([^:;]+)/);
+      const tzid = tzidMatch ? tzidMatch[1] : null;
       
-      // Handle UTC format: 20250305T003000Z
-      if (dateTimeString.endsWith('Z')) {
-        const cleanDateTime = dateTimeString.slice(0, -1);
-        const components = this.parseBasicDateTimeComponents(cleanDateTime);
+      // Check for VALUE=DATE (all-day event)
+      const isDateOnly = dateTimeString.includes('VALUE=DATE');
+      
+      // Extract just the value portion (after the last colon, or the whole string if no colon)
+      // This handles: "DTSTART:20261121T000000Z" -> "20261121T000000Z"
+      //               "DTSTART;TZID=America/New_York:20261117T183000" -> "20261117T183000"
+      //               "20261121T000000Z" -> "20261121T000000Z"
+      const colonIndex = dateTimeString.lastIndexOf(':');
+      const value = colonIndex >= 0 ? dateTimeString.substring(colonIndex + 1) : dateTimeString;
+      
+      // Handle UTC format (Z suffix)
+      if (value.endsWith('Z')) {
+        const cleanValue = value.slice(0, -1);
+        const components = this.parseBasicDateTimeComponents(cleanValue);
         if (components) {
           return new Date(Date.UTC(
             components.year, components.month, components.day,
@@ -899,12 +904,22 @@ export class CalendarService {
         return null;
       }
       
-      // Floating time - treat as America/New_York (calendar's default timezone)
-      const components = this.parseBasicDateTimeComponents(dateTimeString);
-      if (components) {
+      // Parse the datetime components
+      const components = this.parseBasicDateTimeComponents(value);
+      if (!components) return null;
+      
+      // If we have a TZID, convert from that timezone to UTC
+      if (tzid) {
+        return this.convertTimezoneToUtc(components, tzid);
+      }
+      
+      // For VALUE=DATE (all-day events), treat as midnight in calendar's timezone
+      if (isDateOnly) {
         return this.convertTimezoneToUtc(components, 'America/New_York');
       }
-      return null;
+      
+      // Floating time - treat as America/New_York (calendar's default timezone)
+      return this.convertTimezoneToUtc(components, 'America/New_York');
     } catch {
       return null;
     }
