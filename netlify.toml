@@ -2,6 +2,13 @@
   command = "npm run build -- --configuration=production --base-href=/ --deploy-url=/"
   publish = "dist/stpete-lodge139-angular-head-v1/browser"
 
+# Redirect netlify.app to production domain
+[[redirects]]
+  from = "https://stpetelodge139.netlify.app/*"
+  to = "https://stpetelodge139.org/:splat"
+  status = 301
+  force = true
+
 # WordPress API proxying
 [[redirects]]
   from = "/wp-json/*"

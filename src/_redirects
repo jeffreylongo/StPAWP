@@ -1,3 +1,6 @@
+# Redirect netlify.app to production domain
+https://stpetelodge139.netlify.app/* https://stpetelodge139.org/:splat 301!
+
 # WordPress API proxying
 /wp-json/*  https://y91.b3b.myftpupload.com/wp-json/:splat  200!
 /wp-content/*  https://y91.b3b.myftpupload.com/wp-content/:splat  200!
